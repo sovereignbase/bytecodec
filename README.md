@@ -31,6 +31,10 @@ npm install @sovereignbase/bytecodec
 pnpm add @sovereignbase/bytecodec
 # or
 yarn add @sovereignbase/bytecodec
+# or
+bun add @sovereignbase/bytecodec
+# or
+deno add jsr:@sovereignbase/bytecodec
 ```
 
 ## Usage

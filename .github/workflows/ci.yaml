@@ -91,3 +91,10 @@ jobs:
       - run: npm run build --if-present
 
       - run: npm publish --access public --ignore-scripts
+
+      - name: Sync jsr.json version from package.json
+        run: |
+          node -e "const fs=require('node:fs'); const pkg=JSON.parse(fs.readFileSync('package.json','utf8')); const jsr=JSON.parse(fs.readFileSync('jsr.json','utf8')); jsr.version=pkg.version; fs.writeFileSync('jsr.json', JSON.stringify(jsr, null, 2) + '\n');"
+
+      - name: Publish to JSR
+        run: npx jsr publish

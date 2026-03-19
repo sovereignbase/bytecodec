@@ -1,0 +1,14 @@
+{
+  "$schema": "https://jsr.io/schema/config-file.v1.json",
+  "name": "@sovereignbase/bytecodec",
+  "version": "1.2.0",
+  "exports": "./src/index.ts",
+  "publish": {
+    "include": [
+      "package.json",
+      "src/**/*.ts",
+      "README.md",
+      "LICENSE"
+    ]
+  }
+}
