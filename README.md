@@ -35,6 +35,8 @@ yarn add @sovereignbase/bytecodec
 bun add @sovereignbase/bytecodec
 # or
 deno add jsr:@sovereignbase/bytecodec
+# or
+vlt install jsr:@sovereignbase/bytecodec
 ```
 
 ## Usage
