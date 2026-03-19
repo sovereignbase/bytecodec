@@ -40,7 +40,8 @@ yarn add @sovereignbase/bytecodec
 ```js
 import { Bytes } from '@sovereignbase/bytecodec'
 
-const encoded = Bytes.toBase64String(new Uint8Array([1, 2, 3]))
+// The `Bytes` convenience class wraps the same functions as static methods.
+const encoded = Bytes.toBase64String(new Uint8Array([1, 2, 3])) // base64 string
 ```
 
 ### Base64
@@ -49,8 +50,8 @@ const encoded = Bytes.toBase64String(new Uint8Array([1, 2, 3]))
 import { toBase64String, fromBase64String } from '@sovereignbase/bytecodec'
 
 const bytes = new Uint8Array([104, 101, 108, 108, 111])
-const encoded = toBase64String(bytes)
-const decoded = fromBase64String(encoded)
+const encoded = toBase64String(bytes) // string of base64 chars
+const decoded = fromBase64String(encoded) // Uint8Array
 ```
 
 ### Base64URL
@@ -62,8 +63,8 @@ import {
 } from '@sovereignbase/bytecodec'
 
 const bytes = new Uint8Array([104, 101, 108, 108, 111])
-const encoded = toBase64UrlString(bytes)
-const decoded = fromBase64UrlString(encoded)
+const encoded = toBase64UrlString(bytes) // string of base64url chars
+const decoded = fromBase64UrlString(encoded) // Uint8Array
 ```
 
 ### UTF-8 strings
@@ -71,8 +72,8 @@ const decoded = fromBase64UrlString(encoded)
 ```js
 import { fromString, toString } from '@sovereignbase/bytecodec'
 
-const textBytes = fromString('caffe and rockets')
-const text = toString(textBytes)
+const textBytes = fromString('caffe and rockets') // Uint8Array
+const text = toString(textBytes) // "caffe and rockets"
 ```
 
 ### JSON
@@ -80,8 +81,8 @@ const text = toString(textBytes)
 ```js
 import { fromJSON, toJSON } from '@sovereignbase/bytecodec'
 
-const jsonBytes = fromJSON({ ok: true, count: 3 })
-const obj = toJSON(jsonBytes)
+const jsonBytes = fromJSON({ ok: true, count: 3 }) // Uint8Array
+const obj = toJSON(jsonBytes) // { ok: true, count: 3 }
 ```
 
 ### Compression
@@ -89,8 +90,8 @@ const obj = toJSON(jsonBytes)
 ```js
 import { toCompressed, fromCompressed } from '@sovereignbase/bytecodec'
 
-const compressed = await toCompressed(new Uint8Array([1, 2, 3]))
-const restored = await fromCompressed(compressed)
+const compressed = await toCompressed(new Uint8Array([1, 2, 3])) // Uint8Array
+const restored = await fromCompressed(compressed) // Uint8Array
 ```
 
 ### Normalization
@@ -102,9 +103,9 @@ import {
   toBufferSource,
 } from '@sovereignbase/bytecodec'
 
-const normalized = toUint8Array([1, 2, 3])
-const copied = toArrayBuffer(normalized)
-const bufferSource = toBufferSource(normalized)
+const normalized = toUint8Array([1, 2, 3]) // Uint8Array
+const copied = toArrayBuffer(normalized) // ArrayBuffer
+const bufferSource = toBufferSource(normalized) // Uint8Array as BufferSource
 ```
 
 Accepted byte inputs (`ByteSource`) are:
@@ -119,7 +120,7 @@ Accepted byte inputs (`ByteSource`) are:
 ```js
 import { equals } from '@sovereignbase/bytecodec'
 
-const isSame = equals(new Uint8Array([1, 2, 3]), new Uint8Array([1, 2, 3]))
+const isSame = equals(new Uint8Array([1, 2, 3]), new Uint8Array([1, 2, 3])) // true | false
 ```
 
 ### Concatenating
@@ -127,7 +128,7 @@ const isSame = equals(new Uint8Array([1, 2, 3]), new Uint8Array([1, 2, 3]))
 ```js
 import { concat } from '@sovereignbase/bytecodec'
 
-const joined = concat([new Uint8Array([1, 2]), new Uint8Array([3, 4]), [5, 6]])
+const joined = concat([new Uint8Array([1, 2]), new Uint8Array([3, 4]), [5, 6]]) // Uint8Array
 ```
 
 ## Runtime behavior
