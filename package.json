@@ -20,20 +20,26 @@
     "compression",
     "gzip",
     "binary",
+    "esm",
+    "commonjs",
     "typescript",
     "sovereignbase"
   ],
   "license": "Apache-2.0",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sovereignbase/bytecodec.git"
@@ -49,7 +55,7 @@
   ],
   "scripts": {
     "format": "prettier . --write",
-    "build": "tsc -p tsconfig.json",
+    "build": "tsup",
     "test": "npm run build && node test/run-coverage.mjs && node test/e2e/run.mjs",
     "bench": "npm run build && node benchmark/bench.js",
     "prepare": "husky",
@@ -67,9 +73,8 @@
       "playwright.config.ts"
     ]
   },
-  "sideEffects": false,
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.5.0",
@@ -81,6 +86,7 @@
     "husky": "^9.1.7",
     "playwright": "^1.58.2",
     "prettier": "^3.8.1",
+    "tsup": "^8.5.1",
     "typescript": "^5.6.3"
   }
 }
