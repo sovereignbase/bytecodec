@@ -1,14 +1,15 @@
 import { BytecodecError } from '../.errors/class.js'
+import { fromBase64String } from '../fromBase64String/index.js'
 
 export function fromBase64UrlString(
   base64UrlString: Base64URLString
 ): Uint8Array {
   const base64String = toBase64String(base64UrlString)
-  return decodeBase64(base64String)
+  return fromBase64String(base64String)
 }
 
 /**
- * From b64 URL to b64 string
+ * From Base 64 URL String to Base 64 String
  */
 function toBase64String(base64UrlString: Base64URLString): string {
   let base64String = base64UrlString.replace(/-/g, '+').replace(/_/g, '/')
@@ -21,21 +22,4 @@ function toBase64String(base64UrlString: Base64URLString): string {
       'Invalid base64url length'
     )
   return base64String
-}
-
-function decodeBase64(base64String: string): Uint8Array {
-  if (typeof Buffer !== 'undefined' && typeof Buffer.from === 'function')
-    return new Uint8Array(Buffer.from(base64String, 'base64'))
-
-  if (typeof atob !== 'function')
-    throw new BytecodecError(
-      'BASE64_DECODER_UNAVAILABLE',
-      'No base64 decoder available in this environment.'
-    )
-
-  const binaryString = atob(base64String)
-  const bytes = new Uint8Array(binaryString.length)
-  for (let index = 0; index < binaryString.length; index++)
-    bytes[index] = binaryString.charCodeAt(index)
-  return bytes
 }
