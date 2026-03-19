@@ -8,15 +8,21 @@ const originalTextDecoder = globalThis.TextDecoder
 globalThis.TextEncoder = undefined
 globalThis.TextDecoder = undefined
 
-const { fromString } = await import('../../dist/fromString/index.js')
-const { toString } = await import('../../dist/toString/index.js')
-const { toBase64UrlString } =
-  await import('../../dist/toBase64UrlString/index.js')
-const { fromBase64UrlString } =
-  await import('../../dist/fromBase64UrlString/index.js')
-const { toCompressed } = await import('../../dist/toCompressed/index.js')
-const { fromCompressed } = await import('../../dist/fromCompressed/index.js')
-const { concat, fromJSON, toJSON } = await import('../../dist/index.js')
+const bundleUrl = new URL(
+  `../../dist/index.js?fallbacks=${Date.now()}-${Math.random()}`,
+  import.meta.url
+)
+const {
+  concat,
+  fromBase64UrlString,
+  fromCompressed,
+  fromJSON,
+  fromString,
+  toBase64UrlString,
+  toCompressed,
+  toJSON,
+  toString,
+} = await import(bundleUrl.href)
 
 const originalGlobals = {
   Buffer: globalThis.Buffer,

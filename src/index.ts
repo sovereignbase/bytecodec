@@ -38,6 +38,9 @@ import { concat } from './concat/index.js'
 import { equals } from './equals/index.js'
 /***/
 
+/**
+ * A supported byte input source accepted by the codec helpers.
+ */
 export type ByteSource = Uint8Array | ArrayBuffer | ArrayBufferView | number[]
 
 export {
@@ -69,65 +72,108 @@ export {
  * Convenience wrapper around the codec functions.
  */
 export class Bytes {
-  /***/
+  /**
+   * See {@link fromBase64String}.
+   */
   static fromBase64String(base64String: string): Uint8Array {
     return fromBase64String(base64String)
   }
+
+  /**
+   * See {@link toBase64String}.
+   */
   static toBase64String(bytes: ByteSource): string {
     return toBase64String(bytes)
   }
-  /***/
-  /***/
+
+  /**
+   * See {@link fromBase64UrlString}.
+   */
   static fromBase64UrlString(base64UrlString: Base64URLString): Uint8Array {
     return fromBase64UrlString(base64UrlString)
   }
 
+  /**
+   * See {@link toBase64UrlString}.
+   */
   static toBase64UrlString(bytes: ByteSource): Base64URLString {
     return toBase64UrlString(bytes)
   }
-  /***/
+
+  /**
+   * See {@link fromString}.
+   */
   static fromString(text: string): Uint8Array {
     return fromString(text)
   }
 
+  /**
+   * See {@link toString}.
+   */
   static toString(bytes: ByteSource): string {
     return toString(bytes)
   }
-  /***/
+
+  /**
+   * See {@link toJSON}.
+   */
   static toJSON(bytes: ByteSource | string): any {
     return toJSON(bytes)
   }
 
+  /**
+   * See {@link fromJSON}.
+   */
   static fromJSON(value: any): Uint8Array {
     return fromJSON(value)
   }
-  /***/
+
+  /**
+   * See {@link toCompressed}.
+   */
   static toCompressed(bytes: ByteSource): Promise<Uint8Array> {
     return toCompressed(bytes)
   }
 
+  /**
+   * See {@link fromCompressed}.
+   */
   static fromCompressed(bytes: ByteSource): Promise<Uint8Array> {
     return fromCompressed(bytes)
   }
-  /***/
+
+  /**
+   * See {@link toBufferSource}.
+   */
   static toBufferSource(bytes: ByteSource): BufferSource {
     return toBufferSource(bytes)
   }
 
+  /**
+   * See {@link toArrayBuffer}.
+   */
   static toArrayBuffer(bytes: ByteSource): ArrayBuffer {
     return toArrayBuffer(bytes)
   }
 
+  /**
+   * See {@link toUint8Array}.
+   */
   static toUint8Array(bytes: ByteSource): Uint8Array {
     return toUint8Array(bytes)
   }
-  /***/
+
+  /**
+   * See {@link concat}.
+   */
   static concat(sources: ByteSource[]): Uint8Array {
     return concat(sources)
   }
 
+  /**
+   * See {@link equals}.
+   */
   static equals(a: ByteSource, b: ByteSource): boolean {
     return equals(a, b)
   }
-  /***/
 }

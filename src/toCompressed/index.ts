@@ -15,17 +15,27 @@
  */
 
 import { BytecodecError } from '../.errors/class.js'
-import type { ByteSource } from '../index.js'
-import { isNodeRuntime } from '../.helpers/index.js'
+import { importNodeBuiltin, isNodeRuntime } from '../.helpers/index.js'
 import { toUint8Array } from '../index.js'
+import type { ByteSource } from '../index.js'
 
+/**
+ * Compresses bytes using gzip.
+ *
+ * @param bytes The bytes to compress.
+ * @returns A promise that resolves to a new `Uint8Array` containing the gzip payload.
+ */
 export async function toCompressed(bytes: ByteSource): Promise<Uint8Array> {
   const view = toUint8Array(bytes)
 
   // Node: use built-in zlib
   if (isNodeRuntime()) {
-    const { gzip } = await import('node:zlib')
-    const { promisify } = await import('node:util')
+    const { gzip } = await importNodeBuiltin<typeof import('node:zlib')>(
+      'node:zlib'
+    )
+    const { promisify } = await importNodeBuiltin<typeof import('node:util')>(
+      'node:util'
+    )
     const gzipAsync = promisify(gzip)
     const compressed = await gzipAsync(view)
     return toUint8Array(compressed)
@@ -41,14 +51,20 @@ export async function toCompressed(bytes: ByteSource): Promise<Uint8Array> {
   return compressWithStream(view, 'gzip')
 }
 
+/**
+ * Compresses bytes with `CompressionStream` in runtimes that expose the web compression APIs.
+ *
+ * @param bytes The bytes to compress.
+ * @param format The compression format to use.
+ * @returns A promise that resolves to the compressed bytes.
+ */
 async function compressWithStream(
   bytes: BufferSource,
   format: CompressionFormat
 ) {
-  const cs = new CompressionStream(format)
-  const writer = cs.writable.getWriter()
-  await writer.write(bytes)
-  await writer.close()
-  const arrayBuffer = await new Response(cs.readable).arrayBuffer()
+  const compressedStream = new Blob([bytes])
+    .stream()
+    .pipeThrough(new CompressionStream(format))
+  const arrayBuffer = await new Response(compressedStream).arrayBuffer()
   return new Uint8Array(arrayBuffer)
 }

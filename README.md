@@ -5,13 +5,13 @@
 
 # bytecodec
 
-Typed JavaScript and TypeScript byte utilities for base64, base64url, UTF-8 strings, JSON, gzip, concatenation, comparison, and byte-source normalization. The package is ESM-only and keeps the same API across Node and browser or edge runtimes.
+Typed JavaScript and TypeScript byte utilities for base64, base64url, UTF-8 strings, JSON, gzip, concatenation, comparison, and byte-source normalization. The package ships tree-shakeable ESM plus CommonJS entry points and keeps the same API across Node, Bun, Deno, browsers, and edge runtimes.
 
 ## Compatibility
 
-- Runtimes: Node >= 18; browsers and edge runtimes with `TextEncoder`/`TextDecoder` plus `btoa`/`atob` for base64 helpers.
-- Module format: ESM-only.
-- Node runtime behavior: uses `Buffer` for base64 helpers and `node:zlib` for gzip.
+- Runtimes: Node, Bun, Deno, browsers, and edge runtimes.
+- Module formats: ESM by default, with CommonJS exports for `require()` consumers in Node and Bun.
+- Node and Bun runtime behavior: uses `Buffer` for base64 helpers and `node:zlib` for gzip.
 - Browser and edge gzip support requires `CompressionStream` and `DecompressionStream`.
 - TypeScript: bundled types.
 
@@ -19,7 +19,7 @@ Typed JavaScript and TypeScript byte utilities for base64, base64url, UTF-8 stri
 
 - Developer-friendly API for base64, base64url, UTF-8, JSON, gzip, concat, equality, and byte normalization.
 - No runtime dependencies or bundler shims.
-- ESM-only and side-effect free for tree-shaking.
+- Tree-shakeable ESM by default with CommonJS compatibility and no side effects.
 - Returns copies for safety when normalizing inputs.
 - Consistent behavior across Node, browsers, and edge runtimes.
 
@@ -51,6 +51,15 @@ import { toBase64String, fromBase64String } from '@sovereignbase/bytecodec'
 
 const bytes = new Uint8Array([104, 101, 108, 108, 111])
 const encoded = toBase64String(bytes) // string of base64 chars
+const decoded = fromBase64String(encoded) // Uint8Array
+```
+
+### CommonJS
+
+```js
+const { toBase64String, fromBase64String } = require('@sovereignbase/bytecodec')
+
+const encoded = toBase64String([104, 101, 108, 108, 111]) // string of base64 chars
 const decoded = fromBase64String(encoded) // Uint8Array
 ```
 
@@ -137,6 +146,10 @@ const joined = concat([new Uint8Array([1, 2]), new Uint8Array([3, 4]), [5, 6]]) 
 
 Uses `Buffer.from` for base64 helpers, `TextEncoder` and `TextDecoder` when available with `Buffer` fallback for UTF-8, and `node:zlib` for gzip.
 
+### Bun
+
+Uses the same API shape as Node. ESM and CommonJS entry points are both exported.
+
 ### Browsers / Edge runtimes
 
 Uses `TextEncoder`, `TextDecoder`, `btoa`, and `atob`. Gzip uses `CompressionStream` and `DecompressionStream` when available.
@@ -151,16 +164,16 @@ Validation failures throw `BytecodecError` instances with a `code` string, for e
 
 ## Tests
 
-Latest local `npm test` run on 2026-03-19:
+`npm test` covers:
 
-| Check             | Result                                                            |
-| ----------------- | ----------------------------------------------------------------- |
-| Unit tests        | 53 passed                                                         |
-| Integration tests | 4 passed                                                          |
-| Browser E2E       | 5 passed: Chromium, Firefox, WebKit, mobile-chrome, mobile-safari |
-| Coverage          | 100% statements, branches, functions, and lines                   |
-
-Command: `npm test`
+- 53 unit tests
+- 4 integration tests
+- Node E2E: ESM and CommonJS
+- Bun E2E: ESM and CommonJS
+- Deno E2E: ESM
+- Edge Runtime E2E: ESM
+- Browser E2E: Chromium, Firefox, WebKit, mobile-chrome, and mobile-safari
+- Coverage gate: 100% statements, branches, functions, and lines
 
 ## Benchmarks
 

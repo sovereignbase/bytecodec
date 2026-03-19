@@ -17,6 +17,12 @@
 import { toUint8Array } from '../index.js'
 import type { ByteSource } from '../index.js'
 
+/**
+ * Normalizes a supported byte source into a `BufferSource`.
+ *
+ * @param bytes The byte source to normalize.
+ * @returns A `Uint8Array` copy that can be passed anywhere a `BufferSource` is accepted.
+ */
 export function toBufferSource(bytes: ByteSource): BufferSource {
   return toUint8Array(bytes)
 }

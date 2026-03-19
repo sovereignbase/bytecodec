@@ -16,6 +16,12 @@
 
 import { BytecodecError } from '../.errors/class.js'
 
+/**
+ * Decodes a base64-encoded string into a new `Uint8Array`.
+ *
+ * @param base64String The base64 string to decode.
+ * @returns A new `Uint8Array` containing the decoded bytes.
+ */
 export function fromBase64String(base64String: string): Uint8Array {
   if (typeof Buffer !== 'undefined' && typeof Buffer.from === 'function')
     return new Uint8Array(Buffer.from(base64String, 'base64'))

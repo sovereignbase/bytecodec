@@ -17,6 +17,12 @@
 import { BytecodecError } from '../.errors/class.js'
 import { textEncoder } from '../.helpers/index.js'
 
+/**
+ * Encodes a JavaScript string as UTF-8 bytes.
+ *
+ * @param text The string to encode.
+ * @returns A new `Uint8Array` containing the UTF-8 encoded bytes.
+ */
 export function fromString(text: string): Uint8Array {
   if (typeof text !== 'string')
     throw new BytecodecError(

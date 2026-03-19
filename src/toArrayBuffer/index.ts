@@ -18,6 +18,12 @@ import { BytecodecError } from '../.errors/class.js'
 import { isSharedArrayBuffer } from '../.helpers/index.js'
 import type { ByteSource } from '../index.js'
 
+/**
+ * Normalizes a supported byte source into a new `ArrayBuffer`.
+ *
+ * @param bytes The byte source to normalize.
+ * @returns A new `ArrayBuffer` copy of `bytes`.
+ */
 export function toArrayBuffer(bytes: ByteSource): ArrayBuffer {
   if (bytes instanceof ArrayBuffer) return bytes.slice(0)
 

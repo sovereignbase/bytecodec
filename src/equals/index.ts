@@ -16,6 +16,14 @@
 
 import type { ByteSource } from '../index.js'
 import { toUint8Array } from '../index.js'
+
+/**
+ * Compares two byte sources for byte-for-byte equality.
+ *
+ * @param x The first byte source to compare.
+ * @param y The second byte source to compare.
+ * @returns `true` if both byte sources contain the same bytes; otherwise, `false`.
+ */
 export function equals(x: ByteSource, y: ByteSource): boolean {
   const a = toUint8Array(x)
   const b = toUint8Array(y)

@@ -19,6 +19,12 @@ import { textDecoder } from '../.helpers/index.js'
 import { toUint8Array } from '../index.js'
 import type { ByteSource } from '../index.js'
 
+/**
+ * Decodes UTF-8 bytes into a JavaScript string.
+ *
+ * @param bytes The bytes to decode.
+ * @returns The decoded string.
+ */
 export function toString(bytes: ByteSource): string {
   const view = toUint8Array(bytes)
 

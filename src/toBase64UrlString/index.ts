@@ -17,6 +17,12 @@
 import type { ByteSource } from '../index.js'
 import { toBase64String } from '../toBase64String/index.js'
 
+/**
+ * Encodes bytes as a base64url string without trailing padding.
+ *
+ * @param bytes The bytes to encode.
+ * @returns A base64url string representation of `bytes`.
+ */
 export function toBase64UrlString(bytes: ByteSource): Base64URLString {
   const base64 = toBase64String(bytes)
   return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '')

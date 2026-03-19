@@ -1,16 +1,25 @@
 import { defineConfig, devices } from '@playwright/test'
 
+const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://127.0.0.1:4173'
+const webServer = process.env.PLAYWRIGHT_BASE_URL
+  ? undefined
+  : {
+      command: 'node test/e2e/runsInBrowsers/server.mjs',
+      url: baseURL,
+      env: {
+        ...process.env,
+        PORT: new URL(baseURL).port || '4173',
+      },
+      reuseExistingServer: true,
+    }
+
 export default defineConfig({
-  testDir: 'test/e2e',
+  testDir: 'test/e2e/runsInBrowsers',
   timeout: 30000,
   use: {
-    baseURL: 'http://127.0.0.1:4173',
+    baseURL,
   },
-  webServer: {
-    command: 'node test/e2e/server.mjs',
-    url: 'http://127.0.0.1:4173',
-    reuseExistingServer: !process.env.CI,
-  },
+  webServer,
   projects: [
     {
       name: 'chromium',

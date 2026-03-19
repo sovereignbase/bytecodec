@@ -18,6 +18,12 @@ import { BytecodecError } from '../.errors/class.js'
 import type { ByteSource } from '../index.js'
 import { toUint8Array } from '../index.js'
 
+/**
+ * Encodes bytes as a base64 string.
+ *
+ * @param bytes The bytes to encode.
+ * @returns A base64 string representation of `bytes`.
+ */
 export function toBase64String(bytes: ByteSource): string {
   const view = toUint8Array(bytes)
   if (typeof Buffer !== 'undefined' && typeof Buffer.from === 'function')

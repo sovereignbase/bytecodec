@@ -17,6 +17,13 @@
 import { BytecodecError } from '../.errors/class.js'
 import type { ByteSource } from '../index.js'
 import { toUint8Array } from '../index.js'
+
+/**
+ * Concatenates multiple byte sources into a single `Uint8Array`.
+ *
+ * @param sources The byte sources to concatenate, in order.
+ * @returns A new `Uint8Array` containing the concatenated bytes.
+ */
 export function concat(sources: ByteSource[]): Uint8Array {
   if (!Array.isArray(sources))
     throw new BytecodecError(

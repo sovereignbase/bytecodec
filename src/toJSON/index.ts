@@ -18,6 +18,12 @@ import { BytecodecError } from '../.errors/class.js'
 import type { ByteSource } from '../index.js'
 import { toString } from '../toString/index.js'
 
+/**
+ * Parses JSON text from a string or UTF-8 byte source.
+ *
+ * @param input The JSON string or UTF-8 encoded bytes to parse.
+ * @returns The parsed JavaScript value.
+ */
 export function toJSON(input: ByteSource | string): any {
   const jsonString = typeof input === 'string' ? input : toString(input)
   try {

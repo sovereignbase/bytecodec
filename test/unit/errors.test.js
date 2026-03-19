@@ -1,24 +1,62 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { BytecodecError } from '../../dist/.errors/class.js'
 
-test('BytecodecError uses code when message is omitted', () => {
-  const err = new BytecodecError('UTF8_ENCODER_UNAVAILABLE')
-  assert.equal(err.code, 'UTF8_ENCODER_UNAVAILABLE')
-  assert.equal(err.name, 'BytecodecError')
+function importFreshBundle(tag) {
+  const url = new URL(
+    `../../dist/index.js?${tag}=${Date.now()}-${Math.random()}`,
+    import.meta.url
+  )
+  return import(url.href)
+}
+
+test('public errors expose code, name, and prefixed message', async () => {
+  const originalTextEncoder = globalThis.TextEncoder
+  const originalBuffer = globalThis.Buffer
+  let capturedError
+
+  globalThis.TextEncoder = undefined
+  globalThis.Buffer = undefined
+
+  try {
+    const { fromString } = await importFreshBundle('utf8-error')
+
+    assert.throws(() => fromString('hello'), (error) => {
+      capturedError = error
+      assert.equal(error.code, 'UTF8_ENCODER_UNAVAILABLE')
+      assert.equal(error.name, 'BytecodecError')
+      assert.equal(
+        error.message,
+        '{@sovereignbase/bytecodec} No UTF-8 encoder available in this environment.'
+      )
+      return true
+    })
+  } finally {
+    globalThis.TextEncoder = originalTextEncoder
+    globalThis.Buffer = originalBuffer
+  }
+
+  assert.ok(capturedError)
+  const BytecodecError = capturedError.constructor
+  const errorWithCodeFallback = new BytecodecError('UTF8_ENCODER_UNAVAILABLE')
+
+  assert.equal(errorWithCodeFallback.code, 'UTF8_ENCODER_UNAVAILABLE')
+  assert.equal(errorWithCodeFallback.name, 'BytecodecError')
   assert.equal(
-    err.message,
+    errorWithCodeFallback.message,
     '{@sovereignbase/bytecodec} UTF8_ENCODER_UNAVAILABLE'
   )
 })
 
-test('BytecodecError prefixes custom message', () => {
-  const err = new BytecodecError(
-    'UTF8_ENCODER_UNAVAILABLE',
-    'No UTF-8 encoder available in this environment.'
-  )
-  assert.equal(
-    err.message,
-    '{@sovereignbase/bytecodec} No UTF-8 encoder available in this environment.'
-  )
+test('validation errors use the same public error shape', async () => {
+  const { fromBase64UrlString } = await importFreshBundle('validation-error')
+
+  assert.throws(() => fromBase64UrlString('a'), (error) => {
+    assert.equal(error.code, 'BASE64URL_INVALID_LENGTH')
+    assert.equal(error.name, 'BytecodecError')
+    assert.equal(
+      error.message,
+      '{@sovereignbase/bytecodec} Invalid base64url length'
+    )
+    return true
+  })
 })

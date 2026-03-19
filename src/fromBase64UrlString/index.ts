@@ -17,6 +17,12 @@
 import { BytecodecError } from '../.errors/class.js'
 import { fromBase64String } from '../fromBase64String/index.js'
 
+/**
+ * Decodes a base64url-encoded string into a new `Uint8Array`.
+ *
+ * @param base64UrlString The base64url string to decode.
+ * @returns A new `Uint8Array` containing the decoded bytes.
+ */
 export function fromBase64UrlString(
   base64UrlString: Base64URLString
 ): Uint8Array {
@@ -25,7 +31,10 @@ export function fromBase64UrlString(
 }
 
 /**
- * From Base 64 URL String to Base 64 String
+ * Converts a base64url string into a padded base64 string.
+ *
+ * @param base64UrlString The base64url string to normalize.
+ * @returns A padded base64 string.
  */
 function toBase64String(base64UrlString: Base64URLString): string {
   let base64String = base64UrlString.replace(/-/g, '+').replace(/_/g, '/')

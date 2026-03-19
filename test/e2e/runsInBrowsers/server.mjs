@@ -23,7 +23,7 @@ function safeResolve(base, pathname) {
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url ?? '/', 'http://127.0.0.1')
   let pathname = url.pathname
-  if (pathname === '/') pathname = '/index.html'
+  if (pathname === '/') pathname = '/runsInBrowsers/index.html'
 
   let filePath
   if (pathname.startsWith('/dist/')) filePath = safeResolve(root, pathname)
@@ -53,3 +53,10 @@ const port = Number.parseInt(process.env.PORT || '4173', 10)
 server.listen(port, '127.0.0.1', () => {
   console.log(`bytecodec test server running at http://127.0.0.1:${port}`)
 })
+
+function shutdown() {
+  server.close(() => process.exit(0))
+}
+
+process.on('SIGINT', shutdown)
+process.on('SIGTERM', shutdown)

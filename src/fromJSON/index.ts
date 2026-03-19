@@ -17,6 +17,12 @@
 import { BytecodecError } from '../.errors/class.js'
 import { fromString } from '../fromString/index.js'
 
+/**
+ * Serializes a JavaScript value as JSON UTF-8 bytes.
+ *
+ * @param value The value to serialize.
+ * @returns A new `Uint8Array` containing the JSON representation of `value`.
+ */
 export function fromJSON(value: any): Uint8Array {
   try {
     return fromString(JSON.stringify(value))

@@ -1,7 +1,7 @@
 {
   "name": "@sovereignbase/bytecodec",
   "version": "1.2.0",
-  "description": "JS/TS byte toolkit for UTF-8 strings, base64, base64url, JSON, normalization, compression, concatenation, and comparison in browser and Node runtimes.",
+  "description": "JS/TS agnostic byte toolkit for UTF-8 strings, base64, base64url, JSON, normalization, compression, concatenation, and comparison.",
   "keywords": [
     "base64url",
     "base64",
@@ -12,6 +12,7 @@
     "encoding",
     "decoding",
     "browser",
+    "web",
     "node",
     "utf8",
     "text",
@@ -22,6 +23,12 @@
     "binary",
     "esm",
     "commonjs",
+    "cjs",
+    "require",
+    "bun",
+    "deno",
+    "edge",
+    "edge-runtime",
     "typescript",
     "sovereignbase"
   ],
@@ -74,7 +81,7 @@
     ]
   },
   "engines": {
-    "node": ">=22"
+    "node": ">=18"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.5.0",
@@ -82,6 +89,7 @@
     "@playwright/test": "^1.58.2",
     "@types/node": "^25.5.0",
     "c8": "^11.0.0",
+    "edge-runtime": "^4.0.1",
     "fast-glob": "^3.3.3",
     "husky": "^9.1.7",
     "playwright": "^1.58.2",

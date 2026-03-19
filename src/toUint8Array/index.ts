@@ -17,6 +17,12 @@
 import { BytecodecError } from '../.errors/class.js'
 import type { ByteSource } from '../index.js'
 
+/**
+ * Normalizes a supported byte source into a new `Uint8Array`.
+ *
+ * @param input The byte source to normalize.
+ * @returns A new `Uint8Array` copy of `input`.
+ */
 export function toUint8Array(input: ByteSource): Uint8Array<ArrayBuffer> {
   if (input instanceof Uint8Array) return new Uint8Array(input)
   if (input instanceof ArrayBuffer) return new Uint8Array(input.slice(0))
