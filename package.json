@@ -1,6 +1,6 @@
 {
   "name": "@sovereignbase/bytecodec",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "JS/TS Runtime-Agnostic byte toolkit for UTF-8 strings, base64, base64url, JSON, normalization, compression, concatenation, and comparison.",
   "keywords": [
     "base64url",
