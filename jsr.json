@@ -7,6 +7,8 @@
     "include": [
       "package.json",
       "src/**/*.ts",
+      "src/.errors/**/*.ts",
+      "src/.helpers/**/*.ts",
       "README.md",
       "LICENSE"
     ]
