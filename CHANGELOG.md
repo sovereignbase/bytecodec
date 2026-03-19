@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.2](https://github.com/sovereignbase/bytecodec/compare/v1.3.1...v1.3.2) (2026-03-19)
+
+
+### Bug Fixes
+
+* JSR release ci ([a7948af](https://github.com/sovereignbase/bytecodec/commit/a7948afe4e9c6b76afff4a4d244d3f4f972f6e24))
+
 ## [1.3.1](https://github.com/sovereignbase/bytecodec/compare/v1.3.0...v1.3.1) (2026-03-19)
 
 
