@@ -1,6 +1,6 @@
 import { BytecodecError } from '../.errors/class.js'
 
-function fromBase64String(base64String: string): Uint8Array {
+export function fromBase64String(base64String: string): Uint8Array {
   if (typeof Buffer !== 'undefined' && typeof Buffer.from === 'function')
     return new Uint8Array(Buffer.from(base64String, 'base64'))
 
