@@ -36,7 +36,7 @@ async function benchAsync(name, iterations, fn) {
   console.log(`${name.padEnd(18)} ${formatOps(iterations, duration)}`)
 }
 
-console.log('Benchmarking bytecodec...')
+console.log('Benchmarking @sovereignbase/bytecodec...')
 
 const sampleBytes = randomBytes(64)
 const sampleBytesDiff = Uint8Array.from(sampleBytes, (value, idx) =>
@@ -45,7 +45,7 @@ const sampleBytesDiff = Uint8Array.from(sampleBytes, (value, idx) =>
 const sampleView = new DataView(sampleBytes.buffer, 0, sampleBytes.byteLength)
 const sampleText = 'caffeinated rockets at dawn'
 const sampleTextBytes = fromString(sampleText)
-const sampleJson = { ok: true, count: 42, note: 'bytecodec' }
+const sampleJson = { ok: true, count: 42, note: '@sovereignbase/bytecodec' }
 const sampleJsonBytes = fromJSON(sampleJson)
 const base64 = toBase64UrlString(sampleBytes)
 const compressed = await toCompressed(sampleBytes)

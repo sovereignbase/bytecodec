@@ -1,3 +1,22 @@
+/*
+ * Copyright 2026 Sovereignbase
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/***/
+import { fromBase64String } from './fromBase64String/index.js'
+import { toBase64String } from './toBase64String/index.js'
 /***/
 import { fromBase64UrlString } from './fromBase64UrlString/index.js'
 import { toBase64UrlString } from './toBase64UrlString/index.js'
@@ -23,6 +42,9 @@ export type ByteSource = Uint8Array | ArrayBuffer | ArrayBufferView | number[]
 
 export {
   /***/
+  fromBase64String,
+  toBase64String,
+  /***/
   fromBase64UrlString,
   toBase64UrlString,
   /***/
@@ -47,6 +69,14 @@ export {
  * Convenience wrapper around the codec functions.
  */
 export class Bytes {
+  /***/
+  static fromBase64String(base64String: string): Uint8Array {
+    return fromBase64String(base64String)
+  }
+  static toBase64String(bytes: ByteSource): string {
+    return toBase64String(bytes)
+  }
+  /***/
   /***/
   static fromBase64UrlString(base64UrlString: Base64URLString): Uint8Array {
     return fromBase64UrlString(base64UrlString)

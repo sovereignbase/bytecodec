@@ -59,7 +59,7 @@ jobs:
         uses: googleapis/release-please-action@v3
         with:
           release-type: node
-          package-name: '@z-base/bytecodec'
+          package-name: '@sovereignbase/bytecodec'
 
   publish:
     if: needs.release-please.outputs.release_created == 'true'
