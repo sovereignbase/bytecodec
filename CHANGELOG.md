@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.3](https://github.com/sovereignbase/bytecodec/compare/v1.3.2...v1.3.3) (2026-03-19)
+
+
+### Bug Fixes
+
+* Fixed Action Runner node version ([1b2c477](https://github.com/sovereignbase/bytecodec/commit/1b2c477d2e053903a18c265022428ff17396f2f5))
+* Fixed Action Runner node version ([a71b1d6](https://github.com/sovereignbase/bytecodec/commit/a71b1d6bc99e403939ab11a94a34a41bc7fe9dec))
+
 ## [1.3.2](https://github.com/sovereignbase/bytecodec/compare/v1.3.1...v1.3.2) (2026-03-19)
 
 
