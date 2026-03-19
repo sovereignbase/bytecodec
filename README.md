@@ -3,7 +3,7 @@
 [![codecov](https://codecov.io/gh/sovereignbase/bytecodec/branch/master/graph/badge.svg)](https://codecov.io/gh/sovereignbase/bytecodec)
 [![license](https://img.shields.io/npm/l/@sovereignbase/bytecodec)](LICENSE)
 
-# `@sovereignbase/bytecodec`
+# bytecodec
 
 Typed JavaScript and TypeScript byte utilities for base64, base64url, UTF-8 strings, JSON, gzip, concatenation, comparison, and byte-source normalization. The package is ESM-only and keeps the same API across Node and browser or edge runtimes.
 
@@ -127,11 +127,7 @@ const isSame = equals(new Uint8Array([1, 2, 3]), new Uint8Array([1, 2, 3]))
 ```js
 import { concat } from '@sovereignbase/bytecodec'
 
-const joined = concat([
-  new Uint8Array([1, 2]),
-  new Uint8Array([3, 4]),
-  [5, 6],
-])
+const joined = concat([new Uint8Array([1, 2]), new Uint8Array([3, 4]), [5, 6]])
 ```
 
 ## Runtime behavior
@@ -156,12 +152,12 @@ Validation failures throw `BytecodecError` instances with a `code` string, for e
 
 Latest local `npm test` run on 2026-03-19:
 
-| Check             | Result                                                               |
-| ----------------- | -------------------------------------------------------------------- |
-| Unit tests        | 53 passed                                                            |
-| Integration tests | 4 passed                                                             |
-| Browser E2E       | 5 passed: Chromium, Firefox, WebKit, mobile-chrome, mobile-safari   |
-| Coverage          | 100% statements, branches, functions, and lines                      |
+| Check             | Result                                                            |
+| ----------------- | ----------------------------------------------------------------- |
+| Unit tests        | 53 passed                                                         |
+| Integration tests | 4 passed                                                          |
+| Browser E2E       | 5 passed: Chromium, Firefox, WebKit, mobile-chrome, mobile-safari |
+| Coverage          | 100% statements, branches, functions, and lines                   |
 
 Command: `npm test`
 
@@ -169,8 +165,8 @@ Command: `npm test`
 
 Latest local `npm run bench` run on 2026-03-19 with Node `v22.14.0 (win32 x64)`:
 
-| Benchmark        | Result                   |
-| ---------------- | ------------------------ |
+| Benchmark        | Result                    |
+| ---------------- | ------------------------- |
 | base64 encode    | 1,717,210 ops/s (29.1 ms) |
 | base64 decode    | 2,326,783 ops/s (21.5 ms) |
 | base64url encode | 768,469 ops/s (65.1 ms)   |
