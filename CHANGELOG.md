@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0](https://github.com/sovereignbase/bytecodec/compare/v1.1.0...v1.2.0) (2026-03-19)
+
+
+### Features
+
+* Added Base64String support (already had Base64UrlString support). ([13e03da](https://github.com/sovereignbase/bytecodec/commit/13e03da9d8bb126d4b8cad8098dd33814f0aab5e))
+
+
+### Bug Fixes
+
+* license ([a95d69f](https://github.com/sovereignbase/bytecodec/commit/a95d69f9aa5c518f0f6dbcf68c83c523efc3de6b))
+
 ## [1.1.0](https://github.com/z-base/bytecodec/compare/v1.0.7...v1.1.0) (2026-01-28)
 
 
