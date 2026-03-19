@@ -3,11 +3,13 @@ import { randomBytes } from 'node:crypto'
 import {
   concat,
   equals,
+  fromBase64String,
   fromBase64UrlString,
   fromCompressed,
   fromJSON,
   fromString,
   toArrayBuffer,
+  toBase64String,
   toBase64UrlString,
   toBufferSource,
   toCompressed,
@@ -47,11 +49,14 @@ const sampleText = 'caffeinated rockets at dawn'
 const sampleTextBytes = fromString(sampleText)
 const sampleJson = { ok: true, count: 42, note: '@sovereignbase/bytecodec' }
 const sampleJsonBytes = fromJSON(sampleJson)
-const base64 = toBase64UrlString(sampleBytes)
+const base64 = toBase64String(sampleBytes)
+const base64Url = toBase64UrlString(sampleBytes)
 const compressed = await toCompressed(sampleBytes)
 
-bench('base64 encode', 50000, () => toBase64UrlString(sampleBytes))
-bench('base64 decode', 50000, () => fromBase64UrlString(base64))
+bench('base64 encode', 50000, () => toBase64String(sampleBytes))
+bench('base64 decode', 50000, () => fromBase64String(base64))
+bench('base64url encode', 50000, () => toBase64UrlString(sampleBytes))
+bench('base64url decode', 50000, () => fromBase64UrlString(base64Url))
 bench('utf8 encode', 50000, () => fromString(sampleText))
 bench('utf8 decode', 50000, () => toString(sampleTextBytes))
 bench('json encode', 20000, () => fromJSON(sampleJson))

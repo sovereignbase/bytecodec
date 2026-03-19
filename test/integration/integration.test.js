@@ -2,13 +2,23 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
   concat,
+  fromBase64String,
   fromBase64UrlString,
   fromJSON,
   fromString,
+  toBase64String,
   toBase64UrlString,
   toJSON,
   toString,
 } from '../../dist/index.js'
+
+test('integration: utf8 -> base64 -> utf8', () => {
+  const text = 'pipeline check'
+  const bytes = fromString(text)
+  const encoded = toBase64String(bytes)
+  const decoded = fromBase64String(encoded)
+  assert.equal(toString(decoded), text)
+})
 
 test('integration: utf8 -> base64url -> utf8', () => {
   const text = 'pipeline check'

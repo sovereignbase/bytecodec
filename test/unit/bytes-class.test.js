@@ -4,6 +4,10 @@ import { Bytes } from '../../dist/index.js'
 
 test('Bytes wrapper mirrors functions', async () => {
   const payload = Uint8Array.from([1, 2, 3, 4])
+  const base64 = Bytes.toBase64String(payload)
+  assert.equal(base64, 'AQIDBA==')
+  assert.deepStrictEqual(Bytes.fromBase64String(base64), payload)
+
   const encoded = Bytes.toBase64UrlString(payload)
   assert.deepStrictEqual(Bytes.fromBase64UrlString(encoded), payload)
 

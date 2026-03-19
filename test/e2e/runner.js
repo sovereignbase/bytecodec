@@ -2,11 +2,13 @@ import {
   Bytes,
   concat,
   equals,
+  fromBase64String,
   fromBase64UrlString,
   fromCompressed,
   fromJSON,
   fromString,
   toArrayBuffer,
+  toBase64String,
   toBase64UrlString,
   toBufferSource,
   toCompressed,
@@ -88,6 +90,14 @@ async function runTest(name, fn) {
     results.errors.push({ name, message: String(error) })
   }
 }
+
+await runTest('base64 roundtrip', () => {
+  const payload = new Uint8Array([104, 101, 108, 108, 111])
+  const encoded = toBase64String(payload)
+  assertEqual(encoded, 'aGVsbG8=')
+  const decoded = fromBase64String(encoded)
+  assertArrayEqual(decoded, [104, 101, 108, 108, 111])
+})
 
 await runTest('base64url roundtrip', () => {
   const payload = new Uint8Array([104, 101, 108, 108, 111])
@@ -177,6 +187,9 @@ await runTest('buffer helpers', () => {
 
 await runTest('Bytes wrapper', async () => {
   const payload = Uint8Array.from([1, 2, 3, 4])
+  const base64 = Bytes.toBase64String(payload)
+  assertEqual(base64, 'AQIDBA==')
+  assertArrayEqual(Bytes.fromBase64String(base64), [1, 2, 3, 4])
   const encoded = Bytes.toBase64UrlString(payload)
   assertArrayEqual(Bytes.fromBase64UrlString(encoded), [1, 2, 3, 4])
   const text = 'bytes wrapper'

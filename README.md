@@ -5,11 +5,11 @@
 
 # `@sovereignbase/bytecodec`
 
-Typed JavaScript and TypeScript byte utilities for base64url, UTF-8 strings, JSON, gzip, concatenation, comparison, and byte-source normalization. The package is ESM-only and keeps the same API across Node and browser or edge runtimes.
+Typed JavaScript and TypeScript byte utilities for base64, base64url, UTF-8 strings, JSON, gzip, concatenation, comparison, and byte-source normalization. The package is ESM-only and keeps the same API across Node and browser or edge runtimes.
 
 ## Compatibility
 
-- Runtimes: Node >= 18; browsers and edge runtimes with `TextEncoder`/`TextDecoder` plus `btoa`/`atob` for base64url helpers.
+- Runtimes: Node >= 18; browsers and edge runtimes with `TextEncoder`/`TextDecoder` plus `btoa`/`atob` for base64 helpers.
 - Module format: ESM-only.
 - Node runtime behavior: uses `Buffer` for base64 helpers and `node:zlib` for gzip.
 - Browser and edge gzip support requires `CompressionStream` and `DecompressionStream`.
@@ -17,7 +17,7 @@ Typed JavaScript and TypeScript byte utilities for base64url, UTF-8 strings, JSO
 
 ## Goals
 
-- Developer-friendly API for base64url, UTF-8, JSON, gzip, concat, equality, and byte normalization.
+- Developer-friendly API for base64, base64url, UTF-8, JSON, gzip, concat, equality, and byte normalization.
 - No runtime dependencies or bundler shims.
 - ESM-only and side-effect free for tree-shaking.
 - Returns copies for safety when normalizing inputs.
@@ -40,7 +40,17 @@ yarn add @sovereignbase/bytecodec
 ```js
 import { Bytes } from '@sovereignbase/bytecodec'
 
-const encoded = Bytes.toBase64UrlString(new Uint8Array([1, 2, 3]))
+const encoded = Bytes.toBase64String(new Uint8Array([1, 2, 3]))
+```
+
+### Base64
+
+```js
+import { toBase64String, fromBase64String } from '@sovereignbase/bytecodec'
+
+const bytes = new Uint8Array([104, 101, 108, 108, 111])
+const encoded = toBase64String(bytes)
+const decoded = fromBase64String(encoded)
 ```
 
 ### Base64URL
@@ -136,7 +146,7 @@ Uses `TextEncoder`, `TextDecoder`, `btoa`, and `atob`. Gzip uses `CompressionStr
 
 ### Validation & errors
 
-Validation failures throw `BytecodecError` instances with a `code` string, for example `BASE64URL_INVALID_LENGTH`, `UTF8_DECODER_UNAVAILABLE`, and `GZIP_COMPRESSION_UNAVAILABLE`. Messages are prefixed with `{@sovereignbase/bytecodec}`.
+Validation failures throw `BytecodecError` instances with a `code` string, for example `BASE64URL_INVALID_LENGTH`, `BASE64_DECODER_UNAVAILABLE`, `UTF8_DECODER_UNAVAILABLE`, and `GZIP_COMPRESSION_UNAVAILABLE`. Messages are prefixed with `{@sovereignbase/bytecodec}`.
 
 ### Safety / copying semantics
 
@@ -163,6 +173,7 @@ npm run bench
 Current benchmark targets:
 
 - base64url encode and decode
+- base64 encode and decode
 - UTF-8 encode and decode
 - JSON encode and decode
 - concatenation
