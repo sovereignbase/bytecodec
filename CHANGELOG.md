@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0](https://github.com/sovereignbase/bytecodec/compare/v1.2.0...v1.3.0) (2026-03-19)
+
+
+### Features
+
+* Added tested CommonJS and deno + bun + edge runtime support. ([f21f9ff](https://github.com/sovereignbase/bytecodec/commit/f21f9ff953141e753f912c25a6aa5388580889c6))
+* Added tested CommonJS and deno + bun + edge runtime support. ([1b9397a](https://github.com/sovereignbase/bytecodec/commit/1b9397a1c784a6877d5915bc5a8c31b600364e1e))
+
 ## [1.2.0](https://github.com/sovereignbase/bytecodec/compare/v1.1.0...v1.2.0) (2026-03-19)
 
 
