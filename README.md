@@ -154,34 +154,43 @@ Validation failures throw `BytecodecError` instances with a `code` string, for e
 
 ## Tests
 
-Run the full suite with:
+Latest local `npm test` run on 2026-03-19:
 
-```sh
-npm test
-```
+| Check             | Result                                                               |
+| ----------------- | -------------------------------------------------------------------- |
+| Unit tests        | 53 passed                                                            |
+| Integration tests | 4 passed                                                             |
+| Browser E2E       | 5 passed: Chromium, Firefox, WebKit, mobile-chrome, mobile-safari   |
+| Coverage          | 100% statements, branches, functions, and lines                      |
 
-The suite covers unit and integration tests in Node plus Playwright browser E2E coverage.
+Command: `npm test`
 
 ## Benchmarks
 
-Run the benchmark script with:
+Latest local `npm run bench` run on 2026-03-19 with Node `v22.14.0 (win32 x64)`:
 
-```sh
-npm run bench
-```
+| Benchmark        | Result                   |
+| ---------------- | ------------------------ |
+| base64 encode    | 1,717,210 ops/s (29.1 ms) |
+| base64 decode    | 2,326,783 ops/s (21.5 ms) |
+| base64url encode | 768,469 ops/s (65.1 ms)   |
+| base64url decode | 1,173,307 ops/s (42.6 ms) |
+| utf8 encode      | 1,479,264 ops/s (33.8 ms) |
+| utf8 decode      | 4,109,139 ops/s (12.2 ms) |
+| json encode      | 353,666 ops/s (56.6 ms)   |
+| json decode      | 513,064 ops/s (39.0 ms)   |
+| concat 3 buffers | 664,735 ops/s (75.2 ms)   |
+| toUint8Array     | 4,721,669 ops/s (42.4 ms) |
+| toArrayBuffer    | 751,732 ops/s (266.1 ms)  |
+| toBufferSource   | 8,952,992 ops/s (22.3 ms) |
+| equals same      | 3,766,379 ops/s (53.1 ms) |
+| equals diff      | 4,285,463 ops/s (46.7 ms) |
+| gzip compress    | 3,118 ops/s (128.3 ms)    |
+| gzip decompress  | 5,070 ops/s (78.9 ms)     |
 
-Current benchmark targets:
+Command: `npm run bench`
 
-- base64url encode and decode
-- base64 encode and decode
-- UTF-8 encode and decode
-- JSON encode and decode
-- concatenation
-- `toUint8Array`, `toArrayBuffer`, and `toBufferSource`
-- `equals` with equal and different payloads
-- gzip compress and decompress
-
-Benchmark results vary by machine and Node version, so the benchmark script is the source of truth instead of a hardcoded results table.
+Results vary by machine and Node version.
 
 ## License
 
