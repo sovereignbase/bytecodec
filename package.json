@@ -1,7 +1,7 @@
 {
   "name": "@sovereignbase/bytecodec",
   "version": "1.3.3",
-  "description": "JS/TS Runtime-Agnostic byte toolkit for UTF-8 strings, base64, base64url, JSON, normalization, compression, concatenation, and comparison.",
+  "description": "JS/TS runtime-agnostic byte toolkit for UTF-8, base64, base64url, hex, Z85, JSON, normalization, compression, concatenation, and comparison.",
   "keywords": [
     "base64url",
     "base64",
@@ -15,9 +15,14 @@
     "web",
     "node",
     "utf8",
+    "string",
     "text",
     "json",
     "equals",
+    "hex",
+    "hexadecimal",
+    "z85",
+    "zeromq",
     "compression",
     "gzip",
     "binary",

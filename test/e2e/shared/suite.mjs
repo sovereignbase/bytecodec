@@ -13,16 +13,20 @@ export async function runBytecodecSuite(api, options = {}) {
     fromBase64String,
     fromBase64UrlString,
     fromCompressed,
+    fromHex,
     fromJSON,
     fromString,
+    fromZ85String,
     toArrayBuffer,
     toBase64String,
     toBase64UrlString,
     toBufferSource,
     toCompressed,
+    toHex,
     toJSON,
     toString,
     toUint8Array,
+    toZ85String,
   } = api
 
   function assert(condition, message) {
@@ -114,6 +118,10 @@ export async function runBytecodecSuite(api, options = {}) {
       toBase64String,
       fromBase64UrlString,
       toBase64UrlString,
+      fromHex,
+      toHex,
+      fromZ85String,
+      toZ85String,
       fromString,
       toString,
       fromJSON,
@@ -152,6 +160,39 @@ export async function runBytecodecSuite(api, options = {}) {
     const decoded = fromBase64UrlString('aGVsbG8')
     assertArrayEqual(decoded, base64Payload)
     assertThrows(() => fromBase64UrlString('a'), /Invalid base64url length/)
+  })
+
+  await runTest('toHex', () => {
+    assertEqual(toHex(base64Payload), '68656c6c6f')
+
+    const view = new DataView(base64Payload.buffer, 1, 3)
+    assertEqual(toHex(view), '656c6c')
+  })
+
+  await runTest('fromHex', () => {
+    const decoded = fromHex('68656C6C6F')
+    assertArrayEqual(decoded, base64Payload)
+    assertThrows(() => fromHex('6g'), /Invalid hex character at index 1/)
+  })
+
+  await runTest('toZ85String', () => {
+    const payload = Uint8Array.from([
+      0x86, 0x4f, 0xd2, 0x6f, 0xb5, 0x59, 0xf7, 0x5b,
+    ])
+    assertEqual(toZ85String(payload), 'HelloWorld')
+    assertThrows(
+      () => toZ85String(base64Payload),
+      /Z85 input length must be divisible by 4/
+    )
+  })
+
+  await runTest('fromZ85String', () => {
+    const decoded = fromZ85String('HelloWorld')
+    assertArrayEqual(decoded, [0x86, 0x4f, 0xd2, 0x6f, 0xb5, 0x59, 0xf7, 0x5b])
+    assertThrows(
+      () => fromZ85String('Hell~'),
+      /Invalid Z85 character at index 4/
+    )
   })
 
   await runTest('fromString', () => {
@@ -306,6 +347,13 @@ export async function runBytecodecSuite(api, options = {}) {
 
     const encoded = Bytes.toBase64UrlString(payload)
     assertArrayEqual(Bytes.fromBase64UrlString(encoded), [1, 2, 3, 4])
+
+    const hex = Bytes.toHex(payload)
+    assertEqual(hex, '01020304')
+    assertArrayEqual(Bytes.fromHex(hex), [1, 2, 3, 4])
+
+    const z85 = Bytes.toZ85String(payload)
+    assertArrayEqual(Bytes.fromZ85String(z85), [1, 2, 3, 4])
 
     const text = 'bytes wrapper'
     assertEqual(Bytes.toString(Bytes.fromString(text)), text)
