@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/sovereignbase/bytecodec/compare/v1.3.3...v1.4.0) (2026-03-23)
+
+
+### Features
+
+* add hex, z85 support, and decided to drop basE91 support due to being a outlier and inconsistent size semantic. ([1300c1a](https://github.com/sovereignbase/bytecodec/commit/1300c1aaf5e626a1e25d80c70341c5ada31979b1))
+
 ## [1.3.3](https://github.com/sovereignbase/bytecodec/compare/v1.3.2...v1.3.3) (2026-03-19)
 
 
