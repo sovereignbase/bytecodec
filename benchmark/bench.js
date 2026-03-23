@@ -6,16 +6,20 @@ import {
   fromBase64String,
   fromBase64UrlString,
   fromCompressed,
+  fromHex,
   fromJSON,
   fromString,
+  fromZ85String,
   toArrayBuffer,
   toBase64String,
   toBase64UrlString,
   toBufferSource,
   toCompressed,
+  toHex,
   toJSON,
   toString,
   toUint8Array,
+  toZ85String,
 } from '../dist/index.js'
 
 function formatOps(iterations, durationMs) {
@@ -51,12 +55,18 @@ const sampleJson = { ok: true, count: 42, note: '@sovereignbase/bytecodec' }
 const sampleJsonBytes = fromJSON(sampleJson)
 const base64 = toBase64String(sampleBytes)
 const base64Url = toBase64UrlString(sampleBytes)
+const hex = toHex(sampleBytes)
+const z85 = toZ85String(sampleBytes)
 const compressed = await toCompressed(sampleBytes)
 
 bench('base64 encode', 50000, () => toBase64String(sampleBytes))
 bench('base64 decode', 50000, () => fromBase64String(base64))
 bench('base64url encode', 50000, () => toBase64UrlString(sampleBytes))
 bench('base64url decode', 50000, () => fromBase64UrlString(base64Url))
+bench('hex encode', 50000, () => toHex(sampleBytes))
+bench('hex decode', 50000, () => fromHex(hex))
+bench('z85 encode', 50000, () => toZ85String(sampleBytes))
+bench('z85 decode', 50000, () => fromZ85String(z85))
 bench('utf8 encode', 50000, () => fromString(sampleText))
 bench('utf8 decode', 50000, () => toString(sampleTextBytes))
 bench('json encode', 20000, () => fromJSON(sampleJson))

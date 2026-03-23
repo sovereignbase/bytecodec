@@ -11,6 +11,13 @@ test('Bytes wrapper mirrors functions', async () => {
   const encoded = Bytes.toBase64UrlString(payload)
   assert.deepStrictEqual(Bytes.fromBase64UrlString(encoded), payload)
 
+  const hex = Bytes.toHex(payload)
+  assert.equal(hex, '01020304')
+  assert.deepStrictEqual(Bytes.fromHex(hex), payload)
+
+  const z85 = Bytes.toZ85String(payload)
+  assert.deepStrictEqual(Bytes.fromZ85String(z85), payload)
+
   const text = 'wrapper check'
   assert.equal(Bytes.toString(Bytes.fromString(text)), text)
 

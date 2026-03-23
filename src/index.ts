@@ -21,6 +21,12 @@ import { toBase64String } from './toBase64String/index.js'
 import { fromBase64UrlString } from './fromBase64UrlString/index.js'
 import { toBase64UrlString } from './toBase64UrlString/index.js'
 /***/
+import { fromHex } from './fromHex/index.js'
+import { toHex } from './toHex/index.js'
+/***/
+import { fromZ85String } from './fromZ85String/index.js'
+import { toZ85String } from './toZ85String/index.js'
+/***/
 import { fromString } from './fromString/index.js'
 import { toString } from './toString/index.js'
 /***/
@@ -50,6 +56,12 @@ export {
   /***/
   fromBase64UrlString,
   toBase64UrlString,
+  /***/
+  fromHex,
+  toHex,
+  /***/
+  fromZ85String,
+  toZ85String,
   /***/
   fromString,
   toString,
@@ -98,6 +110,34 @@ export class Bytes {
    */
   static toBase64UrlString(bytes: ByteSource): Base64URLString {
     return toBase64UrlString(bytes)
+  }
+
+  /**
+   * See {@link fromHex}.
+   */
+  static fromHex(hex: string): Uint8Array {
+    return fromHex(hex)
+  }
+
+  /**
+   * See {@link toHex}.
+   */
+  static toHex(bytes: ByteSource): string {
+    return toHex(bytes)
+  }
+
+  /**
+   * See {@link fromZ85String}.
+   */
+  static fromZ85String(z85String: string): Uint8Array {
+    return fromZ85String(z85String)
+  }
+
+  /**
+   * See {@link toZ85String}.
+   */
+  static toZ85String(bytes: ByteSource): string {
+    return toZ85String(bytes)
   }
 
   /**

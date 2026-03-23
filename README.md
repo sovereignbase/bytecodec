@@ -5,7 +5,7 @@
 
 # bytecodec
 
-Typed JavaScript and TypeScript byte utilities for base64, base64url, UTF-8 strings, JSON, gzip, concatenation, comparison, and byte-source normalization. The package ships tree-shakeable ESM plus CommonJS entry points and keeps the same API across Node, Bun, Deno, browsers, and edge runtimes.
+Typed JavaScript and TypeScript byte utilities for base64, base64url, hex, Z85, UTF-8 strings, JSON, gzip, concatenation, comparison, and byte-source normalization. The package ships tree-shakeable ESM plus CommonJS entry points and keeps the same API across Node, Bun, Deno, browsers, and edge runtimes.
 
 ## Compatibility
 
@@ -17,7 +17,7 @@ Typed JavaScript and TypeScript byte utilities for base64, base64url, UTF-8 stri
 
 ## Goals
 
-- Developer-friendly API for base64, base64url, UTF-8, JSON, gzip, concat, equality, and byte normalization.
+- Developer-friendly API for base64, base64url, hex, Z85, UTF-8, JSON, gzip, concat, equality, and byte normalization.
 - No runtime dependencies or bundler shims.
 - Tree-shakeable ESM by default with CommonJS compatibility and no side effects.
 - Returns copies for safety when normalizing inputs.
@@ -81,6 +81,28 @@ const bytes = new Uint8Array([104, 101, 108, 108, 111])
 const encoded = toBase64UrlString(bytes) // string of base64url chars
 const decoded = fromBase64UrlString(encoded) // Uint8Array
 ```
+
+### Hex
+
+```js
+import { toHex, fromHex } from '@sovereignbase/bytecodec'
+
+const bytes = new Uint8Array([222, 173, 190, 239])
+const encoded = toHex(bytes) // "deadbeef"
+const decoded = fromHex(encoded) // Uint8Array
+```
+
+### Z85
+
+```js
+import { toZ85String, fromZ85String } from '@sovereignbase/bytecodec'
+
+const bytes = new Uint8Array([0x86, 0x4f, 0xd2, 0x6f, 0xb5, 0x59, 0xf7, 0x5b])
+const encoded = toZ85String(bytes) // "HelloWorld"
+const decoded = fromZ85String(encoded) // Uint8Array
+```
+
+Z85 encodes 4 input bytes into 5 output characters, so `toZ85String()` requires a byte length divisible by 4 and `fromZ85String()` requires a string length divisible by 5.
 
 ### UTF-8 strings
 
@@ -162,7 +184,7 @@ Uses `TextEncoder`, `TextDecoder`, `btoa`, and `atob`. Gzip uses `CompressionStr
 
 ### Validation & errors
 
-Validation failures throw `BytecodecError` instances with a `code` string, for example `BASE64URL_INVALID_LENGTH`, `BASE64_DECODER_UNAVAILABLE`, `UTF8_DECODER_UNAVAILABLE`, and `GZIP_COMPRESSION_UNAVAILABLE`. Messages are prefixed with `{@sovereignbase/bytecodec}`.
+Validation failures throw `BytecodecError` instances with a `code` string, for example `BASE64URL_INVALID_LENGTH`, `HEX_INVALID_CHARACTER`, `Z85_INVALID_BLOCK`, `BASE64_DECODER_UNAVAILABLE`, `UTF8_DECODER_UNAVAILABLE`, and `GZIP_COMPRESSION_UNAVAILABLE`. Messages are prefixed with `{@sovereignbase/bytecodec}`.
 
 ### Safety / copying semantics
 
@@ -172,8 +194,8 @@ Validation failures throw `BytecodecError` instances with a `code` string, for e
 
 `npm test` covers:
 
-- 53 unit tests
-- 4 integration tests
+- 68 unit tests
+- 6 integration tests
 - Node E2E: ESM and CommonJS
 - Bun E2E: ESM and CommonJS
 - Deno E2E: ESM
@@ -183,26 +205,30 @@ Validation failures throw `BytecodecError` instances with a `code` string, for e
 
 ## Benchmarks
 
-Latest local `npm run bench` run on 2026-03-19 with Node `v22.14.0 (win32 x64)`:
+Latest local `npm run bench` run on 2026-03-23 with Node `v22.14.0 (win32 x64)`:
 
 | Benchmark        | Result                    |
 | ---------------- | ------------------------- |
-| base64 encode    | 1,717,210 ops/s (29.1 ms) |
-| base64 decode    | 2,326,783 ops/s (21.5 ms) |
-| base64url encode | 768,469 ops/s (65.1 ms)   |
-| base64url decode | 1,173,307 ops/s (42.6 ms) |
-| utf8 encode      | 1,479,264 ops/s (33.8 ms) |
-| utf8 decode      | 4,109,139 ops/s (12.2 ms) |
-| json encode      | 353,666 ops/s (56.6 ms)   |
-| json decode      | 513,064 ops/s (39.0 ms)   |
-| concat 3 buffers | 664,735 ops/s (75.2 ms)   |
-| toUint8Array     | 4,721,669 ops/s (42.4 ms) |
-| toArrayBuffer    | 751,732 ops/s (266.1 ms)  |
-| toBufferSource   | 8,952,992 ops/s (22.3 ms) |
-| equals same      | 3,766,379 ops/s (53.1 ms) |
-| equals diff      | 4,285,463 ops/s (46.7 ms) |
-| gzip compress    | 3,118 ops/s (128.3 ms)    |
-| gzip decompress  | 5,070 ops/s (78.9 ms)     |
+| base64 encode    | 1,391,126 ops/s (35.9 ms) |
+| base64 decode    | 2,089,279 ops/s (23.9 ms) |
+| base64url encode | 697,088 ops/s (71.7 ms)   |
+| base64url decode | 1,095,554 ops/s (45.6 ms) |
+| hex encode       | 1,053,832 ops/s (47.4 ms) |
+| hex decode       | 1,027,413 ops/s (48.7 ms) |
+| z85 encode       | 244,928 ops/s (204.1 ms)  |
+| z85 decode       | 1,596,730 ops/s (31.3 ms) |
+| utf8 encode      | 1,537,199 ops/s (32.5 ms) |
+| utf8 decode      | 3,481,143 ops/s (14.4 ms) |
+| json encode      | 681,747 ops/s (29.3 ms)   |
+| json decode      | 989,746 ops/s (20.2 ms)   |
+| concat 3 buffers | 846,612 ops/s (59.1 ms)   |
+| toUint8Array     | 9,396,818 ops/s (21.3 ms) |
+| toArrayBuffer    | 884,096 ops/s (226.2 ms)  |
+| toBufferSource   | 9,279,881 ops/s (21.6 ms) |
+| equals same      | 3,932,572 ops/s (50.9 ms) |
+| equals diff      | 4,060,534 ops/s (49.3 ms) |
+| gzip compress    | 4,126 ops/s (96.9 ms)     |
+| gzip decompress  | 5,550 ops/s (72.1 ms)     |
 
 Command: `npm run bench`
 

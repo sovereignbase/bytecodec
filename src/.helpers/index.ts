@@ -54,9 +54,39 @@ export async function importNodeBuiltin<T = unknown>(
   specifier: string
 ): Promise<T> {
   // Keep neutral bundles from rewriting node: specifiers for non-Node runtimes.
-  const importer = new Function(
-    'specifier',
-    'return import(specifier)'
-  ) as (value: string) => Promise<T>
+  const importer = new Function('specifier', 'return import(specifier)') as (
+    value: string
+  ) => Promise<T>
   return importer(specifier)
 }
+
+export const HEX_PAIRS = Array.from({ length: 256 }, (_, value) =>
+  value.toString(16).padStart(2, '0')
+)
+
+export const HEX_VALUES = (() => {
+  const table = new Int16Array(128).fill(-1)
+
+  for (let index = 0; index < 10; index++)
+    table['0'.charCodeAt(0) + index] = index
+
+  for (let index = 0; index < 6; index++) {
+    table['A'.charCodeAt(0) + index] = index + 10
+    table['a'.charCodeAt(0) + index] = index + 10
+  }
+
+  return table
+})()
+
+export const Z85_CHARS =
+  '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#'
+
+export const Z85_VALUES = (() => {
+  const table = new Int16Array(128).fill(-1)
+
+  for (let i = 0; i < Z85_CHARS.length; i++) {
+    table[Z85_CHARS.charCodeAt(i)] = i
+  }
+
+  return table
+})()
