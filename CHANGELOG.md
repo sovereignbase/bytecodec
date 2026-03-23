@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/sovereignbase/bytecodec/compare/v1.4.0...v1.4.1) (2026-03-23)
+
+
+### Bug Fixes
+
+* Added testing and support for for node 20. ([fe058d6](https://github.com/sovereignbase/bytecodec/commit/fe058d6a12b48d8ccd7c47fc5a55e4295e812abe))
+
 ## [1.4.0](https://github.com/sovereignbase/bytecodec/compare/v1.3.3...v1.4.0) (2026-03-23)
 
 
