@@ -51,7 +51,7 @@ test('public errors expose code, name, and prefixed message', async () => {
 })
 
 test('validation errors use the same public error shape', async () => {
-  const { fromBase64UrlString, fromHex, toZ85String } =
+  const { fromBase64UrlString, fromBigInt, fromHex, toZ85String } =
     await importFreshBundle('validation-error')
 
   assert.throws(
@@ -75,6 +75,19 @@ test('validation errors use the same public error shape', async () => {
       assert.equal(
         error.message,
         '{@sovereignbase/bytecodec} Hex string must have an even length'
+      )
+      return true
+    }
+  )
+
+  assert.throws(
+    () => fromBigInt(-1n),
+    (error) => {
+      assert.equal(error.code, 'BIGINT_UNSIGNED_EXPECTED')
+      assert.equal(error.name, 'BytecodecError')
+      assert.equal(
+        error.message,
+        '{@sovereignbase/bytecodec} fromBigInt expects an unsigned bigint'
       )
       return true
     }

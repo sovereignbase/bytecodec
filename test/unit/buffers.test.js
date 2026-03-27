@@ -17,9 +17,8 @@ test('toUint8Array handles Uint8Array', () => {
 test('toUint8Array handles SharedArrayBuffer', () => {
   if (typeof SharedArrayBuffer === 'undefined') return
   const sab = new SharedArrayBuffer(4)
-  const input = new Uint8Array(sab)
-  input.set([9, 8, 7, 6])
-  const output = toUint8Array(input)
+  new Uint8Array(sab).set([9, 8, 7, 6])
+  const output = toUint8Array(sab)
   assert.notStrictEqual(output.buffer, sab)
   assert.deepStrictEqual([...output], [9, 8, 7, 6])
 })
@@ -58,7 +57,7 @@ test('toUint8Array handles number[]', () => {
 test('toUint8Array rejects invalid input', () => {
   assert.throws(
     () => toUint8Array('nope'),
-    /Expected a Uint8Array, ArrayBuffer, ArrayBufferView, or number\[\]/
+    /Expected a Uint8Array, ArrayBuffer, SharedArrayBuffer, ArrayBufferView, or number\[\]/
   )
 })
 
@@ -67,6 +66,15 @@ test('toArrayBuffer handles ArrayBuffer', () => {
   const output = toArrayBuffer(buffer)
   assert.notStrictEqual(output, buffer)
   assert.deepStrictEqual([...new Uint8Array(output)], [1, 2, 3])
+})
+
+test('toArrayBuffer handles SharedArrayBuffer', () => {
+  if (typeof SharedArrayBuffer === 'undefined') return
+  const sab = new SharedArrayBuffer(4)
+  new Uint8Array(sab).set([1, 2, 3, 4])
+  const output = toArrayBuffer(sab)
+  assert.equal(output instanceof SharedArrayBuffer, false)
+  assert.deepStrictEqual([...new Uint8Array(output)], [1, 2, 3, 4])
 })
 
 test('toArrayBuffer handles ArrayBufferView', () => {
@@ -95,7 +103,7 @@ test('toArrayBuffer handles number[]', () => {
 test('toArrayBuffer rejects invalid input', () => {
   assert.throws(
     () => toArrayBuffer('nope'),
-    /Expected a Uint8Array, ArrayBuffer, ArrayBufferView, or number\[\]/
+    /Expected a Uint8Array, ArrayBuffer, SharedArrayBuffer, ArrayBufferView, or number\[\]/
   )
 })
 
@@ -113,6 +121,16 @@ test('toBufferSource handles ArrayBuffer', () => {
   assert.ok(output instanceof Uint8Array)
   assert.notStrictEqual(output.buffer, buffer)
   assert.deepStrictEqual([...output], [30, 31])
+})
+
+test('toBufferSource handles SharedArrayBuffer', () => {
+  if (typeof SharedArrayBuffer === 'undefined') return
+  const sab = new SharedArrayBuffer(4)
+  new Uint8Array(sab).set([30, 31, 32, 33])
+  const output = toBufferSource(sab)
+  assert.ok(output instanceof Uint8Array)
+  assert.notStrictEqual(output.buffer, sab)
+  assert.deepStrictEqual([...output], [30, 31, 32, 33])
 })
 
 test('toBufferSource handles ArrayBufferView', () => {

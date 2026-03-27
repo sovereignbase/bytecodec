@@ -23,5 +23,8 @@ test('equals handles different inputs', () => {
 })
 
 test('equals rejects invalid input', () => {
-  assert.throws(() => equals('nope', [1]), /Expected a Uint8Array/)
+  assert.throws(
+    () => equals('nope', [1]),
+    /Expected a Uint8Array, ArrayBuffer, SharedArrayBuffer, ArrayBufferView, or number\[\]/
+  )
 })

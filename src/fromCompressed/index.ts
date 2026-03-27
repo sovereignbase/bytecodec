@@ -16,7 +16,7 @@
 
 import { BytecodecError } from '../.errors/class.js'
 import { importNodeBuiltin, isNodeRuntime } from '../.helpers/index.js'
-import { toUint8Array } from '../index.js'
+import { toBufferSource, toUint8Array } from '../index.js'
 import type { ByteSource } from '../index.js'
 
 /**
@@ -29,12 +29,10 @@ export async function fromCompressed(bytes: ByteSource): Promise<Uint8Array> {
   const view = toUint8Array(bytes)
 
   if (isNodeRuntime()) {
-    const { gunzip } = await importNodeBuiltin<typeof import('node:zlib')>(
-      'node:zlib'
-    )
-    const { promisify } = await importNodeBuiltin<typeof import('node:util')>(
-      'node:util'
-    )
+    const { gunzip } =
+      await importNodeBuiltin<typeof import('node:zlib')>('node:zlib')
+    const { promisify } =
+      await importNodeBuiltin<typeof import('node:util')>('node:util')
     const gunzipAsync = promisify(gunzip)
     const decompressed = await gunzipAsync(view)
     return toUint8Array(decompressed)
@@ -57,10 +55,10 @@ export async function fromCompressed(bytes: ByteSource): Promise<Uint8Array> {
  * @returns A promise that resolves to the decompressed bytes.
  */
 async function decompressWithStream(
-  bytes: BufferSource,
+  bytes: Uint8Array,
   format: CompressionFormat
 ) {
-  const decompressedStream = new Blob([bytes])
+  const decompressedStream = new Blob([toBufferSource(bytes)])
     .stream()
     .pipeThrough(new DecompressionStream(format))
   const arrayBuffer = await new Response(decompressedStream).arrayBuffer()

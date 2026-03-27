@@ -4,12 +4,14 @@ import {
   concat,
   fromBase64String,
   fromBase64UrlString,
+  fromBigInt,
   fromHex,
   fromJSON,
   fromString,
   fromZ85String,
   toBase64String,
   toBase64UrlString,
+  toBigInt,
   toHex,
   toJSON,
   toString,
@@ -38,6 +40,14 @@ test('integration: utf8 -> hex -> utf8', () => {
   const encoded = toHex(bytes)
   const decoded = fromHex(encoded)
   assert.equal(toString(decoded), text)
+})
+
+test('integration: bigint -> bytes -> hex -> bigint', () => {
+  const value = 0x1234567890abcdefn
+  const bytes = fromBigInt(value)
+  const encoded = toHex(bytes)
+  const decoded = fromHex(encoded)
+  assert.equal(toBigInt(decoded), value)
 })
 
 test('integration: json -> bytes -> base64url -> json', () => {

@@ -5,6 +5,7 @@ import {
   equals,
   fromBase64String,
   fromBase64UrlString,
+  fromBigInt,
   fromCompressed,
   fromHex,
   fromJSON,
@@ -13,6 +14,7 @@ import {
   toArrayBuffer,
   toBase64String,
   toBase64UrlString,
+  toBigInt,
   toBufferSource,
   toCompressed,
   toHex,
@@ -51,6 +53,8 @@ const sampleBytesDiff = Uint8Array.from(sampleBytes, (value, idx) =>
 const sampleView = new DataView(sampleBytes.buffer, 0, sampleBytes.byteLength)
 const sampleText = 'caffeinated rockets at dawn'
 const sampleTextBytes = fromString(sampleText)
+const sampleBigInt = 0x1234567890abcdef1234567890abcdefn
+const sampleBigIntBytes = fromBigInt(sampleBigInt)
 const sampleJson = { ok: true, count: 42, note: '@sovereignbase/bytecodec' }
 const sampleJsonBytes = fromJSON(sampleJson)
 const base64 = toBase64String(sampleBytes)
@@ -69,6 +73,8 @@ bench('z85 encode', 50000, () => toZ85String(sampleBytes))
 bench('z85 decode', 50000, () => fromZ85String(z85))
 bench('utf8 encode', 50000, () => fromString(sampleText))
 bench('utf8 decode', 50000, () => toString(sampleTextBytes))
+bench('bigint encode', 50000, () => fromBigInt(sampleBigInt))
+bench('bigint decode', 50000, () => toBigInt(sampleBigIntBytes))
 bench('json encode', 20000, () => fromJSON(sampleJson))
 bench('json decode', 20000, () => toJSON(sampleJsonBytes))
 bench('concat 3 buffers', 50000, () =>
