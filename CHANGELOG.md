@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/sovereignbase/bytecodec/compare/v1.5.0...v1.5.1) (2026-03-28)
+
+
+### Bug Fixes
+
+* Export error code type union to get typesense for error handling. ([10f2c31](https://github.com/sovereignbase/bytecodec/commit/10f2c31b28b9347af0f73d5b8649a5f992ef1e07))
+
 ## [1.5.0](https://github.com/sovereignbase/bytecodec/compare/v1.4.1...v1.5.0) (2026-03-28)
 
 
