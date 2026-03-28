@@ -1,8 +1,5 @@
 import * as api from '/dist/index.js'
-import {
-  printResults,
-  runBytecodecSuite,
-} from '../shared/suite.mjs'
+import { printResults, runBytecodecSuite } from '../shared/suite.mjs'
 
 const results = await runBytecodecSuite(api, { label: 'browser esm' })
 printResults(results)

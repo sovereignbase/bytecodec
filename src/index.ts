@@ -56,6 +56,8 @@ export type ByteSource =
   | ArrayBufferView
   | number[]
 
+export type { BytecodecErrorCode } from './.errors/class.js'
+
 export {
   /***/
   fromBase64String,

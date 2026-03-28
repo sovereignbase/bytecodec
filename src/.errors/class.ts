@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+/**
+ * All structured error codes thrown by the bytecodec.
+ */
 export type BytecodecErrorCode =
   | 'BASE64_DECODER_UNAVAILABLE'
   | 'BASE64_ENCODER_UNAVAILABLE'
@@ -38,9 +41,21 @@ export type BytecodecErrorCode =
   | 'Z85_INVALID_CHARACTER'
   | 'Z85_INVALID_LENGTH'
 
+/**
+ * Error type used by the bytecodec helpers to expose a stable error code.
+ */
 export class BytecodecError extends Error {
+  /**
+   * Machine-readable error code for programmatic handling.
+   */
   readonly code: BytecodecErrorCode
 
+  /**
+   * Creates a new bytecodec error with a package-prefixed message.
+   *
+   * @param code Stable error code describing the failure category.
+   * @param message Optional human-readable detail appended to the package prefix.
+   */
   constructor(code: BytecodecErrorCode, message?: string) {
     const detail = message ?? code
     super(`{@sovereignbase/bytecodec} ${detail}`)

@@ -24,7 +24,13 @@ const workerEntry = resolve(
   'runsInCloudflareWorkers',
   'worker.mjs'
 )
-const wranglerBin = resolve(root, 'node_modules', 'wrangler', 'bin', 'wrangler.js')
+const wranglerBin = resolve(
+  root,
+  'node_modules',
+  'wrangler',
+  'bin',
+  'wrangler.js'
+)
 
 function withTimeout(promise, timeoutMs, name) {
   let timer
@@ -111,7 +117,9 @@ async function fetchWorkerResults(url, child, logLines) {
       if (
         error instanceof TypeError ||
         (error instanceof Error &&
-          /fetch failed|ECONNREFUSED|ENOTFOUND|socket hang up/i.test(error.message))
+          /fetch failed|ECONNREFUSED|ENOTFOUND|socket hang up/i.test(
+            error.message
+          ))
       ) {
         await delay(POLL_INTERVAL_MS)
         continue

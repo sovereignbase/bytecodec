@@ -42,7 +42,9 @@ async function waitForServer(baseURL, child) {
 
   while (Date.now() - startedAt < 10_000) {
     if (child.exitCode !== null)
-      throw new Error(`browser test server exited early with code ${child.exitCode}`)
+      throw new Error(
+        `browser test server exited early with code ${child.exitCode}`
+      )
 
     try {
       const response = await fetch(baseURL)
@@ -83,10 +85,8 @@ async function main() {
       })
     })
 
-    if (result.signal)
-      process.exitCode = 1
-    else if (result.code !== 0)
-      process.exitCode = result.code ?? 1
+    if (result.signal) process.exitCode = 1
+    else if (result.code !== 0) process.exitCode = result.code ?? 1
   } finally {
     if (server.exitCode === null) {
       server.kill('SIGTERM')
