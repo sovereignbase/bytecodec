@@ -7,6 +7,10 @@ const tasks = [
   ['Bun', resolve(root, 'test', 'e2e', 'runsInBun', 'run.mjs')],
   ['Deno', resolve(root, 'test', 'e2e', 'runsInDeno', 'run.mjs')],
   [
+    'Cloudflare Workers',
+    resolve(root, 'test', 'e2e', 'runsInCloudflareWorkers', 'run.mjs'),
+  ],
+  [
     'Edge Runtimes',
     resolve(root, 'test', 'e2e', 'runsInEdgeRuntimes', 'run.mjs'),
   ],

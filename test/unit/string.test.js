@@ -21,6 +21,6 @@ test('toString accepts ArrayBufferView', () => {
 test('toString rejects invalid input', () => {
   assert.throws(
     () => toString('nope'),
-    /Expected a Uint8Array, ArrayBuffer, ArrayBufferView, or number\[\]/
+    /Expected a Uint8Array, ArrayBuffer, SharedArrayBuffer, ArrayBufferView, or number\[\]/
   )
 })

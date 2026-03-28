@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-import { toUint8Array } from '../index.js'
 import type { ByteSource } from '../index.js'
+import { toUint8Array } from '../index.js'
 
 /**
- * Normalizes a supported byte source into a `BufferSource`.
+ * Decodes a byte source as an unsigned big-endian `bigint`.
  *
- * @param bytes The byte source to normalize.
- * @returns A `Uint8Array` copy that can be passed anywhere a `BufferSource` is accepted.
+ * @param bytes The bytes to decode.
+ * @returns The decoded unsigned bigint.
  */
-export function toBufferSource(bytes: ByteSource): BufferSource {
-  return toUint8Array(bytes) as BufferSource
+export function toBigInt(bytes: ByteSource): bigint {
+  const view = toUint8Array(bytes)
+  let value = 0n
+
+  for (const byte of view) value = (value << 8n) | BigInt(byte)
+
+  return value
 }

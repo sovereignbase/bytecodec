@@ -21,6 +21,10 @@ test('Bytes wrapper mirrors functions', async () => {
   const text = 'wrapper check'
   assert.equal(Bytes.toString(Bytes.fromString(text)), text)
 
+  const bigint = 0x01020304n
+  assert.deepStrictEqual([...Bytes.fromBigInt(bigint)], [1, 2, 3, 4])
+  assert.equal(Bytes.toBigInt(payload), bigint)
+
   const value = { wrapper: true, items: [1, 2, 3] }
   const jsonBytes = Bytes.fromJSON(value)
   assert.deepStrictEqual(Bytes.toJSON(jsonBytes), value)

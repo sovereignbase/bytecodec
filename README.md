@@ -5,11 +5,11 @@
 
 # bytecodec
 
-Typed JavaScript and TypeScript byte utilities for base64, base64url, hex, Z85, UTF-8 strings, JSON, gzip, concatenation, comparison, and byte-source normalization. The package ships tree-shakeable ESM plus CommonJS entry points and keeps the same API across Node, Bun, Deno, browsers, and edge runtimes.
+Typed JavaScript and TypeScript byte utilities for base64, base64url, hex, Z85, UTF-8 strings, unsigned BigInt conversion, JSON, gzip, concatenation, comparison, and byte-source normalization. The package ships tree-shakeable ESM plus CommonJS entry points and keeps the same API across Node, Bun, Deno, browsers, and edge runtimes.
 
 ## Compatibility
 
-- Runtimes: Node, Bun, Deno, browsers, and edge runtimes.
+- Runtimes: Node, Bun, Deno, browsers, Cloudflare Workers, and edge runtimes.
 - Module formats: ESM by default, with CommonJS exports for `require()` consumers in Node and Bun.
 - Node and Bun runtime behavior: uses `Buffer` for base64 helpers and `node:zlib` for gzip.
 - Browser and edge gzip support requires `CompressionStream` and `DecompressionStream`.
@@ -17,7 +17,7 @@ Typed JavaScript and TypeScript byte utilities for base64, base64url, hex, Z85, 
 
 ## Goals
 
-- Developer-friendly API for base64, base64url, hex, Z85, UTF-8, JSON, gzip, concat, equality, and byte normalization.
+- Developer-friendly API for base64, base64url, hex, Z85, UTF-8, unsigned BigInt conversion, JSON, gzip, concat, equality, and byte normalization.
 - No runtime dependencies or bundler shims.
 - Tree-shakeable ESM by default with CommonJS compatibility and no side effects.
 - Returns copies for safety when normalizing inputs.
@@ -113,6 +113,18 @@ const textBytes = fromString('caffe and rockets') // Uint8Array
 const text = toString(textBytes) // "caffe and rockets"
 ```
 
+### BigInt
+
+```js
+import { fromBigInt, toBigInt } from '@sovereignbase/bytecodec'
+
+const bytes = fromBigInt(0x1234n) // Uint8Array([0x12, 0x34])
+const value = toBigInt(bytes) // 0x1234n
+```
+
+BigInt helpers use unsigned big-endian encoding. `fromBigInt(0n)` returns an empty `Uint8Array`, because no byte width is implied.
+Leading zero bytes are not preserved, so the helpers model integers rather than fixed-width binary fields.
+
 ### JSON
 
 ```js
@@ -147,8 +159,8 @@ const bufferSource = toBufferSource(normalized) // Uint8Array as BufferSource
 
 Accepted byte inputs (`ByteSource`) are:
 
-- `Uint8Array`
 - `ArrayBuffer`
+- `SharedArrayBuffer`
 - `ArrayBufferView`
 - `number[]`
 
@@ -184,7 +196,7 @@ Uses `TextEncoder`, `TextDecoder`, `btoa`, and `atob`. Gzip uses `CompressionStr
 
 ### Validation & errors
 
-Validation failures throw `BytecodecError` instances with a `code` string, for example `BASE64URL_INVALID_LENGTH`, `HEX_INVALID_CHARACTER`, `Z85_INVALID_BLOCK`, `BASE64_DECODER_UNAVAILABLE`, `UTF8_DECODER_UNAVAILABLE`, and `GZIP_COMPRESSION_UNAVAILABLE`. Messages are prefixed with `{@sovereignbase/bytecodec}`.
+Validation failures throw `BytecodecError` instances with a `code` string, for example `BASE64URL_INVALID_LENGTH`, `BIGINT_UNSIGNED_EXPECTED`, `HEX_INVALID_CHARACTER`, `Z85_INVALID_BLOCK`, `BASE64_DECODER_UNAVAILABLE`, `UTF8_DECODER_UNAVAILABLE`, and `GZIP_COMPRESSION_UNAVAILABLE`. Messages are prefixed with `{@sovereignbase/bytecodec}`.
 
 ### Safety / copying semantics
 
@@ -194,41 +206,44 @@ Validation failures throw `BytecodecError` instances with a `code` string, for e
 
 `npm test` covers:
 
-- 68 unit tests
-- 6 integration tests
-- Node E2E: ESM and CommonJS
-- Bun E2E: ESM and CommonJS
-- Deno E2E: ESM
-- Edge Runtime E2E: ESM
-- Browser E2E: Chromium, Firefox, WebKit, mobile-chrome, and mobile-safari
+- 75 unit tests
+- 7 integration tests
+- Node E2E: 23/23 passed in ESM and 23/23 passed in CommonJS
+- Bun E2E: 23/23 passed in ESM and 23/23 passed in CommonJS
+- Deno E2E: 23/23 passed in ESM
+- Cloudflare Workers E2E: 23/23 passed in ESM
+- Edge Runtime E2E: 23/23 passed in ESM
+- Browser E2E: 5/5 passed in Chromium, Firefox, WebKit, mobile-chrome, and mobile-safari
 - Coverage gate: 100% statements, branches, functions, and lines
 
 ## Benchmarks
 
-Latest local `npm run bench` run on 2026-03-23 with Node `v22.14.0 (win32 x64)`:
+Latest local `npm run bench` run on 2026-03-27 with Node `v22.14.0 (win32 x64)`:
 
 | Benchmark        | Result                    |
 | ---------------- | ------------------------- |
-| base64 encode    | 1,391,126 ops/s (35.9 ms) |
-| base64 decode    | 2,089,279 ops/s (23.9 ms) |
-| base64url encode | 697,088 ops/s (71.7 ms)   |
-| base64url decode | 1,095,554 ops/s (45.6 ms) |
-| hex encode       | 1,053,832 ops/s (47.4 ms) |
-| hex decode       | 1,027,413 ops/s (48.7 ms) |
-| z85 encode       | 244,928 ops/s (204.1 ms)  |
-| z85 decode       | 1,596,730 ops/s (31.3 ms) |
-| utf8 encode      | 1,537,199 ops/s (32.5 ms) |
-| utf8 decode      | 3,481,143 ops/s (14.4 ms) |
-| json encode      | 681,747 ops/s (29.3 ms)   |
-| json decode      | 989,746 ops/s (20.2 ms)   |
-| concat 3 buffers | 846,612 ops/s (59.1 ms)   |
-| toUint8Array     | 9,396,818 ops/s (21.3 ms) |
-| toArrayBuffer    | 884,096 ops/s (226.2 ms)  |
-| toBufferSource   | 9,279,881 ops/s (21.6 ms) |
-| equals same      | 3,932,572 ops/s (50.9 ms) |
-| equals diff      | 4,060,534 ops/s (49.3 ms) |
-| gzip compress    | 4,126 ops/s (96.9 ms)     |
-| gzip decompress  | 5,550 ops/s (72.1 ms)     |
+| base64 encode    | 979,522 ops/s (51.0 ms)   |
+| base64 decode    | 1,825,737 ops/s (27.4 ms) |
+| base64url encode | 407,973 ops/s (122.6 ms)  |
+| base64url decode | 560,991 ops/s (89.1 ms)   |
+| hex encode       | 781,944 ops/s (63.9 ms)   |
+| hex decode       | 806,002 ops/s (62.0 ms)   |
+| z85 encode       | 170,125 ops/s (293.9 ms)  |
+| z85 decode       | 1,141,472 ops/s (43.8 ms) |
+| utf8 encode      | 1,241,977 ops/s (40.3 ms) |
+| utf8 decode      | 2,610,407 ops/s (19.2 ms) |
+| bigint encode    | 490,692 ops/s (101.9 ms)  |
+| bigint decode    | 428,938 ops/s (116.6 ms)  |
+| json encode      | 588,066 ops/s (34.0 ms)   |
+| json decode      | 603,058 ops/s (33.2 ms)   |
+| concat 3 buffers | 560,639 ops/s (89.2 ms)   |
+| toUint8Array     | 6,292,910 ops/s (31.8 ms) |
+| toArrayBuffer    | 677,822 ops/s (295.1 ms)  |
+| toBufferSource   | 7,465,472 ops/s (26.8 ms) |
+| equals same      | 2,217,064 ops/s (90.2 ms) |
+| equals diff      | 2,302,002 ops/s (86.9 ms) |
+| gzip compress    | 3,473 ops/s (115.2 ms)    |
+| gzip decompress  | 4,753 ops/s (84.2 ms)     |
 
 Command: `npm run bench`
 

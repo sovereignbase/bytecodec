@@ -27,6 +27,13 @@ import type { ByteSource } from '../index.js'
 export function toArrayBuffer(bytes: ByteSource): ArrayBuffer {
   if (bytes instanceof ArrayBuffer) return bytes.slice(0)
 
+  if (
+    typeof SharedArrayBuffer !== 'undefined' &&
+    bytes instanceof SharedArrayBuffer
+  ) {
+    return new Uint8Array(bytes).slice().buffer
+  }
+
   if (ArrayBuffer.isView(bytes)) {
     const view = new Uint8Array(
       bytes.buffer,
@@ -42,6 +49,6 @@ export function toArrayBuffer(bytes: ByteSource): ArrayBuffer {
 
   throw new BytecodecError(
     'BYTE_SOURCE_EXPECTED',
-    'Expected a Uint8Array, ArrayBuffer, ArrayBufferView, or number[]'
+    'Expected a Uint8Array, ArrayBuffer, SharedArrayBuffer, ArrayBufferView, or number[]'
   )
 }

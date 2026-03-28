@@ -30,6 +30,9 @@ import { toZ85String } from './toZ85String/index.js'
 import { fromString } from './fromString/index.js'
 import { toString } from './toString/index.js'
 /***/
+import { fromBigInt } from './fromBigInt/index.js'
+import { toBigInt } from './toBigInt/index.js'
+/***/
 import { fromJSON } from './fromJSON/index.js'
 import { toJSON } from './toJSON/index.js'
 /***/
@@ -47,7 +50,11 @@ import { equals } from './equals/index.js'
 /**
  * A supported byte input source accepted by the codec helpers.
  */
-export type ByteSource = Uint8Array | ArrayBuffer | ArrayBufferView | number[]
+export type ByteSource =
+  | ArrayBuffer
+  | SharedArrayBuffer
+  | ArrayBufferView
+  | number[]
 
 export {
   /***/
@@ -65,6 +72,9 @@ export {
   /***/
   fromString,
   toString,
+  /***/
+  fromBigInt,
+  toBigInt,
   /***/
   fromJSON,
   toJSON,
@@ -152,6 +162,20 @@ export class Bytes {
    */
   static toString(bytes: ByteSource): string {
     return toString(bytes)
+  }
+
+  /**
+   * See {@link fromBigInt}.
+   */
+  static fromBigInt(value: bigint): Uint8Array {
+    return fromBigInt(value)
+  }
+
+  /**
+   * See {@link toBigInt}.
+   */
+  static toBigInt(bytes: ByteSource): bigint {
+    return toBigInt(bytes)
   }
 
   /**

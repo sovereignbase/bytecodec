@@ -13,6 +13,7 @@ export async function runBytecodecSuite(api, options = {}) {
     fromBase64String,
     fromBase64UrlString,
     fromCompressed,
+    fromBigInt,
     fromHex,
     fromJSON,
     fromString,
@@ -20,6 +21,7 @@ export async function runBytecodecSuite(api, options = {}) {
     toArrayBuffer,
     toBase64String,
     toBase64UrlString,
+    toBigInt,
     toBufferSource,
     toCompressed,
     toHex,
@@ -124,6 +126,8 @@ export async function runBytecodecSuite(api, options = {}) {
       toZ85String,
       fromString,
       toString,
+      fromBigInt,
+      toBigInt,
       fromJSON,
       toJSON,
       toCompressed,
@@ -212,6 +216,15 @@ export async function runBytecodecSuite(api, options = {}) {
     assertEqual(toString(view), 'bc')
   })
 
+  await runTest('bigint helpers', () => {
+    const value = 0x1234567890abcdefn
+    const encoded = fromBigInt(value)
+    assertArrayEqual(encoded, [0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef])
+    assertEqual(toBigInt(encoded), value)
+    assertEqual(toBigInt([]), 0n)
+    assertThrows(() => fromBigInt(-1n), /expects an unsigned bigint/)
+  })
+
   await runTest('fromJSON', () => {
     const bytes = fromJSON(jsonValue)
     assertJsonEqual(toJSON(bytes), jsonValue)
@@ -259,11 +272,13 @@ export async function runBytecodecSuite(api, options = {}) {
     const shared = new SharedArrayBufferCtor(4)
     const view = new Uint8Array(shared)
     view.set([5, 6, 7, 8])
-    const normalized = toUint8Array(view)
-    const copiedBuffer = toArrayBuffer(view)
+    const normalized = toUint8Array(shared)
+    const copiedBuffer = toArrayBuffer(shared)
+    const copiedSource = toBufferSource(shared)
     view[1] = 99
     assertArrayEqual(normalized, [5, 6, 7, 8])
     assertArrayEqual(new Uint8Array(copiedBuffer), [5, 6, 7, 8])
+    assertArrayEqual(copiedSource, [5, 6, 7, 8])
   })
 
   await runTest('concat', () => {
@@ -357,6 +372,10 @@ export async function runBytecodecSuite(api, options = {}) {
 
     const text = 'bytes wrapper'
     assertEqual(Bytes.toString(Bytes.fromString(text)), text)
+
+    const bigint = 0x01020304n
+    assertArrayEqual(Bytes.fromBigInt(bigint), [1, 2, 3, 4])
+    assertEqual(Bytes.toBigInt(payload), bigint)
 
     const value = { wrapper: true, items: [1, 2, 3] }
     assertJsonEqual(Bytes.toJSON(Bytes.fromJSON(value)), value)
