@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/sovereignbase/bytecodec/compare/v1.4.1...v1.5.0) (2026-03-28)
+
+
+### Features
+
+* BigInt methods and CloudflareWorkers test runner. ([bc57eab](https://github.com/sovereignbase/bytecodec/commit/bc57eab007629eb72ad12acd063a74ed2fa7f99b))
+
 ## [1.4.1](https://github.com/sovereignbase/bytecodec/compare/v1.4.0...v1.4.1) (2026-03-23)
 
 
