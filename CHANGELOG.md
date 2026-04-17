@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/sovereignbase/bytecodec/compare/v1.5.1...v1.6.0) (2026-04-17)
+
+
+### Features
+
+* add base58 and base58btc support ([49438d5](https://github.com/sovereignbase/bytecodec/commit/49438d59185a2a35c7ea45a6b546f25068756614))
+
 ## [1.5.1](https://github.com/sovereignbase/bytecodec/compare/v1.5.0...v1.5.1) (2026-03-28)
 
 
