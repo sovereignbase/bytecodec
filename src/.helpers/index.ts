@@ -90,3 +90,18 @@ export const Z85_VALUES = (() => {
 
   return table
 })()
+
+export const BASE58BTC_PREFIX = 'z'
+
+export const BASE58BTC_CHARS =
+  '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+
+export const BASE58BTC_VALUES = (() => {
+  const table = new Int16Array(128).fill(-1)
+
+  for (let i = 0; i < BASE58BTC_CHARS.length; i++) {
+    table[BASE58BTC_CHARS.charCodeAt(i)] = i
+  }
+
+  return table
+})()

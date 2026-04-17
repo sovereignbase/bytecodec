@@ -51,8 +51,41 @@ test('public errors expose code, name, and prefixed message', async () => {
 })
 
 test('validation errors use the same public error shape', async () => {
-  const { fromBase64UrlString, fromBigInt, fromHex, toZ85String } =
+  const {
+    fromBase58BtcString,
+    fromBase58String,
+    fromBase64UrlString,
+    fromBigInt,
+    fromHex,
+    toZ85String,
+  } =
     await importFreshBundle('validation-error')
+
+  assert.throws(
+    () => fromBase58String('0'),
+    (error) => {
+      assert.equal(error.code, 'BASE58_INVALID_CHARACTER')
+      assert.equal(error.name, 'BytecodecError')
+      assert.equal(
+        error.message,
+        '{@sovereignbase/bytecodec} Invalid base58 character at index 0'
+      )
+      return true
+    }
+  )
+
+  assert.throws(
+    () => fromBase58BtcString('2VfUX'),
+    (error) => {
+      assert.equal(error.code, 'BASE58BTC_INVALID_PREFIX')
+      assert.equal(error.name, 'BytecodecError')
+      assert.equal(
+        error.message,
+        '{@sovereignbase/bytecodec} base58btc string must start with the multibase prefix "z"'
+      )
+      return true
+    }
+  )
 
   assert.throws(
     () => fromBase64UrlString('a'),
