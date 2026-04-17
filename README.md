@@ -17,7 +17,7 @@ Typed JavaScript and TypeScript byte utilities for base58, base58btc, base64, ba
 
 ## Goals
 
-- Developer-friendly API for base58, base58btc, base64, base64url, hex, Z85, UTF-8, unsigned BigInt conversion, JSON, gzip, concat, equality, and byte normalization.
+- Developer-friendly API.
 - No runtime dependencies or bundler shims.
 - Tree-shakeable ESM by default with CommonJS compatibility and no side effects.
 - Returns copies for safety when normalizing inputs.
@@ -73,7 +73,10 @@ const decoded = fromBase58String(encoded) // Uint8Array
 ### Base58btc
 
 ```js
-import { toBase58BtcString, fromBase58BtcString } from '@sovereignbase/bytecodec'
+import {
+  toBase58BtcString,
+  fromBase58BtcString,
+} from '@sovereignbase/bytecodec'
 
 const bytes = new Uint8Array([104, 101, 108, 108, 111])
 const encoded = toBase58BtcString(bytes) // "zCn8eVZg"
