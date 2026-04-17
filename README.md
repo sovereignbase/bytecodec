@@ -245,8 +245,6 @@ Latest local `npm run bench` run on 2026-03-27 with Node `v22.14.0 (win32 x64)`:
 | gzip compress    | 3,473 ops/s (115.2 ms)    |
 | gzip decompress  | 4,753 ops/s (84.2 ms)     |
 
-Command: `npm run bench`
-
 Results vary by machine and Node version.
 
 ## License
