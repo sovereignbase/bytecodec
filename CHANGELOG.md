@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.1](https://github.com/sovereignbase/bytecodec/compare/v1.6.0...v1.6.1) (2026-04-17)
+
+
+### Bug Fixes
+
+* update jsr.json ([4f572b4](https://github.com/sovereignbase/bytecodec/commit/4f572b4aa7dc1cdf61aaa1234e10a04b710119cc))
+
 ## [1.6.0](https://github.com/sovereignbase/bytecodec/compare/v1.5.1...v1.6.0) (2026-04-17)
 
 
