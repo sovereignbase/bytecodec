@@ -5,7 +5,7 @@
 
 # bytecodec
 
-Typed JavaScript and TypeScript byte utilities for base64, base64url, hex, Z85, UTF-8 strings, unsigned BigInt conversion, JSON, gzip, concatenation, comparison, and byte-source normalization. The package ships tree-shakeable ESM plus CommonJS entry points and keeps the same API across Node, Bun, Deno, browsers, and edge runtimes.
+Typed JavaScript and TypeScript byte utilities for base58, base58btc, base64, base64url, hex, Z85, UTF-8 strings, unsigned BigInt conversion, JSON, gzip, concatenation, comparison, and byte-source normalization. The package ships tree-shakeable ESM plus CommonJS entry points and keeps the same API across Node, Bun, Deno, browsers, and edge runtimes.
 
 ## Compatibility
 
@@ -17,7 +17,7 @@ Typed JavaScript and TypeScript byte utilities for base64, base64url, hex, Z85, 
 
 ## Goals
 
-- Developer-friendly API for base64, base64url, hex, Z85, UTF-8, unsigned BigInt conversion, JSON, gzip, concat, equality, and byte normalization.
+- Developer-friendly API for base58, base58btc, base64, base64url, hex, Z85, UTF-8, unsigned BigInt conversion, JSON, gzip, concat, equality, and byte normalization.
 - No runtime dependencies or bundler shims.
 - Tree-shakeable ESM by default with CommonJS compatibility and no side effects.
 - Returns copies for safety when normalizing inputs.
@@ -59,6 +59,28 @@ const bytes = new Uint8Array([104, 101, 108, 108, 111])
 const encoded = toBase64String(bytes) // string of base64 chars
 const decoded = fromBase64String(encoded) // Uint8Array
 ```
+
+### Base58
+
+```js
+import { toBase58String, fromBase58String } from '@sovereignbase/bytecodec'
+
+const bytes = new Uint8Array([104, 101, 108, 108, 111])
+const encoded = toBase58String(bytes) // "Cn8eVZg"
+const decoded = fromBase58String(encoded) // Uint8Array
+```
+
+### Base58btc
+
+```js
+import { toBase58BtcString, fromBase58BtcString } from '@sovereignbase/bytecodec'
+
+const bytes = new Uint8Array([104, 101, 108, 108, 111])
+const encoded = toBase58BtcString(bytes) // "zCn8eVZg"
+const decoded = fromBase58BtcString(encoded) // Uint8Array
+```
+
+`base58btc` uses the Bitcoin base58 alphabet and adds the multibase `z` prefix.
 
 ### CommonJS
 
@@ -184,7 +206,7 @@ const joined = concat([new Uint8Array([1, 2]), new Uint8Array([3, 4]), [5, 6]]) 
 
 ### Node
 
-Uses `Buffer.from` for base64 helpers, `TextEncoder` and `TextDecoder` when available with `Buffer` fallback for UTF-8, and `node:zlib` for gzip.
+Uses pure JavaScript for base58/base58btc, `Buffer.from` for base64 helpers, `TextEncoder` and `TextDecoder` when available with `Buffer` fallback for UTF-8, and `node:zlib` for gzip.
 
 ### Bun
 
@@ -196,7 +218,7 @@ Uses `TextEncoder`, `TextDecoder`, `btoa`, and `atob`. Gzip uses `CompressionStr
 
 ### Validation & errors
 
-Validation failures throw `BytecodecError` instances with a `code` string, for example `BASE64URL_INVALID_LENGTH`, `BIGINT_UNSIGNED_EXPECTED`, `HEX_INVALID_CHARACTER`, `Z85_INVALID_BLOCK`, `BASE64_DECODER_UNAVAILABLE`, `UTF8_DECODER_UNAVAILABLE`, and `GZIP_COMPRESSION_UNAVAILABLE`. Messages are prefixed with `{@sovereignbase/bytecodec}`.
+Validation failures throw `BytecodecError` instances with a `code` string, for example `BASE58_INVALID_CHARACTER`, `BASE58BTC_INVALID_PREFIX`, `BASE64URL_INVALID_LENGTH`, `BIGINT_UNSIGNED_EXPECTED`, `HEX_INVALID_CHARACTER`, `Z85_INVALID_BLOCK`, `BASE64_DECODER_UNAVAILABLE`, `UTF8_DECODER_UNAVAILABLE`, and `GZIP_COMPRESSION_UNAVAILABLE`. Messages are prefixed with `{@sovereignbase/bytecodec}`.
 
 ### Safety / copying semantics
 
@@ -206,44 +228,48 @@ Validation failures throw `BytecodecError` instances with a `code` string, for e
 
 `npm test` covers:
 
-- 75 unit tests
-- 7 integration tests
-- Node E2E: 23/23 passed in ESM and 23/23 passed in CommonJS
-- Bun E2E: 23/23 passed in ESM and 23/23 passed in CommonJS
-- Deno E2E: 23/23 passed in ESM
-- Cloudflare Workers E2E: 23/23 passed in ESM
-- Edge Runtime E2E: 23/23 passed in ESM
+- 85 unit tests
+- 9 integration tests
+- Node E2E: 27/27 passed in ESM and 27/27 passed in CommonJS
+- Bun E2E: 27/27 passed in ESM and 27/27 passed in CommonJS
+- Deno E2E: 27/27 passed in ESM
+- Cloudflare Workers E2E: 27/27 passed in ESM
+- Edge Runtime E2E: 27/27 passed in ESM
 - Browser E2E: 5/5 passed in Chromium, Firefox, WebKit, mobile-chrome, and mobile-safari
 - Coverage gate: 100% statements, branches, functions, and lines
 
 ## Benchmarks
 
-Latest local `npm run bench` run on 2026-03-27 with Node `v22.14.0 (win32 x64)`:
+Latest local `npm run bench` run on 2026-04-17 with Node `v22.14.0 (win32 x64)`. Each benchmark uses the same `5,000` operations:
 
-| Benchmark        | Result                    |
-| ---------------- | ------------------------- |
-| base64 encode    | 979,522 ops/s (51.0 ms)   |
-| base64 decode    | 1,825,737 ops/s (27.4 ms) |
-| base64url encode | 407,973 ops/s (122.6 ms)  |
-| base64url decode | 560,991 ops/s (89.1 ms)   |
-| hex encode       | 781,944 ops/s (63.9 ms)   |
-| hex decode       | 806,002 ops/s (62.0 ms)   |
-| z85 encode       | 170,125 ops/s (293.9 ms)  |
-| z85 decode       | 1,141,472 ops/s (43.8 ms) |
-| utf8 encode      | 1,241,977 ops/s (40.3 ms) |
-| utf8 decode      | 2,610,407 ops/s (19.2 ms) |
-| bigint encode    | 490,692 ops/s (101.9 ms)  |
-| bigint decode    | 428,938 ops/s (116.6 ms)  |
-| json encode      | 588,066 ops/s (34.0 ms)   |
-| json decode      | 603,058 ops/s (33.2 ms)   |
-| concat 3 buffers | 560,639 ops/s (89.2 ms)   |
-| toUint8Array     | 6,292,910 ops/s (31.8 ms) |
-| toArrayBuffer    | 677,822 ops/s (295.1 ms)  |
-| toBufferSource   | 7,465,472 ops/s (26.8 ms) |
-| equals same      | 2,217,064 ops/s (90.2 ms) |
-| equals diff      | 2,302,002 ops/s (86.9 ms) |
-| gzip compress    | 3,473 ops/s (115.2 ms)    |
-| gzip decompress  | 4,753 ops/s (84.2 ms)     |
+| Benchmark        | Ops   | Ms       | Ms/Op    | Ops/Sec   |
+| ---------------- | ----- | -------- | -------- | --------- |
+| base58 encode    | 5,000 | 378.548  | 0.075710 | 13,208    |
+| base58 decode    | 5,000 | 64.313   | 0.012863 | 77,745    |
+| base58btc encode | 5,000 | 318.044  | 0.063609 | 15,721    |
+| base58btc decode | 5,000 | 56.138   | 0.011228 | 89,066    |
+| base64 encode    | 5,000 | 16.971   | 0.003394 | 294,629   |
+| base64 decode    | 5,000 | 13.244   | 0.002649 | 377,541   |
+| base64url encode | 5,000 | 23.162   | 0.004632 | 215,867   |
+| base64url decode | 5,000 | 22.993   | 0.004599 | 217,454   |
+| hex encode       | 5,000 | 18.494   | 0.003699 | 270,361   |
+| hex decode       | 5,000 | 10.099   | 0.002020 | 495,084   |
+| z85 encode       | 5,000 | 65.417   | 0.013083 | 76,433    |
+| z85 decode       | 5,000 | 11.928   | 0.002386 | 419,171   |
+| utf8 encode      | 5,000 | 9.949    | 0.001990 | 502,583   |
+| utf8 decode      | 5,000 | 4.835    | 0.000967 | 1,034,105 |
+| bigint encode    | 5,000 | 17.098   | 0.003420 | 292,435   |
+| bigint decode    | 5,000 | 21.104   | 0.004221 | 236,922   |
+| json encode      | 5,000 | 10.640   | 0.002128 | 469,912   |
+| json decode      | 5,000 | 11.192   | 0.002238 | 446,740   |
+| concat 3 buffers | 5,000 | 28.862   | 0.005772 | 173,240   |
+| toUint8Array     | 5,000 | 4.866    | 0.000973 | 1,027,475 |
+| toArrayBuffer    | 5,000 | 13.325   | 0.002665 | 375,229   |
+| toBufferSource   | 5,000 | 3.412    | 0.000682 | 1,465,373 |
+| equals same      | 5,000 | 9.302    | 0.001860 | 537,536   |
+| equals diff      | 5,000 | 5.908    | 0.001182 | 846,267   |
+| gzip compress    | 5,000 | 1370.000 | 0.274000 | 3,650     |
+| gzip decompress  | 5,000 | 1493.242 | 0.298648 | 3,348     |
 
 Command: `npm run bench`
 

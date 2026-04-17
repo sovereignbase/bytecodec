@@ -2,6 +2,8 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
   concat,
+  fromBase58BtcString,
+  fromBase58String,
   fromBase64String,
   fromBase64UrlString,
   fromBigInt,
@@ -9,6 +11,8 @@ import {
   fromJSON,
   fromString,
   fromZ85String,
+  toBase58BtcString,
+  toBase58String,
   toBase64String,
   toBase64UrlString,
   toBigInt,
@@ -24,6 +28,22 @@ test('integration: utf8 -> base64 -> utf8', () => {
   const encoded = toBase64String(bytes)
   const decoded = fromBase64String(encoded)
   assert.equal(toString(decoded), text)
+})
+
+test('integration: utf8 -> base58 -> utf8', () => {
+  const text = 'pipeline check'
+  const bytes = fromString(text)
+  const encoded = toBase58String(bytes)
+  const decoded = fromBase58String(encoded)
+  assert.equal(toString(decoded), text)
+})
+
+test('integration: json -> bytes -> base58btc -> json', () => {
+  const value = { ok: true, list: [1, 2, 3] }
+  const bytes = fromJSON(value)
+  const encoded = toBase58BtcString(bytes)
+  const decoded = fromBase58BtcString(encoded)
+  assert.deepStrictEqual(toJSON(decoded), value)
 })
 
 test('integration: utf8 -> base64url -> utf8', () => {

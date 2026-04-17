@@ -15,6 +15,12 @@
  */
 
 /***/
+import { fromBase58String } from './fromBase58String/index.js'
+import { toBase58String } from './toBase58String/index.js'
+/***/
+import { fromBase58BtcString } from './fromBase58BtcString/index.js'
+import { toBase58BtcString } from './toBase58BtcString/index.js'
+/***/
 import { fromBase64String } from './fromBase64String/index.js'
 import { toBase64String } from './toBase64String/index.js'
 /***/
@@ -60,6 +66,12 @@ export type { BytecodecErrorCode } from './.errors/class.js'
 
 export {
   /***/
+  fromBase58String,
+  toBase58String,
+  /***/
+  fromBase58BtcString,
+  toBase58BtcString,
+  /***/
   fromBase64String,
   toBase64String,
   /***/
@@ -96,6 +108,34 @@ export {
  * Convenience wrapper around the codec functions.
  */
 export class Bytes {
+  /**
+   * See {@link fromBase58String}.
+   */
+  static fromBase58String(base58String: string): Uint8Array {
+    return fromBase58String(base58String)
+  }
+
+  /**
+   * See {@link toBase58String}.
+   */
+  static toBase58String(bytes: ByteSource): string {
+    return toBase58String(bytes)
+  }
+
+  /**
+   * See {@link fromBase58BtcString}.
+   */
+  static fromBase58BtcString(base58BtcString: string): Uint8Array {
+    return fromBase58BtcString(base58BtcString)
+  }
+
+  /**
+   * See {@link toBase58BtcString}.
+   */
+  static toBase58BtcString(bytes: ByteSource): string {
+    return toBase58BtcString(bytes)
+  }
+
   /**
    * See {@link fromBase64String}.
    */

@@ -14,10 +14,14 @@ const bundleUrl = new URL(
 )
 const {
   concat,
+  fromBase58BtcString,
+  fromBase58String,
   fromBase64UrlString,
   fromCompressed,
   fromJSON,
   fromString,
+  toBase58BtcString,
+  toBase58String,
   toBase64UrlString,
   toCompressed,
   toJSON,
@@ -143,6 +147,22 @@ test('fromBase64UrlString throws when no base64 decoder exists', () => {
   globalThis.Buffer = undefined
   globalThis.atob = undefined
   assert.throws(() => fromBase64UrlString('aGVsbG8'), /No base64 decoder/)
+  restoreGlobals()
+})
+
+test('base58 helpers do not depend on Buffer or browser base64 globals', () => {
+  globalThis.Buffer = undefined
+  globalThis.btoa = undefined
+  globalThis.atob = undefined
+
+  const encoded = toBase58String(new Uint8Array([104, 101, 108, 108, 111]))
+  assert.equal(encoded, 'Cn8eVZg')
+  assert.deepStrictEqual([...fromBase58String(encoded)], [104, 101, 108, 108, 111])
+
+  const btcEncoded = toBase58BtcString(new Uint8Array([0, 1, 2, 3, 4]))
+  assert.equal(btcEncoded, 'z12VfUX')
+  assert.deepStrictEqual([...fromBase58BtcString(btcEncoded)], [0, 1, 2, 3, 4])
+
   restoreGlobals()
 })
 

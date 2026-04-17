@@ -10,6 +10,8 @@ export async function runBytecodecSuite(api, options = {}) {
     Bytes,
     concat,
     equals,
+    fromBase58BtcString,
+    fromBase58String,
     fromBase64String,
     fromBase64UrlString,
     fromCompressed,
@@ -19,6 +21,8 @@ export async function runBytecodecSuite(api, options = {}) {
     fromString,
     fromZ85String,
     toArrayBuffer,
+    toBase58BtcString,
+    toBase58String,
     toBase64String,
     toBase64UrlString,
     toBigInt,
@@ -109,6 +113,7 @@ export async function runBytecodecSuite(api, options = {}) {
   }
 
   const base64Payload = Uint8Array.from([104, 101, 108, 108, 111])
+  const base58Payload = Uint8Array.from([0, 1, 2, 3, 4])
   const utf8Text = 'h\u00e9llo \u2713 rocket \ud83d\ude80'
   const jsonValue = { ok: true, count: 3, list: ['x', { y: 1 }], nil: null }
   const compressionPayload = fromString('compress me please')
@@ -116,6 +121,10 @@ export async function runBytecodecSuite(api, options = {}) {
   await runTest('exports shape', () => {
     assert(typeof Bytes === 'function', 'Bytes export missing')
     for (const fn of [
+      fromBase58String,
+      toBase58String,
+      fromBase58BtcString,
+      toBase58BtcString,
       fromBase64String,
       toBase64String,
       fromBase64UrlString,
@@ -148,6 +157,34 @@ export async function runBytecodecSuite(api, options = {}) {
 
     const view = new DataView(base64Payload.buffer, 1, 3)
     assertEqual(toBase64String(view), 'ZWxs')
+  })
+
+  await runTest('toBase58String', () => {
+    const encoded = toBase58String(base64Payload)
+    assertEqual(encoded, 'Cn8eVZg')
+
+    const view = new DataView(base58Payload.buffer, 1, 3)
+    assertEqual(toBase58String(view), 'Ldp')
+  })
+
+  await runTest('fromBase58String', () => {
+    const decoded = fromBase58String('12VfUX')
+    assertArrayEqual(decoded, base58Payload)
+    assertThrows(() => fromBase58String('0'), /Invalid base58 character at index 0/)
+  })
+
+  await runTest('toBase58BtcString', () => {
+    const encoded = toBase58BtcString(base64Payload)
+    assertEqual(encoded, 'zCn8eVZg')
+  })
+
+  await runTest('fromBase58BtcString', () => {
+    const decoded = fromBase58BtcString('z12VfUX')
+    assertArrayEqual(decoded, base58Payload)
+    assertThrows(
+      () => fromBase58BtcString('12VfUX'),
+      /base58btc string must start with the multibase prefix "z"/
+    )
   })
 
   await runTest('fromBase64String', () => {
@@ -355,6 +392,14 @@ export async function runBytecodecSuite(api, options = {}) {
 
   await runTest('Bytes wrapper', async () => {
     const payload = Uint8Array.from([1, 2, 3, 4])
+
+    const base58 = Bytes.toBase58String(payload)
+    assertEqual(base58, '2VfUX')
+    assertArrayEqual(Bytes.fromBase58String(base58), [1, 2, 3, 4])
+
+    const base58Btc = Bytes.toBase58BtcString(payload)
+    assertEqual(base58Btc, 'z2VfUX')
+    assertArrayEqual(Bytes.fromBase58BtcString(base58Btc), [1, 2, 3, 4])
 
     const base64 = Bytes.toBase64String(payload)
     assertEqual(base64, 'AQIDBA==')
