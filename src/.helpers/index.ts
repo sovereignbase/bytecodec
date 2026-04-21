@@ -78,6 +78,18 @@ export const HEX_VALUES = (() => {
   return table
 })()
 
+export const BASE45_CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:'
+
+export const BASE45_VALUES = (() => {
+  const table = new Int16Array(128).fill(-1)
+
+  for (let i = 0; i < BASE45_CHARS.length; i++) {
+    table[BASE45_CHARS.charCodeAt(i)] = i
+  }
+
+  return table
+})()
+
 export const Z85_CHARS =
   '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#'
 

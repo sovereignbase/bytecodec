@@ -1,0 +1,3 @@
+- https://datatracker.ietf.org/doc/html/rfc9285
+- https://digitalproc.github.io/2021/11/11/qrCode/qr_standard.pdf
+- https://ref.gs1.org/guidelines/2d-in-retail/1.0.0/
