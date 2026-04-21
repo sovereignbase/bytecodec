@@ -1,6 +1,6 @@
 {
   "name": "@sovereignbase/bytecodec",
-  "version": "1.6.1",
+  "version": "1.7.0",
   "description": "JS/TS runtime-agnostic byte toolkit for UTF-8, base45, base58, base58btc, base64, base64url, hex, Z85, unsigned BigInt conversion, JSON, normalization, compression, concatenation, and comparison.",
   "keywords": [
     "base45",
