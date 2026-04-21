@@ -10,6 +10,7 @@ export async function runBytecodecSuite(api, options = {}) {
     Bytes,
     concat,
     equals,
+    fromBase45String,
     fromBase58BtcString,
     fromBase58String,
     fromBase64String,
@@ -21,6 +22,7 @@ export async function runBytecodecSuite(api, options = {}) {
     fromString,
     fromZ85String,
     toArrayBuffer,
+    toBase45String,
     toBase58BtcString,
     toBase58String,
     toBase64String,
@@ -121,6 +123,8 @@ export async function runBytecodecSuite(api, options = {}) {
   await runTest('exports shape', () => {
     assert(typeof Bytes === 'function', 'Bytes export missing')
     for (const fn of [
+      fromBase45String,
+      toBase45String,
       fromBase58String,
       toBase58String,
       fromBase58BtcString,
@@ -171,6 +175,21 @@ export async function runBytecodecSuite(api, options = {}) {
     const decoded = fromBase58String('12VfUX')
     assertArrayEqual(decoded, base58Payload)
     assertThrows(() => fromBase58String('0'), /Invalid base58 character at index 0/)
+  })
+
+  await runTest('toBase45String', () => {
+    const encoded = toBase45String(base58Payload)
+    assertEqual(encoded, '100KB040')
+
+    const view = new DataView(base58Payload.buffer, 1, 3)
+    assertEqual(toBase45String(view), 'X5030')
+  })
+
+  await runTest('fromBase45String', () => {
+    const decoded = fromBase45String('100KB040')
+    assertArrayEqual(decoded, base58Payload)
+    assertThrows(() => fromBase45String('A'), /Base45 string length must not leave a trailing single character/)
+    assertThrows(() => fromBase45String(':::'), /Invalid base45 chunk at index 0/)
   })
 
   await runTest('toBase58BtcString', () => {
@@ -392,6 +411,10 @@ export async function runBytecodecSuite(api, options = {}) {
 
   await runTest('Bytes wrapper', async () => {
     const payload = Uint8Array.from([1, 2, 3, 4])
+
+    const base45 = Bytes.toBase45String(payload)
+    assertEqual(base45, 'X507H0')
+    assertArrayEqual(Bytes.fromBase45String(base45), [1, 2, 3, 4])
 
     const base58 = Bytes.toBase58String(payload)
     assertEqual(base58, '2VfUX')

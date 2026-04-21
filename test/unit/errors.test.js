@@ -52,6 +52,7 @@ test('public errors expose code, name, and prefixed message', async () => {
 
 test('validation errors use the same public error shape', async () => {
   const {
+    fromBase45String,
     fromBase58BtcString,
     fromBase58String,
     fromBase64UrlString,
@@ -60,6 +61,19 @@ test('validation errors use the same public error shape', async () => {
     toZ85String,
   } =
     await importFreshBundle('validation-error')
+
+  assert.throws(
+    () => fromBase45String(':::'),
+    (error) => {
+      assert.equal(error.code, 'BASE45_INVALID_CHUNK')
+      assert.equal(error.name, 'BytecodecError')
+      assert.equal(
+        error.message,
+        '{@sovereignbase/bytecodec} Invalid base45 chunk at index 0'
+      )
+      return true
+    }
+  )
 
   assert.throws(
     () => fromBase58String('0'),

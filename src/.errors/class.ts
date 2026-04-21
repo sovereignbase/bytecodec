@@ -18,6 +18,10 @@
  * All structured error codes thrown by the bytecodec.
  */
 export type BytecodecErrorCode =
+  | 'BASE45_INPUT_EXPECTED'
+  | 'BASE45_INVALID_CHARACTER'
+  | 'BASE45_INVALID_CHUNK'
+  | 'BASE45_INVALID_LENGTH'
   | 'BASE58BTC_INPUT_EXPECTED'
   | 'BASE58BTC_INVALID_PREFIX'
   | 'BASE58_INPUT_EXPECTED'

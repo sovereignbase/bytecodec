@@ -15,6 +15,9 @@
  */
 
 /***/
+import { fromBase45String } from './fromBase45String/index.js'
+import { toBase45String } from './toBase45String/index.js'
+/***/
 import { fromBase58String } from './fromBase58String/index.js'
 import { toBase58String } from './toBase58String/index.js'
 /***/
@@ -66,6 +69,9 @@ export type { BytecodecErrorCode } from './.errors/class.js'
 
 export {
   /***/
+  fromBase45String,
+  toBase45String,
+  /***/
   fromBase58String,
   toBase58String,
   /***/
@@ -108,6 +114,20 @@ export {
  * Convenience wrapper around the codec functions.
  */
 export class Bytes {
+  /**
+   * See {@link fromBase45String}.
+   */
+  static fromBase45String(base45String: string): Uint8Array {
+    return fromBase45String(base45String)
+  }
+
+  /**
+   * See {@link toBase45String}.
+   */
+  static toBase45String(bytes: ByteSource): string {
+    return toBase45String(bytes)
+  }
+
   /**
    * See {@link fromBase58String}.
    */

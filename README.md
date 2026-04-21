@@ -5,7 +5,7 @@
 
 # bytecodec
 
-Typed JavaScript and TypeScript byte utilities for base58, base58btc, base64, base64url, hex, Z85, UTF-8 strings, unsigned BigInt conversion, JSON, gzip, concatenation, comparison, and byte-source normalization. The package ships tree-shakeable ESM plus CommonJS entry points and keeps the same API across Node, Bun, Deno, browsers, and edge runtimes.
+Typed JavaScript and TypeScript byte utilities for base45, base58, base58btc, base64, base64url, hex, Z85, UTF-8 strings, unsigned BigInt conversion, JSON, gzip, concatenation, comparison, and byte-source normalization. The package ships tree-shakeable ESM plus CommonJS entry points and keeps the same API across Node, Bun, Deno, browsers, and edge runtimes.
 
 ## Compatibility
 
@@ -59,6 +59,19 @@ const bytes = new Uint8Array([104, 101, 108, 108, 111])
 const encoded = toBase64String(bytes) // string of base64 chars
 const decoded = fromBase64String(encoded) // Uint8Array
 ```
+
+### Base45
+
+```js
+import { toBase45String, fromBase45String } from '@sovereignbase/bytecodec'
+
+const bytes = new Uint8Array([65, 66])
+const encoded = toBase45String(bytes) // "BB8"
+const decoded = fromBase45String(encoded) // Uint8Array
+```
+
+Base45 is convenient for QR-friendly payloads. It encodes 2 input bytes into 3 output characters, and a trailing single byte into 2 characters.
+The implementation follows RFC 9285.
 
 ### Base58
 
@@ -209,7 +222,7 @@ const joined = concat([new Uint8Array([1, 2]), new Uint8Array([3, 4]), [5, 6]]) 
 
 ### Node
 
-Uses pure JavaScript for base58/base58btc, `Buffer.from` for base64 helpers, `TextEncoder` and `TextDecoder` when available with `Buffer` fallback for UTF-8, and `node:zlib` for gzip.
+Uses pure JavaScript for base45/base58/base58btc, `Buffer.from` for base64 helpers, `TextEncoder` and `TextDecoder` when available with `Buffer` fallback for UTF-8, and `node:zlib` for gzip.
 
 ### Bun
 
@@ -221,7 +234,7 @@ Uses `TextEncoder`, `TextDecoder`, `btoa`, and `atob`. Gzip uses `CompressionStr
 
 ### Validation & errors
 
-Validation failures throw `BytecodecError` instances with a `code` string, for example `BASE58_INVALID_CHARACTER`, `BASE58BTC_INVALID_PREFIX`, `BASE64URL_INVALID_LENGTH`, `BIGINT_UNSIGNED_EXPECTED`, `HEX_INVALID_CHARACTER`, `Z85_INVALID_BLOCK`, `BASE64_DECODER_UNAVAILABLE`, `UTF8_DECODER_UNAVAILABLE`, and `GZIP_COMPRESSION_UNAVAILABLE`. Messages are prefixed with `{@sovereignbase/bytecodec}`.
+Validation failures throw `BytecodecError` instances with a `code` string, for example `BASE45_INVALID_CHUNK`, `BASE58_INVALID_CHARACTER`, `BASE58BTC_INVALID_PREFIX`, `BASE64URL_INVALID_LENGTH`, `BIGINT_UNSIGNED_EXPECTED`, `HEX_INVALID_CHARACTER`, `Z85_INVALID_BLOCK`, `BASE64_DECODER_UNAVAILABLE`, `UTF8_DECODER_UNAVAILABLE`, and `GZIP_COMPRESSION_UNAVAILABLE`. Messages are prefixed with `{@sovereignbase/bytecodec}`.
 
 ### Safety / copying semantics
 
@@ -231,13 +244,13 @@ Validation failures throw `BytecodecError` instances with a `code` string, for e
 
 `npm test` covers:
 
-- 85 unit tests
-- 9 integration tests
-- Node E2E: 27/27 passed in ESM and 27/27 passed in CommonJS
-- Bun E2E: 27/27 passed in ESM and 27/27 passed in CommonJS
-- Deno E2E: 27/27 passed in ESM
-- Cloudflare Workers E2E: 27/27 passed in ESM
-- Edge Runtime E2E: 27/27 passed in ESM
+- 97 unit tests
+- 10 integration tests
+- Node E2E: 29/29 passed in ESM and 29/29 passed in CommonJS
+- Bun E2E: 29/29 passed in ESM and 29/29 passed in CommonJS
+- Deno E2E: 29/29 passed in ESM
+- Cloudflare Workers E2E: 29/29 passed in ESM
+- Edge Runtime E2E: 29/29 passed in ESM
 - Browser E2E: 5/5 passed in Chromium, Firefox, WebKit, mobile-chrome, and mobile-safari
 - Coverage gate: 100% statements, branches, functions, and lines
 
