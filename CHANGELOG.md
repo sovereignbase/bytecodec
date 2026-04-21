@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/sovereignbase/bytecodec/compare/v1.6.1...v1.7.0) (2026-04-21)
+
+
+### Features
+
+* add RFC 9285 base45 encode/decode support ([fac1753](https://github.com/sovereignbase/bytecodec/commit/fac17533b9f1c68ec856f145fdf9ada8942a1e4e))
+
 ## [1.6.1](https://github.com/sovereignbase/bytecodec/compare/v1.6.0...v1.6.1) (2026-04-17)
 
 
