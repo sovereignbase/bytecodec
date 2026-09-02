@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/sovereignbase/bytecodec/compare/v2.0.0...v2.0.1) (2026-09-02)
+
+
+### Bug Fixes
+
+* expose base64url as a direct Bytes codec ([8844599](https://github.com/sovereignbase/bytecodec/commit/8844599c535b861daf34d17324827ee5d9ed35f1))
+
 ## [2.0.0](https://github.com/sovereignbase/bytecodec/compare/v1.7.0...v2.0.0) (2026-09-02)
 
 
