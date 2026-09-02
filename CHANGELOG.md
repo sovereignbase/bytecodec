@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/sovereignbase/bytecodec/compare/v1.7.0...v2.0.0) (2026-09-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* The root API now exposes only Bytes and types; legacy helpers were removed.
+
+### Features
+
+* refactor bytecodec API and add subpath exports ([551ded5](https://github.com/sovereignbase/bytecodec/commit/551ded51601bda90f7f996b29f512fe697b58308))
+
 ## [1.7.0](https://github.com/sovereignbase/bytecodec/compare/v1.6.1...v1.7.0) (2026-04-21)
 
 
