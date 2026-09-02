@@ -1,8 +1,19 @@
-import {} from './base45/index.js'
-import {} from './base64/index.js'
-import {} from './gzip/index.js'
-import {} from './utf8/index.js'
-import {} from './util/index.js'
+import { bytesFromBase45String, bytesToBase45String } from './base45/index.js'
+import {
+  bytesFromBase64String,
+  bytesFromBase64UrlString,
+  bytesToBase64String,
+  bytesToBase64UrlString,
+} from './base64/index.js'
+import { bytesFromGzipBytes, bytesToGzipBytes } from './gzip/index.js'
+import { bytesFromUTF8String, bytesToUTF8String } from './utf8/index.js'
+import {
+  bytesEqualsBytes,
+  concatBytesToUint8Array,
+  deriveBytesToUint8Array,
+  generateBytesToUint8Array,
+  normalizeBytesToUint8Array,
+} from './util/index.js'
 /**
  * A supported byte input source accepted by the codec helpers.
  */
@@ -16,55 +27,46 @@ export type { BytecodecErrorCode } from './.errors/class.js'
  */
 export class Bytes {
   static readonly base45 = {
-    encode: toBase45String,
-    decode: fromBase45String,
+    encode: bytesToBase45String,
+    decode: bytesFromBase45String,
   }
 
   static readonly base64 = {
-    encode: toBase64String,
-    decode: fromBase64String,
+    encode: bytesToBase64String,
+    decode: bytesFromBase64String,
     url: {
-      encode: toBase64UrlString,
-      decode: fromBase64UrlString,
+      encode: bytesToBase64UrlString,
+      decode: bytesFromBase64UrlString,
     },
   }
 
   static readonly utf8 = {
-    encode: toString,
-    decode: fromString,
+    encode: bytesToUTF8String,
+    decode: bytesFromUTF8String,
   }
 
   static readonly gzip = {
-    encode: toCompressed,
-    decode: fromCompressed,
+    encode: bytesToGzipBytes,
+    decode: bytesFromGzipBytes,
   }
 
-  /**
-   * See {@link concat}.
-   */
   static concat(sources: ByteSource[]): Uint8Array {
-    return concat(sources)
+    return concatBytesToUint8Array(sources)
   }
 
-  /**
-   * See {@link equals}.
-   */
   static equals(a: ByteSource, b: ByteSource): boolean {
-    return equals(a, b)
+    return bytesEqualsBytes(a, b)
   }
 
   static derive(base: Uint8Array, domain: Uint8Array, byteLength: number) {
-    return derive(base, domain, byteLength)
+    return deriveBytesToUint8Array(base, domain, byteLength)
   }
 
   static generate(byteLength: number) {
-    return generate(byteLength)
+    return generateBytesToUint8Array(byteLength)
   }
 
-  /**
-   * See {@link toUint8Array}.
-   */
   static normalize(bytes: ByteSource): Uint8Array {
-    return toUint8Array(bytes)
+    return normalizeBytesToUint8Array(bytes)
   }
 }

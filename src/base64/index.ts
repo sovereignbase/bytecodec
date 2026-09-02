@@ -1,5 +1,5 @@
 import { BytecodecError } from '../.errors/class.js'
-import { normalizeBytesToUint8Array } from '../normalize/index.js'
+import { normalizeBytesToUint8Array } from '../util/index.js'
 import type { ByteSource } from '../index.js'
 
 /**

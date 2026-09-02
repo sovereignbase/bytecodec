@@ -1,6 +1,6 @@
 import { BytecodecError } from '../.errors/class.js'
 import { textEncoder, textDecoder } from '../.helpers/index.js'
-import { normalizeBytesToUint8Array } from '../normalize/index.js'
+import { normalizeBytesToUint8Array } from '../util/index.js'
 import type { ByteSource } from '../index.js'
 
 /**
@@ -9,7 +9,7 @@ import type { ByteSource } from '../index.js'
  * @param bytes The bytes to decode.
  * @returns The decoded string.
  */
-export function toString(bytes: ByteSource): string {
+export function bytesToUTF8String(bytes: ByteSource): string {
   const view = normalizeBytesToUint8Array(bytes)
 
   if (textDecoder) return textDecoder.decode(view)
@@ -29,7 +29,7 @@ export function toString(bytes: ByteSource): string {
  * @param text The string to encode.
  * @returns A new `Uint8Array` containing the UTF-8 encoded bytes.
  */
-export function fromString(text: string): Uint8Array {
+export function bytesFromUTF8String(text: string): Uint8Array {
   if (typeof text !== 'string')
     throw new BytecodecError(
       'STRING_INPUT_EXPECTED',

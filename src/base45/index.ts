@@ -1,5 +1,5 @@
 import { BytecodecError } from '../.errors/class.js'
-import { normalizeBytesToUint8Array } from '../normalize/index.js'
+import { normalizeBytesToUint8Array } from '../util/index.js'
 import type { ByteSource } from '../index.js'
 
 let base45Chars: string
@@ -11,7 +11,7 @@ let base45Values: Int16Array
  * @param bytes The bytes to encode.
  * @returns A Base45 string representation of `bytes`.
  */
-export function toBase45String(bytes: ByteSource): string {
+export function bytesToBase45String(bytes: ByteSource): string {
   const view = normalizeBytesToUint8Array(bytes)
   if (!base45Chars)
     base45Chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:'
@@ -42,7 +42,7 @@ export function toBase45String(bytes: ByteSource): string {
  * @param base45String The Base45 string to decode.
  * @returns A new `Uint8Array` containing the decoded bytes.
  */
-export function fromBase45String(base45String: string): Uint8Array {
+export function bytesFromBase45String(base45String: string): Uint8Array {
   if (typeof base45String !== 'string')
     throw new BytecodecError(
       'BASE45_INPUT_EXPECTED',
