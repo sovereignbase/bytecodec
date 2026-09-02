@@ -7,7 +7,7 @@ import type { ByteSource } from '../index.js'
  * @param sources The byte sources to concatenate, in order.
  * @returns A new `Uint8Array` containing the concatenated bytes.
  */
-export function concatBytesToUint8Array(sources: ByteSource[]): Uint8Array {
+export function concatBytes(sources: ByteSource[]): Uint8Array {
   if (!Array.isArray(sources))
     throw new BytecodecError(
       'CONCAT_INVALID_INPUT',
@@ -18,7 +18,7 @@ export function concatBytesToUint8Array(sources: ByteSource[]): Uint8Array {
 
   const arrays = sources.map((source, index) => {
     try {
-      return normalizeBytesToUint8Array(source)
+      return normalizeBytes(source)
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
       throw new BytecodecError(
@@ -48,9 +48,9 @@ export function concatBytesToUint8Array(sources: ByteSource[]): Uint8Array {
  * @param y The second byte source to compare.
  * @returns `true` if both byte sources contain the same bytes; otherwise, `false`.
  */
-export function bytesEqualsBytes(x: ByteSource, y: ByteSource): boolean {
-  const a = normalizeBytesToUint8Array(x)
-  const b = normalizeBytesToUint8Array(y)
+export function equalBytes(x: ByteSource, y: ByteSource): boolean {
+  const a = normalizeBytes(x)
+  const b = normalizeBytes(y)
   if (a.byteLength !== b.byteLength) return false
   let diff = 0
   for (let index = 0; index < a.length; index++) diff |= a[index] ^ b[index]
@@ -63,7 +63,7 @@ export function bytesEqualsBytes(x: ByteSource, y: ByteSource): boolean {
  * @param input The byte source to normalize.
  * @returns A new `Uint8Array` copy of `input`.
  */
-export function normalizeBytesToUint8Array(input: ByteSource): Uint8Array {
+export function normalizeBytes(input: ByteSource): Uint8Array {
   if (input instanceof ArrayBuffer) {
     return new Uint8Array(input.slice(0))
   }
@@ -95,7 +95,6 @@ export function normalizeBytesToUint8Array(input: ByteSource): Uint8Array {
 }
 
 let ikm: CryptoKey
-
 /**
  * Derives deterministic, domain-separated bytes with HKDF-SHA-256.
  *
@@ -120,7 +119,7 @@ let ikm: CryptoKey
  * )
  * ```
  */
-export async function deriveBytesToUint8Array(
+export async function deriveBytes(
   base: ByteSource,
   domain: ByteSource,
   byteLength: number
@@ -134,13 +133,13 @@ export async function deriveBytesToUint8Array(
       ['deriveBits']
     )
 
-  return normalizeBytesToUint8Array(
+  return normalizeBytes(
     await crypto.subtle.deriveBits(
       {
         name: 'HKDF',
         hash: 'SHA-256',
-        salt: normalizeBytesToUint8Array(base) as BufferSource,
-        info: normalizeBytesToUint8Array(domain) as BufferSource,
+        salt: normalizeBytes(base) as BufferSource,
+        info: normalizeBytes(domain) as BufferSource,
       },
       ikm,
       byteLength * 8
@@ -148,7 +147,7 @@ export async function deriveBytesToUint8Array(
   )
 }
 
-export function generateBytesToUint8Array(byteLength: number): Uint8Array {
+export function generateBytes(byteLength: number): Uint8Array {
   const buffer = new Uint8Array(byteLength)
   void crypto.getRandomValues(new Uint8Array(byteLength))
   return buffer

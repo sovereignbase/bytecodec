@@ -1,7 +1,10 @@
 import { BytecodecError } from '../.errors/class.js'
-import { textEncoder, textDecoder } from '../.helpers/index.js'
-import { normalizeBytesToUint8Array } from '../util/index.js'
+import { normalizeBytes } from '../util/index.js'
 import type { ByteSource } from '../index.js'
+
+let textEncoder: TextEncoder
+
+let textDecoder: TextDecoder
 
 /**
  * Decodes UTF-8 bytes into a JavaScript string.
@@ -10,9 +13,12 @@ import type { ByteSource } from '../index.js'
  * @returns The decoded string.
  */
 export function bytesToUTF8String(bytes: ByteSource): string {
-  const view = normalizeBytesToUint8Array(bytes)
+  const view = normalizeBytes(bytes)
 
-  if (textDecoder) return textDecoder.decode(view)
+  if (typeof TextDecoder !== 'undefined') {
+    if (!textDecoder) textDecoder = new TextDecoder()
+    return textDecoder.decode(view)
+  }
 
   if (typeof Buffer !== 'undefined' && typeof Buffer.from === 'function')
     return Buffer.from(view).toString('utf8')
@@ -36,7 +42,10 @@ export function bytesFromUTF8String(text: string): Uint8Array {
       'fromString expects a string input'
     )
 
-  if (textEncoder) return textEncoder.encode(text)
+  if (typeof TextEncoder !== 'undefined') {
+    if (!textEncoder) textEncoder = new TextEncoder()
+    return textEncoder.encode(text)
+  }
 
   if (typeof Buffer !== 'undefined' && typeof Buffer.from === 'function')
     return new Uint8Array(Buffer.from(text, 'utf8'))

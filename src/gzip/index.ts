@@ -1,6 +1,6 @@
 import { BytecodecError } from '../.errors/class.js'
 import { importNodeBuiltin, isNodeRuntime } from '../.helpers/index.js'
-import { normalizeBytesToUint8Array } from '../util/index.js'
+import { normalizeBytes } from '../util/index.js'
 import type { ByteSource } from '../index.js'
 
 /**
@@ -10,7 +10,7 @@ import type { ByteSource } from '../index.js'
  * @returns A promise that resolves to a new `Uint8Array` containing the gzip payload.
  */
 export async function bytesToGzipBytes(bytes: ByteSource): Promise<Uint8Array> {
-  const view = normalizeBytesToUint8Array(bytes)
+  const view = normalizeBytes(bytes)
 
   // Node: use built-in zlib
   if (isNodeRuntime()) {
@@ -20,7 +20,7 @@ export async function bytesToGzipBytes(bytes: ByteSource): Promise<Uint8Array> {
       await importNodeBuiltin<typeof import('node:util')>('node:util')
     const gzipAsync = promisify(gzip)
     const compressed = await gzipAsync(view)
-    return normalizeBytesToUint8Array(compressed)
+    return normalizeBytes(compressed)
   }
 
   // Browser/edge runtimes: CompressionStream with gzip
@@ -60,7 +60,7 @@ async function compressWithStream(
 export async function bytesFromGzipBytes(
   bytes: ByteSource
 ): Promise<Uint8Array> {
-  const view = normalizeBytesToUint8Array(bytes)
+  const view = normalizeBytes(bytes)
 
   if (isNodeRuntime()) {
     const { gunzip } =
@@ -69,7 +69,7 @@ export async function bytesFromGzipBytes(
       await importNodeBuiltin<typeof import('node:util')>('node:util')
     const gunzipAsync = promisify(gunzip)
     const decompressed = await gunzipAsync(view)
-    return normalizeBytesToUint8Array(decompressed)
+    return normalizeBytes(decompressed)
   }
 
   if (typeof DecompressionStream === 'undefined')

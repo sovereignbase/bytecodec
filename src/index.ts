@@ -8,11 +8,11 @@ import {
 import { bytesFromGzipBytes, bytesToGzipBytes } from './gzip/index.js'
 import { bytesFromUTF8String, bytesToUTF8String } from './utf8/index.js'
 import {
-  bytesEqualsBytes,
-  concatBytesToUint8Array,
-  deriveBytesToUint8Array,
-  generateBytesToUint8Array,
-  normalizeBytesToUint8Array,
+  equalBytes,
+  concatBytes,
+  deriveBytes,
+  generateBytes,
+  normalizeBytes,
 } from './util/index.js'
 /**
  * A supported byte input source accepted by the codec helpers.
@@ -51,22 +51,22 @@ export class Bytes {
   }
 
   static concat(sources: ByteSource[]): Uint8Array {
-    return concatBytesToUint8Array(sources)
+    return concatBytes(sources)
   }
 
   static equals(a: ByteSource, b: ByteSource): boolean {
-    return bytesEqualsBytes(a, b)
+    return equalBytes(a, b)
   }
 
   static derive(base: Uint8Array, domain: Uint8Array, byteLength: number) {
-    return deriveBytesToUint8Array(base, domain, byteLength)
+    return deriveBytes(base, domain, byteLength)
   }
 
   static generate(byteLength: number) {
-    return generateBytesToUint8Array(byteLength)
+    return generateBytes(byteLength)
   }
 
   static normalize(bytes: ByteSource): Uint8Array {
-    return normalizeBytesToUint8Array(bytes)
+    return normalizeBytes(bytes)
   }
 }

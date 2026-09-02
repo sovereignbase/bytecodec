@@ -1,9 +1,3 @@
-export const textEncoder =
-  typeof TextEncoder !== 'undefined' ? new TextEncoder() : null
-
-export const textDecoder =
-  typeof TextDecoder !== 'undefined' ? new TextDecoder() : null
-
 /**
  * Returns `true` when the current runtime exposes a Node.js version marker.
  *

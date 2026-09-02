@@ -1,5 +1,5 @@
 import { BytecodecError } from '../.errors/class.js'
-import { normalizeBytesToUint8Array } from '../util/index.js'
+import { normalizeBytes } from '../util/index.js'
 import type { ByteSource } from '../index.js'
 
 /**
@@ -9,7 +9,7 @@ import type { ByteSource } from '../index.js'
  * @returns A base64 string representation of `bytes`.
  */
 export function bytesToBase64String(bytes: ByteSource): string {
-  const view = normalizeBytesToUint8Array(bytes)
+  const view = normalizeBytes(bytes)
   if (typeof Buffer !== 'undefined' && typeof Buffer.from === 'function')
     return Buffer.from(view).toString('base64')
 
