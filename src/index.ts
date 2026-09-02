@@ -34,10 +34,11 @@ export class Bytes {
   static readonly base64 = {
     encode: bytesToBase64String,
     decode: bytesFromBase64String,
-    url: {
-      encode: bytesToBase64UrlString,
-      decode: bytesFromBase64UrlString,
-    },
+  }
+
+  static readonly base64url = {
+    encode: bytesToBase64UrlString,
+    decode: bytesFromBase64UrlString,
   }
 
   static readonly utf8 = {

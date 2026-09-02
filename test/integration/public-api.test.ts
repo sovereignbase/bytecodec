@@ -43,14 +43,14 @@ describe('published package API', () => {
     const bytes = SourceBytes.utf8.decode(text)
     const base45Encoded = SourceBytes.base45.encode(bytes)
     const base64Encoded = SourceBytes.base64.encode(bytes)
-    const base64UrlEncoded = SourceBytes.base64.url.encode(bytes)
+    const base64UrlEncoded = SourceBytes.base64url.encode(bytes)
     const compressed = await SourceBytes.gzip.encode(bytes)
 
     expect(
       SourceBytes.utf8.encode(SourceBytes.base45.decode(base45Encoded))
     ).toBe(text)
     expect(SourceBytes.base64.decode(base64Encoded)).toEqual(bytes)
-    expect(SourceBytes.base64.url.decode(base64UrlEncoded)).toEqual(bytes)
+    expect(SourceBytes.base64url.decode(base64UrlEncoded)).toEqual(bytes)
     expect(await SourceBytes.gzip.decode(compressed)).toEqual(bytes)
     expect(SourceBytes.concat([bytes, [1]])).toEqual(
       new Uint8Array([...bytes, 1])

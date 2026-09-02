@@ -50,5 +50,18 @@ const pending: Array<Promise<Uint8Array>> = [
   bytesFromGzipBytes(source),
   deriveBytes(source, source, 8),
 ]
+const encoding = 'base64url' as const
+const encodedWithWrapper: string = Bytes[encoding].encode(source)
+const decodedWithWrapper: Uint8Array =
+  Bytes[encoding].decode(encodedWithWrapper)
 
-void [Bytes, errorCode, concatenated, equal, generated, decoded, pending]
+void [
+  Bytes,
+  errorCode,
+  concatenated,
+  equal,
+  generated,
+  decoded,
+  pending,
+  decodedWithWrapper,
+]

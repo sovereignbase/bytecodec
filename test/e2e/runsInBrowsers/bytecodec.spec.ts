@@ -87,7 +87,9 @@ test('loads focused entrypoints and runs every codec in a browser', async ({
       base64: base64.bytesToBase64String(bytes),
       roundTrip: utf8.bytesToUTF8String(restored),
       derivedLength: derived.length,
-      wrapper: root.Bytes.utf8.encode(root.Bytes.utf8.decode(text)),
+      wrapper: root.Bytes.utf8.encode(
+        root.Bytes.base64url.decode(root.Bytes.base64url.encode(bytes))
+      ),
     }
   })
 

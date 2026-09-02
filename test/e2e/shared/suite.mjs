@@ -158,6 +158,11 @@ export async function runBytecodecSuite(api, options = {}) {
       'wrapper',
       'Bytes Base64 wrapper'
     )
+    assertEqual(
+      Bytes.utf8.encode(Bytes.base64url.decode(Bytes.base64url.encode(bytes))),
+      'wrapper',
+      'Bytes Base64URL wrapper'
+    )
     if (gzipAvailable) {
       const compressed = await Bytes.gzip.encode(bytes)
       assertBytes(

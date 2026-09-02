@@ -56,8 +56,9 @@ Type-only exports in the table do not add runtime exports. The root runtime surf
 import { Bytes } from '@sovereignbase/bytecodec'
 
 const bytes = Bytes.utf8.decode('hello ✓')
-const encoded = Bytes.base64.url.encode(bytes)
-const decoded = Bytes.base64.url.decode(encoded)
+const encoding = 'base64url'
+const encoded = Bytes[encoding].encode(bytes)
+const decoded = Bytes[encoding].decode(encoded)
 const text = Bytes.utf8.encode(decoded)
 ```
 
@@ -71,8 +72,9 @@ Bytes.base45.decode(base45String)
 
 Bytes.base64.encode(bytes)
 Bytes.base64.decode(base64String)
-Bytes.base64.url.encode(bytes)
-Bytes.base64.url.decode(base64UrlString)
+
+Bytes.base64url.encode(bytes)
+Bytes.base64url.decode(base64UrlString)
 
 Bytes.utf8.encode(bytes)
 Bytes.utf8.decode(text)
