@@ -20,7 +20,14 @@ const apache2Banner = [
 ].join('\n')
 
 export default defineConfig({
-  entry: ['src/index.ts'],
+  entry: {
+    index: 'src/index.ts',
+    'base45/index': 'src/base45/index.ts',
+    'base64/index': 'src/base64/index.ts',
+    'gzip/index': 'src/gzip/index.ts',
+    'utf8/index': 'src/utf8/index.ts',
+    'util/index': 'src/util/index.ts',
+  },
   format: ['esm', 'cjs'],
   outDir: 'dist',
   platform: 'neutral',

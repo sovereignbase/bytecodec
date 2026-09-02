@@ -1,6 +1,13 @@
 {
   "$schema": "https://typedoc.org/schema.json",
-  "entryPoints": ["src/index.ts"],
+  "entryPoints": [
+    "src/index.ts",
+    "src/base45/index.ts",
+    "src/base64/index.ts",
+    "src/gzip/index.ts",
+    "src/utf8/index.ts",
+    "src/util/index.ts"
+  ],
   "out": "docs",
   "favicon": "https://sovereignbase.dev/sovereignbase_logo.png"
 }

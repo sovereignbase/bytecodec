@@ -11,7 +11,7 @@ export function concatBytes(sources: ByteSource[]): Uint8Array {
   if (!Array.isArray(sources))
     throw new BytecodecError(
       'CONCAT_INVALID_INPUT',
-      'concat expects an array of ByteSource items'
+      'concatBytes expects an array of ByteSource items'
     )
 
   if (sources.length === 0) return new Uint8Array(0)
@@ -23,7 +23,7 @@ export function concatBytes(sources: ByteSource[]): Uint8Array {
       const message = error instanceof Error ? error.message : String(error)
       throw new BytecodecError(
         'CONCAT_NORMALIZE_FAILED',
-        `concat failed to normalize input at index ${index}: ${message}`
+        `concatBytes failed to normalize input at index ${index}: ${message}`
       )
     }
   })
@@ -149,6 +149,6 @@ export async function deriveBytes(
 
 export function generateBytes(byteLength: number): Uint8Array {
   const buffer = new Uint8Array(byteLength)
-  void crypto.getRandomValues(new Uint8Array(byteLength))
+  void crypto.getRandomValues(buffer)
   return buffer
 }

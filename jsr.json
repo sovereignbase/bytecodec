@@ -1,8 +1,15 @@
 {
   "$schema": "https://jsr.io/schema/config-file.v1.json",
   "name": "@sovereignbase/bytecodec",
-  "version": "0.0.0",
-  "exports": "./src/index.ts",
+  "version": "1.7.0",
+  "exports": {
+    ".": "./src/index.ts",
+    "./base45": "./src/base45/index.ts",
+    "./base64": "./src/base64/index.ts",
+    "./gzip": "./src/gzip/index.ts",
+    "./utf8": "./src/utf8/index.ts",
+    "./util": "./src/util/index.ts"
+  },
   "publish": {
     "include": [
       "package.json",

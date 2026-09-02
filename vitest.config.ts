@@ -3,14 +3,13 @@ import { defineConfig } from 'vitest/config'
 /** Runs the unit and integration suites with strict V8 coverage thresholds. */
 export default defineConfig({
   test: {
-    include: ['test/unit/**/*.test.js', 'test/integration/**/*.test.js'],
+    include: ['test/unit/**/*.test.ts', 'test/integration/**/*.test.ts'],
     environment: 'node',
     fileParallelism: false,
     coverage: {
       enabled: true,
       provider: 'v8',
-      include: ['dist/**/*.js'],
-      exclude: ['dist/**/*.d.ts'],
+      include: ['src/**/*.ts'],
       reporter: ['text', 'lcov'],
       reportOnFailure: true,
       thresholds: {

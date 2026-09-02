@@ -58,11 +58,15 @@ export class Bytes {
     return equalBytes(a, b)
   }
 
-  static derive(base: Uint8Array, domain: Uint8Array, byteLength: number) {
+  static derive(
+    base: ByteSource,
+    domain: ByteSource,
+    byteLength: number
+  ): Promise<Uint8Array> {
     return deriveBytes(base, domain, byteLength)
   }
 
-  static generate(byteLength: number) {
+  static generate(byteLength: number): Uint8Array {
     return generateBytes(byteLength)
   }
 

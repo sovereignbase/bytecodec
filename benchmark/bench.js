@@ -1,255 +1,123 @@
-import { performance } from 'node:perf_hooks'
 import { randomBytes } from 'node:crypto'
+import { performance } from 'node:perf_hooks'
 import {
-  concat,
-  equals,
-  fromBase58BtcString,
-  fromBase58String,
-  fromBase64String,
-  fromBase64UrlString,
-  fromBigInt,
-  fromCompressed,
-  fromHex,
-  fromJSON,
-  fromString,
-  fromZ85String,
-  toArrayBuffer,
-  toBase58BtcString,
-  toBase58String,
-  toBase64String,
-  toBase64UrlString,
-  toBigInt,
-  toBufferSource,
-  toCompressed,
-  toHex,
-  toJSON,
-  toString,
-  toUint8Array,
-  toZ85String,
-} from '../dist/index.js'
+  bytesFromBase45String,
+  bytesToBase45String,
+} from '../dist/base45/index.js'
+import {
+  bytesFromBase64String,
+  bytesFromBase64UrlString,
+  bytesToBase64String,
+  bytesToBase64UrlString,
+} from '../dist/base64/index.js'
+import { bytesFromGzipBytes, bytesToGzipBytes } from '../dist/gzip/index.js'
+import { bytesFromUTF8String, bytesToUTF8String } from '../dist/utf8/index.js'
+import {
+  concatBytes,
+  deriveBytes,
+  equalBytes,
+  generateBytes,
+  normalizeBytes,
+} from '../dist/util/index.js'
 
 const OPERATIONS = 5_000
-const NAME_HEADER = 'benchmark'
 const COLUMN_SEPARATOR = ' | '
 
-function measure(iterations, fn) {
+function measure(iterations, callback) {
   const start = performance.now()
-  for (let i = 0; i < iterations; i++) fn()
-  const durationMs = performance.now() - start
-  return toStats(iterations, durationMs)
+  for (let index = 0; index < iterations; index++) callback()
+  return toStats(iterations, performance.now() - start)
 }
 
-async function measureAsync(iterations, fn) {
+async function measureAsync(iterations, callback) {
   const start = performance.now()
-  for (let i = 0; i < iterations; i++) await fn()
-  const durationMs = performance.now() - start
-  return toStats(iterations, durationMs)
+  for (let index = 0; index < iterations; index++) await callback()
+  return toStats(iterations, performance.now() - start)
 }
 
-function toStats(iterations, durationMs) {
+function toStats(iterations, milliseconds) {
   return {
     ops: iterations,
-    ms: durationMs,
-    msPerOp: durationMs / iterations,
-    opsPerSec: (iterations / durationMs) * 1000,
+    ms: milliseconds,
+    msPerOp: milliseconds / iterations,
+    opsPerSec: (iterations / milliseconds) * 1_000,
   }
 }
 
-function formatInt(value) {
-  return Math.round(value).toLocaleString('en-US')
-}
-
-function formatMs(value) {
-  return value.toFixed(3)
-}
-
-function formatMsPerOp(value) {
-  return value.toFixed(6)
-}
+const formatInteger = (value) => Math.round(value).toLocaleString('en-US')
+const formatMilliseconds = (value) => value.toFixed(3)
+const formatMillisecondsPerOperation = (value) => value.toFixed(6)
 
 function formatResults(results) {
-  const nameWidth = Math.max(
-    NAME_HEADER.length,
-    ...results.map((result) => result.name.length)
+  const columns = [
+    ['benchmark', (result) => result.name],
+    ['ops', (result) => formatInteger(result.ops)],
+    ['ms', (result) => formatMilliseconds(result.ms)],
+    ['ms/op', (result) => formatMillisecondsPerOperation(result.msPerOp)],
+    ['ops/sec', (result) => formatInteger(result.opsPerSec)],
+  ]
+  const widths = columns.map(([heading, format]) =>
+    Math.max(heading.length, ...results.map((result) => format(result).length))
   )
-  const opsWidth = Math.max(
-    'ops'.length,
-    ...results.map((result) => formatInt(result.ops).length)
-  )
-  const msWidth = Math.max(
-    'ms'.length,
-    ...results.map((result) => formatMs(result.ms).length)
-  )
-  const msPerOpWidth = Math.max(
-    'ms/op'.length,
-    ...results.map((result) => formatMsPerOp(result.msPerOp).length)
-  )
-  const opsPerSecWidth = Math.max(
-    'ops/sec'.length,
-    ...results.map((result) => formatInt(result.opsPerSec).length)
-  )
+  const row = (values) =>
+    values
+      .map((value, index) =>
+        index === 0
+          ? value.padEnd(widths[index])
+          : value.padStart(widths[index])
+      )
+      .join(COLUMN_SEPARATOR)
 
-  const header = [
-    NAME_HEADER.padEnd(nameWidth),
-    'ops'.padStart(opsWidth),
-    'ms'.padStart(msWidth),
-    'ms/op'.padStart(msPerOpWidth),
-    'ops/sec'.padStart(opsPerSecWidth),
-  ].join(COLUMN_SEPARATOR)
-
-  const divider = [
-    '-'.repeat(nameWidth),
-    '-'.repeat(opsWidth),
-    '-'.repeat(msWidth),
-    '-'.repeat(msPerOpWidth),
-    '-'.repeat(opsPerSecWidth),
-  ].join(COLUMN_SEPARATOR)
-
-  const rows = results.map((result) =>
-    [
-      result.name.padEnd(nameWidth),
-      formatInt(result.ops).padStart(opsWidth),
-      formatMs(result.ms).padStart(msWidth),
-      formatMsPerOp(result.msPerOp).padStart(msPerOpWidth),
-      formatInt(result.opsPerSec).padStart(opsPerSecWidth),
-    ].join(COLUMN_SEPARATOR)
-  )
-
-  return [header, divider, ...rows].join('\n')
+  return [
+    row(columns.map(([heading]) => heading)),
+    row(widths.map((width) => '-'.repeat(width))),
+    ...results.map((result) =>
+      row(columns.map(([, format]) => format(result)))
+    ),
+  ].join('\n')
 }
 
 console.log('Benchmarking @sovereignbase/bytecodec...')
-console.log(`Operations per benchmark: ${formatInt(OPERATIONS)}`)
+console.log(`Operations per benchmark: ${formatInteger(OPERATIONS)}`)
 
-const sampleBytes = randomBytes(64)
-const sampleBytesDiff = Uint8Array.from(sampleBytes, (value, idx) =>
-  idx === sampleBytes.length - 1 ? value ^ 1 : value
+const bytes = randomBytes(64)
+const differentBytes = Uint8Array.from(bytes, (value, index) =>
+  index === bytes.length - 1 ? value ^ 1 : value
 )
-const sampleView = new DataView(sampleBytes.buffer, 0, sampleBytes.byteLength)
-const sampleText = 'caffeinated rockets at dawn'
-const sampleTextBytes = fromString(sampleText)
-const sampleBigInt = 0x1234567890abcdef1234567890abcdefn
-const sampleBigIntBytes = fromBigInt(sampleBigInt)
-const sampleJson = { ok: true, count: 42, note: '@sovereignbase/bytecodec' }
-const sampleJsonBytes = fromJSON(sampleJson)
-const base58 = toBase58String(sampleBytes)
-const base58Btc = toBase58BtcString(sampleBytes)
-const base64 = toBase64String(sampleBytes)
-const base64Url = toBase64UrlString(sampleBytes)
-const hex = toHex(sampleBytes)
-const z85 = toZ85String(sampleBytes)
-const compressed = await toCompressed(sampleBytes)
+const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)
+const text = 'caffeinated rockets at dawn ✓'
+const textBytes = bytesFromUTF8String(text)
+const base45 = bytesToBase45String(bytes)
+const base64 = bytesToBase64String(bytes)
+const base64url = bytesToBase64UrlString(bytes)
+const compressed = await bytesToGzipBytes(bytes)
 const results = []
 
-results.push({
-  name: 'base58 encode',
-  ...measure(OPERATIONS, () => toBase58String(sampleBytes)),
-})
-results.push({
-  name: 'base58 decode',
-  ...measure(OPERATIONS, () => fromBase58String(base58)),
-})
-results.push({
-  name: 'base58btc encode',
-  ...measure(OPERATIONS, () => toBase58BtcString(sampleBytes)),
-})
-results.push({
-  name: 'base58btc decode',
-  ...measure(OPERATIONS, () => fromBase58BtcString(base58Btc)),
-})
-results.push({
-  name: 'base64 encode',
-  ...measure(OPERATIONS, () => toBase64String(sampleBytes)),
-})
-results.push({
-  name: 'base64 decode',
-  ...measure(OPERATIONS, () => fromBase64String(base64)),
-})
-results.push({
-  name: 'base64url encode',
-  ...measure(OPERATIONS, () => toBase64UrlString(sampleBytes)),
-})
-results.push({
-  name: 'base64url decode',
-  ...measure(OPERATIONS, () => fromBase64UrlString(base64Url)),
-})
-results.push({
-  name: 'hex encode',
-  ...measure(OPERATIONS, () => toHex(sampleBytes)),
-})
-results.push({
-  name: 'hex decode',
-  ...measure(OPERATIONS, () => fromHex(hex)),
-})
-results.push({
-  name: 'z85 encode',
-  ...measure(OPERATIONS, () => toZ85String(sampleBytes)),
-})
-results.push({
-  name: 'z85 decode',
-  ...measure(OPERATIONS, () => fromZ85String(z85)),
-})
-results.push({
-  name: 'utf8 encode',
-  ...measure(OPERATIONS, () => fromString(sampleText)),
-})
-results.push({
-  name: 'utf8 decode',
-  ...measure(OPERATIONS, () => toString(sampleTextBytes)),
-})
-results.push({
-  name: 'bigint encode',
-  ...measure(OPERATIONS, () => fromBigInt(sampleBigInt)),
-})
-results.push({
-  name: 'bigint decode',
-  ...measure(OPERATIONS, () => toBigInt(sampleBigIntBytes)),
-})
-results.push({
-  name: 'json encode',
-  ...measure(OPERATIONS, () => fromJSON(sampleJson)),
-})
-results.push({
-  name: 'json decode',
-  ...measure(OPERATIONS, () => toJSON(sampleJsonBytes)),
-})
-results.push({
-  name: 'concat 3 buffers',
-  ...measure(OPERATIONS, () => concat([sampleBytes, sampleBytes, sampleBytes])),
-})
-results.push({
-  name: 'toUint8Array',
-  ...measure(OPERATIONS, () => toUint8Array(sampleView)),
-})
-results.push({
-  name: 'toArrayBuffer',
-  ...measure(OPERATIONS, () => toArrayBuffer(sampleView)),
-})
-results.push({
-  name: 'toBufferSource',
-  ...measure(OPERATIONS, () => toBufferSource(sampleView)),
-})
-results.push({
-  name: 'equals same',
-  ...measure(OPERATIONS, () => equals(sampleBytes, sampleBytes)),
-})
-results.push({
-  name: 'equals diff',
-  ...measure(OPERATIONS, () => equals(sampleBytes, sampleBytesDiff)),
-})
-results.push({
-  name: 'gzip compress',
-  ...(await measureAsync(OPERATIONS, async () => {
-    await toCompressed(sampleBytes)
-  })),
-})
-results.push({
-  name: 'gzip decompress',
-  ...(await measureAsync(OPERATIONS, async () => {
-    await fromCompressed(compressed)
-  })),
-})
+for (const [name, callback] of [
+  ['base45 encode', () => bytesToBase45String(bytes)],
+  ['base45 decode', () => bytesFromBase45String(base45)],
+  ['base64 encode', () => bytesToBase64String(bytes)],
+  ['base64 decode', () => bytesFromBase64String(base64)],
+  ['base64url encode', () => bytesToBase64UrlString(bytes)],
+  ['base64url decode', () => bytesFromBase64UrlString(base64url)],
+  ['utf8 encode', () => bytesFromUTF8String(text)],
+  ['utf8 decode', () => bytesToUTF8String(textBytes)],
+  ['normalize', () => normalizeBytes(view)],
+  ['concat 3 buffers', () => concatBytes([bytes, bytes, bytes])],
+  ['equals same', () => equalBytes(bytes, bytes)],
+  ['equals different', () => equalBytes(bytes, differentBytes)],
+  ['generate', () => generateBytes(64)],
+]) {
+  results.push({ name, ...measure(OPERATIONS, callback) })
+}
+
+for (const [name, callback] of [
+  ['derive HKDF', () => deriveBytes(bytes, textBytes, 32)],
+  ['gzip compress', () => bytesToGzipBytes(bytes)],
+  ['gzip decompress', () => bytesFromGzipBytes(compressed)],
+]) {
+  results.push({ name, ...(await measureAsync(OPERATIONS, callback)) })
+}
 
 console.log(formatResults(results))
-
 console.log('Benchmark complete.')

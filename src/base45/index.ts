@@ -2,7 +2,7 @@ import { BytecodecError } from '../.errors/class.js'
 import { normalizeBytes } from '../util/index.js'
 import type { ByteSource } from '../index.js'
 
-let base45Chars: string
+const base45Chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:'
 let base45Values: Int16Array
 
 /**
@@ -13,9 +13,6 @@ let base45Values: Int16Array
  */
 export function bytesToBase45String(bytes: ByteSource): string {
   const view = normalizeBytes(bytes)
-  if (!base45Chars)
-    base45Chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:'
-
   let base45String = ''
 
   for (let offset = 0; offset + 1 < view.length; offset += 2) {
@@ -46,7 +43,7 @@ export function bytesFromBase45String(base45String: string): Uint8Array {
   if (typeof base45String !== 'string')
     throw new BytecodecError(
       'BASE45_INPUT_EXPECTED',
-      'fromBase45String expects a string input'
+      'bytesFromBase45String expects a string input'
     )
 
   if (base45String.length % 3 === 1)
@@ -112,8 +109,6 @@ function toBase45Digit(base45String: string, stringOffset: number): number {
 }
 
 function prepareBase45Values(): Int16Array {
-  if (!base45Chars)
-    base45Chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:'
   const table = new Int16Array(128).fill(-1)
   for (let i = 0; i < base45Chars.length; i++) {
     table[base45Chars.charCodeAt(i)] = i

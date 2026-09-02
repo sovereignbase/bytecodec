@@ -1,7 +1,7 @@
 {
   "name": "@sovereignbase/bytecodec",
   "version": "1.7.0",
-  "description": "JS/TS runtime-agnostic byte toolkit for UTF-8, base45, base58, base58btc, base64, base64url, hex, Z85, unsigned BigInt conversion, JSON, normalization, compression, concatenation, and comparison.",
+  "description": "Runtime-agnostic TypeScript byte codecs for Base45, Base64, UTF-8, gzip, derivation, generation, normalization, concatenation, and comparison.",
   "keywords": [
     "base45",
     "base64url",
@@ -44,6 +44,36 @@
       "require": "./dist/index.cjs",
       "default": "./dist/index.js"
     },
+    "./base45": {
+      "types": "./dist/base45/index.d.ts",
+      "import": "./dist/base45/index.js",
+      "require": "./dist/base45/index.cjs",
+      "default": "./dist/base45/index.js"
+    },
+    "./base64": {
+      "types": "./dist/base64/index.d.ts",
+      "import": "./dist/base64/index.js",
+      "require": "./dist/base64/index.cjs",
+      "default": "./dist/base64/index.js"
+    },
+    "./gzip": {
+      "types": "./dist/gzip/index.d.ts",
+      "import": "./dist/gzip/index.js",
+      "require": "./dist/gzip/index.cjs",
+      "default": "./dist/gzip/index.js"
+    },
+    "./utf8": {
+      "types": "./dist/utf8/index.d.ts",
+      "import": "./dist/utf8/index.js",
+      "require": "./dist/utf8/index.cjs",
+      "default": "./dist/utf8/index.js"
+    },
+    "./util": {
+      "types": "./dist/util/index.d.ts",
+      "import": "./dist/util/index.js",
+      "require": "./dist/util/index.cjs",
+      "default": "./dist/util/index.js"
+    },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -54,7 +84,7 @@
   "bugs": {
     "url": "https://github.com/sovereignbase/bytecodec/issues"
   },
-  "homepage": "https://github.com/sovereignbase/bytecodec#readme",
+  "homepage": "https://sovereignbase.dev/bytecodec",
   "files": [
     "dist",
     "LICENSE",
@@ -62,23 +92,24 @@
   ],
   "scripts": {
     "format": "prettier . --write",
-    "build": "tsup",
-    "test": "npm run build && node test/run-coverage.mjs && node test/e2e/run.mjs",
+    "format:check": "prettier . --check",
+    "build": "npm run build:package && npm run build:docs",
+    "build:package": "tsdown",
+    "build:docs": "typedoc",
+    "test": "npm run build && npm run typecheck && npm run test:vitest && npm run test:e2e",
+    "typecheck": "tsc --noEmit --project test/tsconfig.json",
+    "test:vitest": "vitest run --coverage",
+    "test:e2e": "npm run test:e2e:browsers && npm run test:e2e:runtimes",
+    "test:e2e:browsers": "playwright test",
+    "test:e2e:runtimes": "npm run test:e2e:node && npm run test:e2e:bun && npm run test:e2e:deno && npm run test:e2e:edge && npm run test:e2e:cloudflare",
+    "test:e2e:node": "node test/e2e/runsInNode/runner.mjs",
+    "test:e2e:bun": "bun test/e2e/runsInBun/runner.mjs",
+    "test:e2e:deno": "deno run test/e2e/runsInDeno/runner.mjs",
+    "test:e2e:edge": "node test/e2e/runsInEdgeRuntimes/runner.mjs",
+    "test:e2e:cloudflare": "node test/e2e/runsInCloudflareWorkers/run.mjs",
     "bench": "npm run build && node benchmark/bench.js",
     "prepare": "husky",
     "prepublishOnly": "npm run test && npm run bench"
-  },
-  "c8": {
-    "all": true,
-    "include": [
-      "dist/**/*.js"
-    ],
-    "exclude": [
-      "dist/**/*.d.ts",
-      "test/**",
-      "benchmark/**",
-      "playwright.config.ts"
-    ]
   },
   "devDependencies": {
     "@cloudflare/vitest-plugin": "^1.1.2",
@@ -88,6 +119,7 @@
     "@types/node": "^26.4.0",
     "@vitest/coverage-v8": "^4.1.11",
     "edge-runtime": "^4.0.1",
+    "esbuild": "^0.28.2",
     "husky": "^9.1.7",
     "playwright": "^1.62.1",
     "prettier": "^3.9.6",

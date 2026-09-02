@@ -39,7 +39,7 @@ export function bytesFromUTF8String(text: string): Uint8Array {
   if (typeof text !== 'string')
     throw new BytecodecError(
       'STRING_INPUT_EXPECTED',
-      'fromString expects a string input'
+      'bytesFromUTF8String expects a string input'
     )
 
   if (typeof TextEncoder !== 'undefined') {

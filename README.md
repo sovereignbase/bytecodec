@@ -1,27 +1,22 @@
 [![npm version](https://img.shields.io/npm/v/@sovereignbase/bytecodec)](https://www.npmjs.com/package/@sovereignbase/bytecodec)
+[![JSR version](https://jsr.io/badges/@sovereignbase/bytecodec)](https://jsr.io/@sovereignbase/bytecodec)
 [![CI](https://github.com/sovereignbase/bytecodec/actions/workflows/ci.yaml/badge.svg?branch=master)](https://github.com/sovereignbase/bytecodec/actions/workflows/ci.yaml)
 [![codecov](https://codecov.io/gh/sovereignbase/bytecodec/branch/master/graph/badge.svg)](https://codecov.io/gh/sovereignbase/bytecodec)
 [![license](https://img.shields.io/npm/l/@sovereignbase/bytecodec)](LICENSE)
 
 # bytecodec
 
-Typed JavaScript and TypeScript byte utilities for base45, base58, base58btc, base64, base64url, hex, Z85, UTF-8 strings, unsigned BigInt conversion, JSON, gzip, concatenation, comparison, and byte-source normalization. The package ships tree-shakeable ESM plus CommonJS entry points and keeps the same API across Node, Bun, Deno, browsers, and edge runtimes.
+Runtime-agnostic TypeScript byte codecs for Base45, Base64, UTF-8, gzip, HKDF derivation, secure random generation, normalization, concatenation, and comparison.
+
+The root entrypoint provides the declarative `Bytes` API. Focused subpath exports let applications import only the codec or utilities they need.
 
 ## Compatibility
 
-- Runtimes: Node, Bun, Deno, browsers, Cloudflare Workers, and edge runtimes.
-- Module formats: ESM by default, with CommonJS exports for `require()` consumers in Node and Bun.
-- Node and Bun runtime behavior: uses `Buffer` for base64 helpers and `node:zlib` for gzip.
-- Browser and edge gzip support requires `CompressionStream` and `DecompressionStream`.
-- TypeScript: bundled types.
-
-## Goals
-
-- Developer-friendly API.
-- No runtime dependencies or bundler shims.
-- Tree-shakeable ESM by default with CommonJS compatibility and no side effects.
-- Returns copies for safety when normalizing inputs.
-- Consistent behavior across Node, browsers, and edge runtimes.
+- Runtimes: Node.js, Bun, Deno, modern browsers, Cloudflare Workers, and edge runtimes.
+- Formats: tree-shakeable ESM and CommonJS.
+- TypeScript: strict bundled declarations for the root and every subpath.
+- Dependencies: no runtime dependencies or bundler shims.
+- Gzip: `node:zlib` in Node-like runtimes; `CompressionStream` and `DecompressionStream` elsewhere.
 
 ## Installation
 
@@ -39,255 +34,238 @@ deno add jsr:@sovereignbase/bytecodec
 vlt install jsr:@sovereignbase/bytecodec
 ```
 
+## Entry points
+
+| Import                                  | Exports                                                                       |
+| --------------------------------------- | ----------------------------------------------------------------------------- |
+| `@sovereignbase/bytecodec`              | `Bytes`, `ByteSource`, `BytecodecErrorCode`                                   |
+| `@sovereignbase/bytecodec/base45`       | `bytesToBase45String`, `bytesFromBase45String`                                |
+| `@sovereignbase/bytecodec/base64`       | Base64 and unpadded Base64URL encode/decode functions                         |
+| `@sovereignbase/bytecodec/utf8`         | `bytesToUTF8String`, `bytesFromUTF8String`                                    |
+| `@sovereignbase/bytecodec/gzip`         | `bytesToGzipBytes`, `bytesFromGzipBytes`                                      |
+| `@sovereignbase/bytecodec/util`         | `normalizeBytes`, `concatBytes`, `equalBytes`, `deriveBytes`, `generateBytes` |
+| `@sovereignbase/bytecodec/package.json` | Package metadata                                                              |
+
+Type-only exports in the table do not add runtime exports. The root runtime surface intentionally contains only `Bytes`.
+
 ## Usage
 
-### Bytes wrapper
+### Declarative `Bytes` API
 
-```js
+```ts
 import { Bytes } from '@sovereignbase/bytecodec'
 
-// The `Bytes` convenience class wraps the same functions as static methods.
-const encoded = Bytes.toBase64String(new Uint8Array([1, 2, 3])) // base64 string
+const bytes = Bytes.utf8.decode('hello ✓')
+const encoded = Bytes.base64.url.encode(bytes)
+const decoded = Bytes.base64.url.decode(encoded)
+const text = Bytes.utf8.encode(decoded)
 ```
 
-### Base64
+Codec directions are consistent: `encode` converts bytes into the codec representation and `decode` converts that representation back into bytes. For UTF-8, the representation is a JavaScript string; for gzip, both sides are bytes.
 
-```js
-import { toBase64String, fromBase64String } from '@sovereignbase/bytecodec'
+The complete wrapper surface is:
 
-const bytes = new Uint8Array([104, 101, 108, 108, 111])
-const encoded = toBase64String(bytes) // string of base64 chars
-const decoded = fromBase64String(encoded) // Uint8Array
+```ts
+Bytes.base45.encode(bytes)
+Bytes.base45.decode(base45String)
+
+Bytes.base64.encode(bytes)
+Bytes.base64.decode(base64String)
+Bytes.base64.url.encode(bytes)
+Bytes.base64.url.decode(base64UrlString)
+
+Bytes.utf8.encode(bytes)
+Bytes.utf8.decode(text)
+
+await Bytes.gzip.encode(bytes)
+await Bytes.gzip.decode(compressedBytes)
+
+Bytes.normalize(bytes)
+Bytes.concat([first, second])
+Bytes.equals(first, second)
+await Bytes.derive(base, domain, byteLength)
+Bytes.generate(byteLength)
+```
+
+### Focused imports
+
+Focused entrypoints avoid loading the root wrapper and unrelated codecs.
+
+```ts
+import {
+  bytesFromUTF8String,
+  bytesToUTF8String,
+} from '@sovereignbase/bytecodec/utf8'
+import {
+  bytesFromBase64UrlString,
+  bytesToBase64UrlString,
+} from '@sovereignbase/bytecodec/base64'
+
+const bytes = bytesFromUTF8String('split import')
+const encoded = bytesToBase64UrlString(bytes)
+const restored = bytesToUTF8String(bytesFromBase64UrlString(encoded))
 ```
 
 ### Base45
 
-```js
-import { toBase45String, fromBase45String } from '@sovereignbase/bytecodec'
+```ts
+import {
+  bytesFromBase45String,
+  bytesToBase45String,
+} from '@sovereignbase/bytecodec/base45'
 
-const bytes = new Uint8Array([65, 66])
-const encoded = toBase45String(bytes) // "BB8"
-const decoded = fromBase45String(encoded) // Uint8Array
+const encoded = bytesToBase45String(new Uint8Array([65, 66])) // "BB8"
+const decoded = bytesFromBase45String(encoded)
 ```
 
-Base45 is convenient for QR-friendly payloads. It encodes 2 input bytes into 3 output characters, and a trailing single byte into 2 characters.
-The implementation follows RFC 9285.
+Base45 follows RFC 9285 and is useful for QR-friendly payloads.
 
-### Base58
+### Base64 and Base64URL
 
-```js
-import { toBase58String, fromBase58String } from '@sovereignbase/bytecodec'
+```ts
+import {
+  bytesFromBase64String,
+  bytesFromBase64UrlString,
+  bytesToBase64String,
+  bytesToBase64UrlString,
+} from '@sovereignbase/bytecodec/base64'
 
 const bytes = new Uint8Array([104, 101, 108, 108, 111])
-const encoded = toBase58String(bytes) // "Cn8eVZg"
-const decoded = fromBase58String(encoded) // Uint8Array
+bytesToBase64String(bytes) // "aGVsbG8="
+bytesToBase64UrlString(bytes) // "aGVsbG8" (unpadded)
+bytesFromBase64String('aGVsbG8=')
+bytesFromBase64UrlString('aGVsbG8')
 ```
 
-### Base58btc
+### UTF-8
 
-```js
+```ts
 import {
-  toBase58BtcString,
-  fromBase58BtcString,
-} from '@sovereignbase/bytecodec'
+  bytesFromUTF8String,
+  bytesToUTF8String,
+} from '@sovereignbase/bytecodec/utf8'
 
-const bytes = new Uint8Array([104, 101, 108, 108, 111])
-const encoded = toBase58BtcString(bytes) // "zCn8eVZg"
-const decoded = fromBase58BtcString(encoded) // Uint8Array
+const bytes = bytesFromUTF8String('café ✓ 🚀')
+const text = bytesToUTF8String(bytes)
 ```
 
-`base58btc` uses the Bitcoin base58 alphabet and adds the multibase `z` prefix.
+### Gzip
 
-### CommonJS
-
-```js
-const { toBase64String, fromBase64String } = require('@sovereignbase/bytecodec')
-
-const encoded = toBase64String([104, 101, 108, 108, 111]) // string of base64 chars
-const decoded = fromBase64String(encoded) // Uint8Array
-```
-
-### Base64URL
-
-```js
+```ts
 import {
-  toBase64UrlString,
-  fromBase64UrlString,
-} from '@sovereignbase/bytecodec'
+  bytesFromGzipBytes,
+  bytesToGzipBytes,
+} from '@sovereignbase/bytecodec/gzip'
 
-const bytes = new Uint8Array([104, 101, 108, 108, 111])
-const encoded = toBase64UrlString(bytes) // string of base64url chars
-const decoded = fromBase64UrlString(encoded) // Uint8Array
+const compressed = await bytesToGzipBytes(new Uint8Array([1, 2, 3]))
+const restored = await bytesFromGzipBytes(compressed)
 ```
 
-### Hex
+### Byte utilities
 
-```js
-import { toHex, fromHex } from '@sovereignbase/bytecodec'
-
-const bytes = new Uint8Array([222, 173, 190, 239])
-const encoded = toHex(bytes) // "deadbeef"
-const decoded = fromHex(encoded) // Uint8Array
-```
-
-### Z85
-
-```js
-import { toZ85String, fromZ85String } from '@sovereignbase/bytecodec'
-
-const bytes = new Uint8Array([0x86, 0x4f, 0xd2, 0x6f, 0xb5, 0x59, 0xf7, 0x5b])
-const encoded = toZ85String(bytes) // "HelloWorld"
-const decoded = fromZ85String(encoded) // Uint8Array
-```
-
-Z85 encodes 4 input bytes into 5 output characters, so `toZ85String()` requires a byte length divisible by 4 and `fromZ85String()` requires a string length divisible by 5.
-
-### UTF-8 strings
-
-```js
-import { fromString, toString } from '@sovereignbase/bytecodec'
-
-const textBytes = fromString('caffe and rockets') // Uint8Array
-const text = toString(textBytes) // "caffe and rockets"
-```
-
-### BigInt
-
-```js
-import { fromBigInt, toBigInt } from '@sovereignbase/bytecodec'
-
-const bytes = fromBigInt(0x1234n) // Uint8Array([0x12, 0x34])
-const value = toBigInt(bytes) // 0x1234n
-```
-
-BigInt helpers use unsigned big-endian encoding. `fromBigInt(0n)` returns an empty `Uint8Array`, because no byte width is implied.
-Leading zero bytes are not preserved, so the helpers model integers rather than fixed-width binary fields.
-
-### JSON
-
-```js
-import { fromJSON, toJSON } from '@sovereignbase/bytecodec'
-
-const jsonBytes = fromJSON({ ok: true, count: 3 }) // Uint8Array
-const obj = toJSON(jsonBytes) // { ok: true, count: 3 }
-```
-
-### Compression
-
-```js
-import { toCompressed, fromCompressed } from '@sovereignbase/bytecodec'
-
-const compressed = await toCompressed(new Uint8Array([1, 2, 3])) // Uint8Array
-const restored = await fromCompressed(compressed) // Uint8Array
-```
-
-### Normalization
-
-```js
+```ts
 import {
-  toUint8Array,
-  toArrayBuffer,
-  toBufferSource,
-} from '@sovereignbase/bytecodec'
+  concatBytes,
+  deriveBytes,
+  equalBytes,
+  generateBytes,
+  normalizeBytes,
+} from '@sovereignbase/bytecodec/util'
 
-const normalized = toUint8Array([1, 2, 3]) // Uint8Array
-const copied = toArrayBuffer(normalized) // ArrayBuffer
-const bufferSource = toBufferSource(normalized) // Uint8Array as BufferSource
+const normalized = normalizeBytes(new DataView(new Uint8Array([1, 2]).buffer))
+const joined = concatBytes([normalized, [3, 4]])
+const equal = equalBytes(joined, new Uint8Array([1, 2, 3, 4]))
+const derived = await deriveBytes(joined, new Uint8Array([5]), 32)
+const random = generateBytes(32)
 ```
 
-Accepted byte inputs (`ByteSource`) are:
+`deriveBytes()` uses HKDF-SHA-256 and treats `base` as the salt and `domain` as the context information. The same inputs and byte length produce the same result. Use a distinct domain for every purpose.
+
+All functions accepting `ByteSource` support:
 
 - `ArrayBuffer`
 - `SharedArrayBuffer`
-- `ArrayBufferView`
+- any `ArrayBufferView`, including `Uint8Array` and `DataView`
 - `number[]`
 
-### Equality
+`normalizeBytes()` always returns an independent `Uint8Array` copy. `concatBytes()` also normalizes every input before joining it.
+
+### CommonJS
+
+Every npm entrypoint has a matching CommonJS export.
 
 ```js
-import { equals } from '@sovereignbase/bytecodec'
-
-const isSame = equals(new Uint8Array([1, 2, 3]), new Uint8Array([1, 2, 3])) // true | false
+const { Bytes } = require('@sovereignbase/bytecodec')
+const { bytesFromUTF8String } = require('@sovereignbase/bytecodec/utf8')
 ```
 
-### Concatenating
+## Errors
 
-```js
-import { concat } from '@sovereignbase/bytecodec'
+Package validation and runtime-capability failures throw `BytecodecError` instances. Each error has:
 
-const joined = concat([new Uint8Array([1, 2]), new Uint8Array([3, 4]), [5, 6]]) // Uint8Array
+- `name: "BytecodecError"`
+- a stable `code` typed as `BytecodecErrorCode`
+- a message prefixed with `{@sovereignbase/bytecodec}`
+
+Codes cover invalid Base45/Base64URL input, unsupported byte sources, invalid concatenation, invalid UTF-8 input, unavailable Base64/UTF-8 codecs, and unavailable gzip APIs.
+
+```ts
+import type { BytecodecErrorCode } from '@sovereignbase/bytecodec'
+
+try {
+  Bytes.base45.decode('A')
+} catch (error) {
+  const code = (error as { code: BytecodecErrorCode }).code
+  // "BASE45_INVALID_LENGTH"
+}
 ```
 
 ## Runtime behavior
 
-### Node
+Node.js and Bun use `Buffer` for Base64 and `node:zlib` for gzip. Browsers, Cloudflare Workers, Deno, and compatible edge runtimes use standard web APIs. An edge runtime without compression streams can still use every non-gzip entrypoint; gzip calls fail with a structured availability error.
 
-Uses pure JavaScript for base45/base58/base58btc, `Buffer.from` for base64 helpers, `TextEncoder` and `TextDecoder` when available with `Buffer` fallback for UTF-8, and `node:zlib` for gzip.
-
-### Bun
-
-Uses the same API shape as Node. ESM and CommonJS entry points are both exported.
-
-### Browsers / Edge runtimes
-
-Uses `TextEncoder`, `TextDecoder`, `btoa`, and `atob`. Gzip uses `CompressionStream` and `DecompressionStream` when available.
-
-### Validation & errors
-
-Validation failures throw `BytecodecError` instances with a `code` string, for example `BASE45_INVALID_CHUNK`, `BASE58_INVALID_CHARACTER`, `BASE58BTC_INVALID_PREFIX`, `BASE64URL_INVALID_LENGTH`, `BIGINT_UNSIGNED_EXPECTED`, `HEX_INVALID_CHARACTER`, `Z85_INVALID_BLOCK`, `BASE64_DECODER_UNAVAILABLE`, `UTF8_DECODER_UNAVAILABLE`, and `GZIP_COMPRESSION_UNAVAILABLE`. Messages are prefixed with `{@sovereignbase/bytecodec}`.
-
-### Safety / copying semantics
-
-`toUint8Array`, `toArrayBuffer`, and `toBufferSource` always return copies. `concat` normalizes each input to a fresh `Uint8Array` before joining.
+The package has no side effects. Multi-entry builds share internal chunks while allowing bundlers and runtimes to resolve only the requested public subpath.
 
 ## Tests
 
-`npm test` covers:
+`npm test` runs:
 
-- 97 unit tests
-- 10 integration tests
-- Node E2E: 29/29 passed in ESM and 29/29 passed in CommonJS
-- Bun E2E: 29/29 passed in ESM and 29/29 passed in CommonJS
-- Deno E2E: 29/29 passed in ESM
-- Cloudflare Workers E2E: 29/29 passed in ESM
-- Edge Runtime E2E: 29/29 passed in ESM
-- Browser E2E: 5/5 passed in Chromium, Firefox, WebKit, mobile-chrome, and mobile-safari
-- Coverage gate: 100% statements, branches, functions, and lines
+- a TypeScript typecheck of source, configuration, tests, and all package entrypoints;
+- 27 Vitest unit/integration tests with a 100% statements, branches, functions, and lines coverage gate;
+- ESM and CommonJS runtime suites in Node.js and Bun;
+- ESM runtime suites in Deno, Cloudflare Workers, and Edge Runtime;
+- Playwright tests in Chromium, Firefox, WebKit, mobile Chromium, mobile Firefox, and mobile WebKit.
+
+Useful focused commands include `npm run test:vitest`, `npm run test:e2e:browsers`, and `npm run test:e2e:runtimes`.
+
+## API documentation
+
+Generate the TypeDoc API reference with `npm run build:docs`. The published reference is available at [sovereignbase.dev/bytecodec](https://sovereignbase.dev/bytecodec).
 
 ## Benchmarks
 
-Latest local `npm run bench` run on 2026-04-17 with Node `v22.14.0 (win32 x64)`. Each benchmark uses the same `5,000` operations:
+`npm run bench` builds the package and benchmarks every public capability. A local run on 2026-09-02 with Node.js 24.16.0 on Windows x64 produced:
 
-| Benchmark        | Ops   | Ms       | Ms/Op    | Ops/Sec   |
-| ---------------- | ----- | -------- | -------- | --------- |
-| base58 encode    | 5,000 | 378.548  | 0.075710 | 13,208    |
-| base58 decode    | 5,000 | 64.313   | 0.012863 | 77,745    |
-| base58btc encode | 5,000 | 318.044  | 0.063609 | 15,721    |
-| base58btc decode | 5,000 | 56.138   | 0.011228 | 89,066    |
-| base64 encode    | 5,000 | 16.971   | 0.003394 | 294,629   |
-| base64 decode    | 5,000 | 13.244   | 0.002649 | 377,541   |
-| base64url encode | 5,000 | 23.162   | 0.004632 | 215,867   |
-| base64url decode | 5,000 | 22.993   | 0.004599 | 217,454   |
-| hex encode       | 5,000 | 18.494   | 0.003699 | 270,361   |
-| hex decode       | 5,000 | 10.099   | 0.002020 | 495,084   |
-| z85 encode       | 5,000 | 65.417   | 0.013083 | 76,433    |
-| z85 decode       | 5,000 | 11.928   | 0.002386 | 419,171   |
-| utf8 encode      | 5,000 | 9.949    | 0.001990 | 502,583   |
-| utf8 decode      | 5,000 | 4.835    | 0.000967 | 1,034,105 |
-| bigint encode    | 5,000 | 17.098   | 0.003420 | 292,435   |
-| bigint decode    | 5,000 | 21.104   | 0.004221 | 236,922   |
-| json encode      | 5,000 | 10.640   | 0.002128 | 469,912   |
-| json decode      | 5,000 | 11.192   | 0.002238 | 446,740   |
-| concat 3 buffers | 5,000 | 28.862   | 0.005772 | 173,240   |
-| toUint8Array     | 5,000 | 4.866    | 0.000973 | 1,027,475 |
-| toArrayBuffer    | 5,000 | 13.325   | 0.002665 | 375,229   |
-| toBufferSource   | 5,000 | 3.412    | 0.000682 | 1,465,373 |
-| equals same      | 5,000 | 9.302    | 0.001860 | 537,536   |
-| equals diff      | 5,000 | 5.908    | 0.001182 | 846,267   |
-| gzip compress    | 5,000 | 1370.000 | 0.274000 | 3,650     |
-| gzip decompress  | 5,000 | 1493.242 | 0.298648 | 3,348     |
+| Benchmark        | Operations |   Ops/sec |
+| ---------------- | ---------: | --------: |
+| Base45 encode    |      5,000 |   457,641 |
+| Base45 decode    |      5,000 |   667,067 |
+| Base64 encode    |      5,000 |   674,372 |
+| Base64 decode    |      5,000 | 1,586,546 |
+| Base64URL encode |      5,000 |   724,186 |
+| Base64URL decode |      5,000 |   866,912 |
+| UTF-8 encode     |      5,000 | 1,349,455 |
+| UTF-8 decode     |      5,000 | 1,602,102 |
+| Normalize        |      5,000 | 5,221,387 |
+| Concatenate      |      5,000 |   597,001 |
+| Compare equal    |      5,000 | 1,495,573 |
+| Compare unequal  |      5,000 | 2,264,493 |
+| Generate random  |      5,000 |   297,134 |
+| HKDF derive      |      5,000 |    12,060 |
+| Gzip compress    |      5,000 |     6,324 |
+| Gzip decompress  |      5,000 |     8,866 |
 
-Results vary by machine and Node version.
+Results vary by machine, runtime, input, and system load.
 
 ## License
 
