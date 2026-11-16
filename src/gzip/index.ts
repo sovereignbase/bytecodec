@@ -1,4 +1,4 @@
-import { BytecodecError } from '../.errors/class.js'
+import { BytecodecError, unknownError } from '../.errors/class.js'
 import { importNodeBuiltin, isNodeRuntime } from '../.helpers/index.js'
 import { normalizeBytes } from '../util/index.js'
 import type { ByteSource } from '../index.js'
@@ -7,30 +7,70 @@ import type { ByteSource } from '../index.js'
  * Compresses bytes using gzip.
  *
  * @param bytes The bytes to compress.
- * @returns A promise that resolves to a new `Uint8Array` containing the gzip payload.
+ * @returns A promise that resolves to a new `Uint8Array<ArrayBuffer>` containing the gzip payload.
  */
-export async function bytesToGzipBytes(bytes: ByteSource): Promise<Uint8Array> {
-  const view = normalizeBytes(bytes)
+export async function bytesToGzipBytes(
+  bytes: ByteSource
+): Promise<Uint8Array<ArrayBuffer>> {
+  try {
+    const view = normalizeBytes(bytes)
 
-  // Node: use built-in zlib
-  if (isNodeRuntime()) {
-    const { gzip } =
-      await importNodeBuiltin<typeof import('node:zlib')>('node:zlib')
-    const { promisify } =
-      await importNodeBuiltin<typeof import('node:util')>('node:util')
-    const gzipAsync = promisify(gzip)
-    const compressed = await gzipAsync(view)
-    return normalizeBytes(compressed)
+    // Node: use built-in zlib
+    if (isNodeRuntime()) {
+      const { gzip } =
+        await importNodeBuiltin<typeof import('node:zlib')>('node:zlib')
+      const { promisify } =
+        await importNodeBuiltin<typeof import('node:util')>('node:util')
+      const gzipAsync = promisify(gzip)
+      const compressed = await gzipAsync(view)
+      return normalizeBytes(compressed)
+    }
+
+    // Browser/edge runtimes: CompressionStream with gzip
+    if (typeof CompressionStream === 'undefined')
+      throw new BytecodecError(
+        'GZIP_COMPRESSION_UNAVAILABLE',
+        'gzip compression not available in this environment.'
+      )
+
+    return compressWithStream(view, 'gzip')
+  } catch (cause) {
+    throw unknownError(cause, 'Bytes.gzip.encode()')
   }
+}
 
-  // Browser/edge runtimes: CompressionStream with gzip
-  if (typeof CompressionStream === 'undefined')
-    throw new BytecodecError(
-      'GZIP_COMPRESSION_UNAVAILABLE',
-      'gzip compression not available in this environment.'
-    )
+/**
+ * Decompresses gzip-compressed bytes.
+ *
+ * @param bytes The gzip-compressed bytes to decompress.
+ * @returns A promise that resolves to a new `Uint8Array<ArrayBuffer>` containing the decompressed bytes.
+ */
+export async function bytesFromGzipBytes(
+  bytes: ByteSource
+): Promise<Uint8Array<ArrayBuffer>> {
+  try {
+    const view = normalizeBytes(bytes)
 
-  return compressWithStream(view, 'gzip')
+    if (isNodeRuntime()) {
+      const { gunzip } =
+        await importNodeBuiltin<typeof import('node:zlib')>('node:zlib')
+      const { promisify } =
+        await importNodeBuiltin<typeof import('node:util')>('node:util')
+      const gunzipAsync = promisify(gunzip)
+      const decompressed = await gunzipAsync(view)
+      return normalizeBytes(decompressed)
+    }
+
+    if (typeof DecompressionStream === 'undefined')
+      throw new BytecodecError(
+        'GZIP_DECOMPRESSION_UNAVAILABLE',
+        'gzip decompression not available in this environment.'
+      )
+
+    return decompressWithStream(view, 'gzip')
+  } catch (cause) {
+    throw unknownError(cause, 'Bytes.gzip.decode()')
+  }
 }
 
 /**
@@ -49,36 +89,6 @@ async function compressWithStream(
     .pipeThrough(new CompressionStream(format))
   const arrayBuffer = await new Response(compressedStream).arrayBuffer()
   return new Uint8Array(arrayBuffer)
-}
-
-/**
- * Decompresses gzip-compressed bytes.
- *
- * @param bytes The gzip-compressed bytes to decompress.
- * @returns A promise that resolves to a new `Uint8Array` containing the decompressed bytes.
- */
-export async function bytesFromGzipBytes(
-  bytes: ByteSource
-): Promise<Uint8Array> {
-  const view = normalizeBytes(bytes)
-
-  if (isNodeRuntime()) {
-    const { gunzip } =
-      await importNodeBuiltin<typeof import('node:zlib')>('node:zlib')
-    const { promisify } =
-      await importNodeBuiltin<typeof import('node:util')>('node:util')
-    const gunzipAsync = promisify(gunzip)
-    const decompressed = await gunzipAsync(view)
-    return normalizeBytes(decompressed)
-  }
-
-  if (typeof DecompressionStream === 'undefined')
-    throw new BytecodecError(
-      'GZIP_DECOMPRESSION_UNAVAILABLE',
-      'gzip decompression not available in this environment.'
-    )
-
-  return decompressWithStream(view, 'gzip')
 }
 
 /**

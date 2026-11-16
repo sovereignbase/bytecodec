@@ -17,6 +17,7 @@ export type BytecodecErrorCode =
   | 'STRING_INPUT_EXPECTED'
   | 'UTF8_DECODER_UNAVAILABLE'
   | 'UTF8_ENCODER_UNAVAILABLE'
+  | 'UNKNOWN_ERROR'
 
 /**
  * Error type used by the bytecodec helpers to expose a stable error code.
@@ -32,11 +33,31 @@ export class BytecodecError extends Error {
    *
    * @param code Stable error code describing the failure category.
    * @param message Optional human-readable detail appended to the package prefix.
+   * @param options Error options, including the original cause.
    */
-  constructor(code: BytecodecErrorCode, message?: string) {
+  constructor(
+    code: BytecodecErrorCode,
+    message?: string,
+    options?: ErrorOptions
+  ) {
     const detail = message ?? code
-    super(`{@sovereignbase/bytecodec} ${detail}`)
+    super(`{@sovereignbase/bytecodec} ${detail}`, options)
     this.code = code
     this.name = 'BytecodecError'
   }
+}
+
+/**
+ * Preserves an existing library error or wraps an unexpected failure once.
+ * @param cause The value thrown by the failed operation.
+ * @param operation The operation name to include in the error message.
+ * @returns The original library error, or an `UNKNOWN_ERROR` retaining `cause`.
+ */
+export function unknownError(
+  cause: unknown,
+  operation: string
+): BytecodecError {
+  return cause instanceof BytecodecError
+    ? cause
+    : new BytecodecError('UNKNOWN_ERROR', `${operation} failed.`, { cause })
 }

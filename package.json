@@ -112,21 +112,25 @@
     "prepublishOnly": "npm run test && npm run bench"
   },
   "devDependencies": {
-    "@cloudflare/vitest-plugin": "^1.4.1",
-    "@commitlint/cli": "^21.2.3",
-    "@commitlint/config-conventional": "^21.2.3",
-    "@playwright/test": "^1.64.0",
-    "@types/node": "^26.6.5",
-    "@vitest/coverage-v8": "^5.0.4",
+    "@cloudflare/vitest-plugin": "^1.8.2",
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
+    "@playwright/test": "^1.65.1",
+    "@types/node": "^26.6.6",
+    "@vitest/coverage-v8": "^5.1.0",
     "edge-runtime": "^4.0.1",
     "esbuild": "^0.28.2",
     "husky": "^9.1.7",
-    "playwright": "^1.64.0",
-    "prettier": "^3.9.10",
-    "tsdown": "^0.23.1",
+    "playwright": "^1.65.1",
+    "prettier": "^3.10.1",
+    "tsdown": "^0.23.7",
     "typedoc": "^0.28.20",
     "typescript": "^6.0.3",
-    "vitest": "^5.0.4",
-    "wrangler": "^4.150.0"
+    "vitest": "^5.1.0",
+    "wrangler": "^4.162.0"
+  },
+  "allowScripts": {
+    "workerd@1.20261113.1": true,
+    "esbuild@0.28.2": true
   }
 }
