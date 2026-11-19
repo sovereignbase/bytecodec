@@ -75,7 +75,7 @@ export function bytesToBase64UrlString(bytes: ByteSource): Base64URLString {
     const base64 = bytesToBase64String(bytes)
     return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '')
   } catch (cause) {
-    throw unknownError(cause, 'Bytes.base45.encode()')
+    throw unknownError(cause, 'Bytes.base64url.encode()')
   }
 }
 

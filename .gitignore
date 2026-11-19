@@ -21,3 +21,6 @@ test-results/
 Thumbs.db
 
 .wrangler/
+test/.results/
+benchmark/.results/
+playwright-report/

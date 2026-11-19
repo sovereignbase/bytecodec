@@ -5,3 +5,6 @@ playwright-report
 *.lock
 CHANGELOG.md
 docs
+
+test/.results
+benchmark/.results

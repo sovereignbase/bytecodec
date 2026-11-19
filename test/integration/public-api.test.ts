@@ -1,6 +1,6 @@
 import { createRequire } from 'node:module'
 import { describe, expect, it } from 'vitest'
-import { Bytes } from '@sovereignbase/bytecodec'
+import * as root from '@sovereignbase/bytecodec'
 import * as base45 from '@sovereignbase/bytecodec/base45'
 import * as base64 from '@sovereignbase/bytecodec/base64'
 import * as gzip from '@sovereignbase/bytecodec/gzip'
@@ -10,7 +10,7 @@ import { Bytes as SourceBytes } from '../../src/index.js'
 
 describe('published package API', () => {
   it('exposes the intentionally small root API and focused subpaths', () => {
-    expect(Object.keys({ Bytes })).toEqual(['Bytes'])
+    expect(Object.keys(root).sort()).toEqual(['BytecodecError', 'Bytes'])
     expect(Object.keys(base45).sort()).toEqual([
       'bytesFromBase45String',
       'bytesToBase45String',
@@ -63,7 +63,10 @@ describe('published package API', () => {
   it('provides the same subpaths to CommonJS consumers', () => {
     const require = createRequire(import.meta.url)
 
-    expect(Object.keys(require('@sovereignbase/bytecodec'))).toEqual(['Bytes'])
+    expect(Object.keys(require('@sovereignbase/bytecodec')).sort()).toEqual([
+      'BytecodecError',
+      'Bytes',
+    ])
     expect(
       require('@sovereignbase/bytecodec/utf8').bytesFromUTF8String('cjs')
     ).toEqual(new Uint8Array([99, 106, 115]))
