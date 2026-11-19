@@ -6,7 +6,7 @@ import { ensurePassing, printResults } from '../shared/suite.mjs'
 const entry = resolve(
   process.cwd(),
   'test',
-  'e2e',
+  'compatibility',
   'runsInEdgeRuntimes',
   'entry.mjs'
 )

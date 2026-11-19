@@ -13,14 +13,14 @@ const MAX_LOG_LINES = 200
 const config = resolve(
   root,
   'test',
-  'e2e',
+  'compatibility',
   'runsInCloudflareWorkers',
   'wrangler.jsonc'
 )
 const workerEntry = resolve(
   root,
   'test',
-  'e2e',
+  'compatibility',
   'runsInCloudflareWorkers',
   'worker.mjs'
 )

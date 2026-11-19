@@ -21,7 +21,7 @@ export function concatBytes(sources: ByteSource[]): Uint8Array<ArrayBuffer> {
       try {
         return normalizeBytes(source)
       } catch (error) {
-        const message = error instanceof Error ? error.message : String(error)
+        const message = unknownError(error, 'Bytes.normalize()').message
         throw new BytecodecError(
           'CONCAT_NORMALIZE_FAILED',
           `concatBytes failed to normalize input at index ${index}: ${message}`
@@ -118,8 +118,8 @@ let ikm: CryptoKey
  * @param domain - HKDF context information identifying the derived value's use.
  * @param byteLength - Number of output bytes to derive.
  * @returns A promise that resolves to exactly `byteLength` derived bytes.
- * @throws A `DOMException` when Web Crypto rejects an unsupported or invalid
- * derivation request, including an invalid output length.
+ * @throws A `BytecodecError` with the original failure in `cause` when Web
+ * Crypto rejects the request, including an invalid output length.
  *
  * @example Derive a 32-byte key for one application domain.
  * ```ts
@@ -151,8 +151,8 @@ export async function deriveBytes(
         {
           name: 'HKDF',
           hash: 'SHA-256',
-          salt: normalizeBytes(base) as BufferSource,
-          info: normalizeBytes(domain) as BufferSource,
+          salt: normalizeBytes(base),
+          info: normalizeBytes(domain),
         },
         ikm,
         byteLength * 8

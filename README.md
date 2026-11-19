@@ -8,7 +8,16 @@
 
 Runtime-agnostic TypeScript byte codecs for Base45, Base64, UTF-8, gzip, HKDF derivation, secure random generation, normalization, concatenation, and comparison.
 
-The root entrypoint provides the declarative `Bytes` API. Focused subpath exports let applications import only the codec or utilities they need.
+## Contents
+
+- [Compatibility](#compatibility)
+- [Bytes API](#bytes-api)
+- [Base45](#base45) · [Usage](#base45-usage) · [Errors](#base45-errors) · [Benchmarks](#base45-benchmarks) · [Tests](#base45-tests)
+- [Base64 and Base64URL](#base64-and-base64url) · [Usage](#base64-usage) · [Errors](#base64-errors) · [Benchmarks](#base64-benchmarks) · [Tests](#base64-tests)
+- [UTF-8](#utf-8) · [Usage](#utf8-usage) · [Errors](#utf8-errors) · [Benchmarks](#utf8-benchmarks) · [Tests](#utf8-tests)
+- [Gzip](#gzip) · [Usage](#gzip-usage) · [Errors](#gzip-errors) · [Benchmarks](#gzip-benchmarks) · [Tests](#gzip-tests)
+- [Byte utilities](#byte-utilities) · [Usage](#util-usage) · [Errors](#util-errors) · [Benchmarks](#util-benchmarks) · [Tests](#util-tests)
+- [License](#license)
 
 ## Compatibility
 
@@ -18,55 +27,13 @@ The root entrypoint provides the declarative `Bytes` API. Focused subpath export
 - Dependencies: no runtime dependencies or bundler shims.
 - Gzip: `node:zlib` in Node-like runtimes; `CompressionStream` and `DecompressionStream` elsewhere.
 
-## Installation
-
-```sh
-npm install @sovereignbase/bytecodec
-# or
-pnpm add @sovereignbase/bytecodec
-# or
-yarn add @sovereignbase/bytecodec
-# or
-bun add @sovereignbase/bytecodec
-# or
-deno add jsr:@sovereignbase/bytecodec
-# or
-vlt install jsr:@sovereignbase/bytecodec
-```
-
-## Entry points
-
-| Import                                  | Exports                                                                       |
-| --------------------------------------- | ----------------------------------------------------------------------------- |
-| `@sovereignbase/bytecodec`              | `Bytes`, `ByteSource`, `BytecodecErrorCode`                                   |
-| `@sovereignbase/bytecodec/base45`       | `bytesToBase45String`, `bytesFromBase45String`                                |
-| `@sovereignbase/bytecodec/base64`       | Base64 and unpadded Base64URL encode/decode functions                         |
-| `@sovereignbase/bytecodec/utf8`         | `bytesToUTF8String`, `bytesFromUTF8String`                                    |
-| `@sovereignbase/bytecodec/gzip`         | `bytesToGzipBytes`, `bytesFromGzipBytes`                                      |
-| `@sovereignbase/bytecodec/util`         | `normalizeBytes`, `concatBytes`, `equalBytes`, `deriveBytes`, `generateBytes` |
-| `@sovereignbase/bytecodec/package.json` | Package metadata                                                              |
-
-Type-only exports in the table do not add runtime exports. The root runtime surface intentionally contains only `Bytes`.
-
-## Usage
+## Bytes API
 
 ### Declarative `Bytes` API
 
 ```ts
 import { Bytes } from '@sovereignbase/bytecodec'
 
-const bytes = Bytes.utf8.decode('hello ✓')
-const encoding = 'base64url'
-const encoded = Bytes[encoding].encode(bytes)
-const decoded = Bytes[encoding].decode(encoded)
-const text = Bytes.utf8.encode(decoded)
-```
-
-Codec directions are consistent: `encode` converts bytes into the codec representation and `decode` converts that representation back into bytes. For UTF-8, the representation is a JavaScript string; for gzip, both sides are bytes.
-
-The complete wrapper surface is:
-
-```ts
 Bytes.base45.encode(bytes)
 Bytes.base45.decode(base45String)
 
@@ -89,26 +56,15 @@ await Bytes.derive(base, domain, byteLength)
 Bytes.generate(byteLength)
 ```
 
-### Focused imports
+Codec directions are consistent: `encode` converts bytes into the codec representation and `decode` converts that representation back into bytes.
 
-Focused entrypoints avoid loading the root wrapper and unrelated codecs.
+The root also exports `BytecodecError` for `instanceof` checks and the `ByteSource` and `BytecodecErrorCode` types. Validation errors expose a stable `code`; unexpected wrapped failures use `UNKNOWN_ERROR` and retain the original `cause`.
 
-```ts
-import {
-  bytesFromUTF8String,
-  bytesToUTF8String,
-} from '@sovereignbase/bytecodec/utf8'
-import {
-  bytesFromBase64UrlString,
-  bytesToBase64UrlString,
-} from '@sovereignbase/bytecodec/base64'
+## Base45
 
-const bytes = bytesFromUTF8String('split import')
-const encoded = bytesToBase64UrlString(bytes)
-const restored = bytesToUTF8String(bytesFromBase64UrlString(encoded))
-```
+<a id="base45-usage"></a>
 
-### Base45
+### Usage
 
 ```ts
 import {
@@ -122,7 +78,80 @@ const decoded = bytesFromBase45String(encoded)
 
 Base45 follows RFC 9285 and is useful for QR-friendly payloads.
 
-### Base64 and Base64URL
+<a id="base45-errors"></a>
+
+### Errors
+
+Invalid text is reported as BASE45_INPUT_EXPECTED, BASE45_INVALID_LENGTH, BASE45_INVALID_CHARACTER or BASE45_INVALID_CHUNK.
+
+<a id="base45-benchmarks"></a>
+
+### Benchmarks
+
+<!-- BEGIN GENERATED:base45:benchmarks -->
+
+2026-11-19T14:31:08.442Z · local run · commit `cca7177`
+
+Node v24.16.0 · win32 x64
+
+Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz · 1,000 measured calls per case after warmup
+
+| Operation | Input bytes | Ops/sec |
+| --------- | ----------: | ------: |
+| encode    |          64 | 141,237 |
+| decode    |          64 | 238,317 |
+| encode    |        1024 |  31,255 |
+| decode    |        1024 |  67,955 |
+| encode    |       16384 |   2,048 |
+| decode    |       16384 |   3,433 |
+
+<!-- END GENERATED:base45:benchmarks -->
+
+<a id="base45-tests"></a>
+
+### Tests
+
+<!-- BEGIN GENERATED:base45:tests -->
+
+2026-11-19T14:28:15.863Z · local run · commit `cca7177`
+
+Node v24.16.0 · win32 x64
+
+| Suite            | Passed | Failed | Skipped |
+| ---------------- | -----: | -----: | ------: |
+| base45 (2 files) |     35 |      0 |       0 |
+
+| Coverage | statements | branches | functions | lines |
+| -------- | ---------: | -------: | --------: | ----: |
+| Percent  |       100% |     100% |      100% |  100% |
+
+#### Compatibility
+
+The shared compatibility suite exercises the whole public API.
+
+| Runtime / browser      |      Version | Status | Passed | Failed |
+| ---------------------- | -----------: | -----: | -----: | -----: |
+| node esm               |      24.16.0 | passed |      9 |      0 |
+| node cjs               |      24.16.0 | passed |      9 |      0 |
+| bun esm                |       1.3.10 | passed |      9 |      0 |
+| bun cjs                |       1.3.10 | passed |      9 |      0 |
+| deno esm               |        2.8.3 | passed |      9 |      0 |
+| edge-runtime esm       |        4.0.1 | passed |      9 |      0 |
+| cloudflare-workers esm | 1.20261118.1 | passed |      9 |      0 |
+| chromium               | 159.0.8154.6 | passed |      1 |      0 |
+| firefox                |            — | failed |      0 |      1 |
+| webkit                 |         27.2 | passed |      1 |      0 |
+| mobile-chromium        | 159.0.8154.6 | passed |      1 |      0 |
+| mobile-firefox         |            — | failed |      0 |      1 |
+| mobile-webkit          |         27.2 | passed |      1 |      0 |
+
+<!-- END GENERATED:base45:tests -->
+
+## Base64 and Base64URL
+
+<a id="base64-usage"></a>
+
+### Usage
 
 ```ts
 import {
@@ -139,7 +168,86 @@ bytesFromBase64String('aGVsbG8=')
 bytesFromBase64UrlString('aGVsbG8')
 ```
 
-### UTF-8
+<a id="base64-errors"></a>
+
+### Errors
+
+Unavailable runtime APIs throw BASE64_ENCODER_UNAVAILABLE or BASE64_DECODER_UNAVAILABLE. Base64URL length modulo four must not equal one (BASE64URL_INVALID_LENGTH). Other parsing behavior follows the runtime Base64 decoder.
+
+<a id="base64-benchmarks"></a>
+
+### Benchmarks
+
+<!-- BEGIN GENERATED:base64:benchmarks -->
+
+2026-11-19T14:31:09.132Z · local run · commit `cca7177`
+
+Node v24.16.0 · win32 x64
+
+Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz · 1,000 measured calls per case after warmup
+
+| Operation        | Input bytes | Ops/sec |
+| ---------------- | ----------: | ------: |
+| base64 encode    |          64 | 116,532 |
+| base64 decode    |          64 | 297,628 |
+| base64url encode |          64 | 281,698 |
+| base64url decode |          64 | 496,376 |
+| base64 encode    |        1024 | 209,258 |
+| base64 decode    |        1024 | 160,377 |
+| base64url encode |        1024 |  82,570 |
+| base64url decode |        1024 |  96,676 |
+| base64 encode    |       16384 |  18,179 |
+| base64 decode    |       16384 |  20,135 |
+| base64url encode |       16384 |   8,358 |
+| base64url decode |       16384 |  13,444 |
+
+<!-- END GENERATED:base64:benchmarks -->
+
+<a id="base64-tests"></a>
+
+### Tests
+
+<!-- BEGIN GENERATED:base64:tests -->
+
+2026-11-19T14:28:15.863Z · local run · commit `cca7177`
+
+Node v24.16.0 · win32 x64
+
+| Suite            | Passed | Failed | Skipped |
+| ---------------- | -----: | -----: | ------: |
+| base64 (2 files) |     34 |      0 |       0 |
+
+| Coverage | statements | branches | functions | lines |
+| -------- | ---------: | -------: | --------: | ----: |
+| Percent  |       100% |     100% |      100% |  100% |
+
+#### Compatibility
+
+The shared compatibility suite exercises the whole public API.
+
+| Runtime / browser      |      Version | Status | Passed | Failed |
+| ---------------------- | -----------: | -----: | -----: | -----: |
+| node esm               |      24.16.0 | passed |      9 |      0 |
+| node cjs               |      24.16.0 | passed |      9 |      0 |
+| bun esm                |       1.3.10 | passed |      9 |      0 |
+| bun cjs                |       1.3.10 | passed |      9 |      0 |
+| deno esm               |        2.8.3 | passed |      9 |      0 |
+| edge-runtime esm       |        4.0.1 | passed |      9 |      0 |
+| cloudflare-workers esm | 1.20261118.1 | passed |      9 |      0 |
+| chromium               | 159.0.8154.6 | passed |      1 |      0 |
+| firefox                |            — | failed |      0 |      1 |
+| webkit                 |         27.2 | passed |      1 |      0 |
+| mobile-chromium        | 159.0.8154.6 | passed |      1 |      0 |
+| mobile-firefox         |            — | failed |      0 |      1 |
+| mobile-webkit          |         27.2 | passed |      1 |      0 |
+
+<!-- END GENERATED:base64:tests -->
+
+## UTF-8
+
+<a id="utf8-usage"></a>
+
+### Usage
 
 ```ts
 import {
@@ -151,7 +259,80 @@ const bytes = bytesFromUTF8String('café ✓ 🚀')
 const text = bytesToUTF8String(bytes)
 ```
 
-### Gzip
+<a id="utf8-errors"></a>
+
+### Errors
+
+Non-string text input throws STRING_INPUT_EXPECTED. Missing codecs throw UTF8_ENCODER_UNAVAILABLE or UTF8_DECODER_UNAVAILABLE.
+
+<a id="utf8-benchmarks"></a>
+
+### Benchmarks
+
+<!-- BEGIN GENERATED:utf8:benchmarks -->
+
+2026-11-19T14:31:09.535Z · local run · commit `cca7177`
+
+Node v24.16.0 · win32 x64
+
+Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz · 1,000 measured calls per case after warmup
+
+| Operation               | Input bytes | Ops/sec |
+| ----------------------- | ----------: | ------: |
+| encode (bytes → string) |          64 | 336,383 |
+| decode (string → bytes) |          64 | 429,627 |
+| encode (bytes → string) |        1024 | 164,864 |
+| decode (string → bytes) |        1024 | 138,968 |
+| encode (bytes → string) |       16384 |  32,916 |
+| decode (string → bytes) |       16384 |   9,672 |
+
+<!-- END GENERATED:utf8:benchmarks -->
+
+<a id="utf8-tests"></a>
+
+### Tests
+
+<!-- BEGIN GENERATED:utf8:tests -->
+
+2026-11-19T14:28:15.863Z · local run · commit `cca7177`
+
+Node v24.16.0 · win32 x64
+
+| Suite          | Passed | Failed | Skipped |
+| -------------- | -----: | -----: | ------: |
+| utf8 (2 files) |     32 |      0 |       0 |
+
+| Coverage | statements | branches | functions | lines |
+| -------- | ---------: | -------: | --------: | ----: |
+| Percent  |       100% |     100% |      100% |  100% |
+
+#### Compatibility
+
+The shared compatibility suite exercises the whole public API.
+
+| Runtime / browser      |      Version | Status | Passed | Failed |
+| ---------------------- | -----------: | -----: | -----: | -----: |
+| node esm               |      24.16.0 | passed |      9 |      0 |
+| node cjs               |      24.16.0 | passed |      9 |      0 |
+| bun esm                |       1.3.10 | passed |      9 |      0 |
+| bun cjs                |       1.3.10 | passed |      9 |      0 |
+| deno esm               |        2.8.3 | passed |      9 |      0 |
+| edge-runtime esm       |        4.0.1 | passed |      9 |      0 |
+| cloudflare-workers esm | 1.20261118.1 | passed |      9 |      0 |
+| chromium               | 159.0.8154.6 | passed |      1 |      0 |
+| firefox                |            — | failed |      0 |      1 |
+| webkit                 |         27.2 | passed |      1 |      0 |
+| mobile-chromium        | 159.0.8154.6 | passed |      1 |      0 |
+| mobile-firefox         |            — | failed |      0 |      1 |
+| mobile-webkit          |         27.2 | passed |      1 |      0 |
+
+<!-- END GENERATED:utf8:tests -->
+
+## Gzip
+
+<a id="gzip-usage"></a>
+
+### Usage
 
 ```ts
 import {
@@ -163,7 +344,80 @@ const compressed = await bytesToGzipBytes(new Uint8Array([1, 2, 3]))
 const restored = await bytesFromGzipBytes(compressed)
 ```
 
-### Byte utilities
+<a id="gzip-errors"></a>
+
+### Errors
+
+Missing compression APIs use GZIP_COMPRESSION_UNAVAILABLE or GZIP_DECOMPRESSION_UNAVAILABLE. Node zlib failures use UNKNOWN_ERROR with the original cause. Web stream processing errors can reject with the original runtime error.
+
+<a id="gzip-benchmarks"></a>
+
+### Benchmarks
+
+<!-- BEGIN GENERATED:gzip:benchmarks -->
+
+2026-11-19T14:31:13.084Z · local run · commit `cca7177`
+
+Node v24.16.0 · win32 x64
+
+Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz · 1,000 measured calls per case after warmup
+
+| Operation  | Input bytes | Ops/sec |
+| ---------- | ----------: | ------: |
+| compress   |          64 |   2,014 |
+| decompress |          64 |   2,857 |
+| compress   |        1024 |   1,695 |
+| decompress |        1024 |   2,857 |
+| compress   |       16384 |   1,576 |
+| decompress |       16384 |   2,377 |
+
+<!-- END GENERATED:gzip:benchmarks -->
+
+<a id="gzip-tests"></a>
+
+### Tests
+
+<!-- BEGIN GENERATED:gzip:tests -->
+
+2026-11-19T14:28:15.863Z · local run · commit `cca7177`
+
+Node v24.16.0 · win32 x64
+
+| Suite          | Passed | Failed | Skipped |
+| -------------- | -----: | -----: | ------: |
+| gzip (1 files) |      5 |      0 |       0 |
+
+| Coverage | statements | branches | functions | lines |
+| -------- | ---------: | -------: | --------: | ----: |
+| Percent  |       100% |     100% |      100% |  100% |
+
+#### Compatibility
+
+The shared compatibility suite exercises the whole public API.
+
+| Runtime / browser      |      Version | Status | Passed | Failed |
+| ---------------------- | -----------: | -----: | -----: | -----: |
+| node esm               |      24.16.0 | passed |      9 |      0 |
+| node cjs               |      24.16.0 | passed |      9 |      0 |
+| bun esm                |       1.3.10 | passed |      9 |      0 |
+| bun cjs                |       1.3.10 | passed |      9 |      0 |
+| deno esm               |        2.8.3 | passed |      9 |      0 |
+| edge-runtime esm       |        4.0.1 | passed |      9 |      0 |
+| cloudflare-workers esm | 1.20261118.1 | passed |      9 |      0 |
+| chromium               | 159.0.8154.6 | passed |      1 |      0 |
+| firefox                |            — | failed |      0 |      1 |
+| webkit                 |         27.2 | passed |      1 |      0 |
+| mobile-chromium        | 159.0.8154.6 | passed |      1 |      0 |
+| mobile-firefox         |            — | failed |      0 |      1 |
+| mobile-webkit          |         27.2 | passed |      1 |      0 |
+
+<!-- END GENERATED:gzip:tests -->
+
+## Byte utilities
+
+<a id="util-usage"></a>
+
+### Usage
 
 ```ts
 import {
@@ -190,85 +444,91 @@ All functions accepting `ByteSource` support:
 - any `ArrayBufferView`, including `Uint8Array` and `DataView`
 - `number[]`
 
-`normalizeBytes()` always returns an independent `Uint8Array` copy. `concatBytes()` also normalizes every input before joining it.
+`normalizeBytes()` always returns an independent `Uint8Array<ArrayBuffer>` copy, including for shared buffers and offset views. All byte-returning APIs explicitly return `Uint8Array<ArrayBuffer>` (or a promise of it). `concatBytes()` also normalizes every input before joining it.
 
-### CommonJS
+<a id="util-errors"></a>
 
-Every npm entrypoint has a matching CommonJS export.
+### Errors
 
-```js
-const { Bytes } = require('@sovereignbase/bytecodec')
-const { bytesFromUTF8String } = require('@sovereignbase/bytecodec/utf8')
-```
+Invalid sources use BYTE_SOURCE_EXPECTED. Invalid concatenation uses CONCAT_INVALID_INPUT or CONCAT_NORMALIZE_FAILED with the input index. Web Crypto failures use UNKNOWN_ERROR with the original cause. Random generation is limited to 65,536 bytes per call by Web Crypto.
 
-## Errors
+<a id="util-benchmarks"></a>
 
-Package validation and runtime-capability failures throw `BytecodecError` instances. Each error has:
+### Benchmarks
 
-- `name: "BytecodecError"`
-- a stable `code` typed as `BytecodecErrorCode`
-- a message prefixed with `{@sovereignbase/bytecodec}`
+<!-- BEGIN GENERATED:util:benchmarks -->
 
-Codes cover invalid Base45/Base64URL input, unsupported byte sources, invalid concatenation, invalid UTF-8 input, unavailable Base64/UTF-8 codecs, and unavailable gzip APIs.
+2026-11-19T14:31:15.360Z · local run · commit `cca7177`
 
-```ts
-import type { BytecodecErrorCode } from '@sovereignbase/bytecodec'
+Node v24.16.0 · win32 x64
 
-try {
-  Bytes.base45.decode('A')
-} catch (error) {
-  const code = (error as { code: BytecodecErrorCode }).code
-  // "BASE45_INVALID_LENGTH"
-}
-```
+Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz · 1,000 measured calls per case after warmup
 
-## Runtime behavior
+| Operation        | Input bytes | Ops/sec |
+| ---------------- | ----------: | ------: |
+| normalize view   |          64 | 896,539 |
+| concat three     |          64 | 180,333 |
+| equals same      |          64 | 402,495 |
+| equals different |          64 | 378,530 |
+| generate         |          64 |  90,700 |
+| derive 32 bytes  |          64 |   3,494 |
+| normalize view   |        1024 | 290,630 |
+| concat three     |        1024 |  59,787 |
+| equals same      |        1024 | 155,960 |
+| equals different |        1024 | 134,553 |
+| generate         |        1024 | 113,249 |
+| derive 32 bytes  |        1024 |   3,021 |
+| normalize view   |       16384 |  20,386 |
+| concat three     |       16384 |   3,275 |
+| equals same      |       16384 |   9,604 |
+| equals different |       16384 |   8,352 |
+| generate         |       16384 |  23,555 |
+| derive 32 bytes  |       16384 |   2,326 |
 
-Node.js and Bun use `Buffer` for Base64 and `node:zlib` for gzip. Browsers, Cloudflare Workers, Deno, and compatible edge runtimes use standard web APIs. An edge runtime without compression streams can still use every non-gzip entrypoint; gzip calls fail with a structured availability error.
+<!-- END GENERATED:util:benchmarks -->
 
-The package has no side effects. Multi-entry builds share internal chunks while allowing bundlers and runtimes to resolve only the requested public subpath.
+<a id="util-tests"></a>
 
-## Tests
+### Tests
 
-`npm test` runs:
+<!-- BEGIN GENERATED:util:tests -->
 
-- a TypeScript typecheck of source, configuration, tests, and all package entrypoints;
-- 27 Vitest unit/integration tests with a 100% statements, branches, functions, and lines coverage gate;
-- ESM and CommonJS runtime suites in Node.js and Bun;
-- ESM runtime suites in Deno, Cloudflare Workers, and Edge Runtime;
-- Playwright tests in Chromium, Firefox, WebKit, mobile Chromium, mobile Firefox, and mobile WebKit.
+2026-11-19T14:28:15.863Z · local run · commit `cca7177`
 
-Useful focused commands include `npm run test:vitest`, `npm run test:e2e:browsers`, and `npm run test:e2e:runtimes`.
+Node v24.16.0 · win32 x64
 
-## API documentation
+| Suite          | Passed | Failed | Skipped |
+| -------------- | -----: | -----: | ------: |
+| util (3 files) |     68 |      0 |       0 |
 
-Generate the TypeDoc API reference with `npm run build:docs`. The published reference is available at [sovereignbase.dev/bytecodec](https://sovereignbase.dev/bytecodec).
+| Coverage | statements | branches | functions | lines |
+| -------- | ---------: | -------: | --------: | ----: |
+| Percent  |       100% |     100% |      100% |  100% |
 
-## Benchmarks
+#### Compatibility
 
-`npm run bench` builds the package and benchmarks every public capability. A local run on 2026-09-02 with Node.js 24.16.0 on Windows x64 produced:
+The shared compatibility suite exercises the whole public API.
 
-| Benchmark        | Operations |   Ops/sec |
-| ---------------- | ---------: | --------: |
-| Base45 encode    |      5,000 |   457,641 |
-| Base45 decode    |      5,000 |   667,067 |
-| Base64 encode    |      5,000 |   674,372 |
-| Base64 decode    |      5,000 | 1,586,546 |
-| Base64URL encode |      5,000 |   724,186 |
-| Base64URL decode |      5,000 |   866,912 |
-| UTF-8 encode     |      5,000 | 1,349,455 |
-| UTF-8 decode     |      5,000 | 1,602,102 |
-| Normalize        |      5,000 | 5,221,387 |
-| Concatenate      |      5,000 |   597,001 |
-| Compare equal    |      5,000 | 1,495,573 |
-| Compare unequal  |      5,000 | 2,264,493 |
-| Generate random  |      5,000 |   297,134 |
-| HKDF derive      |      5,000 |    12,060 |
-| Gzip compress    |      5,000 |     6,324 |
-| Gzip decompress  |      5,000 |     8,866 |
+| Runtime / browser      |      Version | Status | Passed | Failed |
+| ---------------------- | -----------: | -----: | -----: | -----: |
+| node esm               |      24.16.0 | passed |      9 |      0 |
+| node cjs               |      24.16.0 | passed |      9 |      0 |
+| bun esm                |       1.3.10 | passed |      9 |      0 |
+| bun cjs                |       1.3.10 | passed |      9 |      0 |
+| deno esm               |        2.8.3 | passed |      9 |      0 |
+| edge-runtime esm       |        4.0.1 | passed |      9 |      0 |
+| cloudflare-workers esm | 1.20261118.1 | passed |      9 |      0 |
+| chromium               | 159.0.8154.6 | passed |      1 |      0 |
+| firefox                |            — | failed |      0 |      1 |
+| webkit                 |         27.2 | passed |      1 |      0 |
+| mobile-chromium        | 159.0.8154.6 | passed |      1 |      0 |
+| mobile-firefox         |            — | failed |      0 |      1 |
+| mobile-webkit          |         27.2 | passed |      1 |      0 |
 
-Results vary by machine, runtime, input, and system load.
+<!-- END GENERATED:util:tests -->
 
 ## License
 
-Apache-2.0
+Licensed under the Apache License, Version 2.0.
+
+Copyright © 2026 Sovereignbase.

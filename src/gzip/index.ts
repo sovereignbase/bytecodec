@@ -81,10 +81,10 @@ export async function bytesFromGzipBytes(
  * @returns A promise that resolves to the compressed bytes.
  */
 async function compressWithStream(
-  bytes: Uint8Array,
+  bytes: Uint8Array<ArrayBuffer>,
   format: CompressionFormat
-) {
-  const compressedStream = new Blob([bytes as BufferSource])
+): Promise<Uint8Array<ArrayBuffer>> {
+  const compressedStream = new Blob([bytes])
     .stream()
     .pipeThrough(new CompressionStream(format))
   const arrayBuffer = await new Response(compressedStream).arrayBuffer()
@@ -99,10 +99,10 @@ async function compressWithStream(
  * @returns A promise that resolves to the decompressed bytes.
  */
 async function decompressWithStream(
-  bytes: Uint8Array,
+  bytes: Uint8Array<ArrayBuffer>,
   format: CompressionFormat
-) {
-  const decompressedStream = new Blob([bytes as BufferSource])
+): Promise<Uint8Array<ArrayBuffer>> {
+  const decompressedStream = new Blob([bytes])
     .stream()
     .pipeThrough(new DecompressionStream(format))
   const arrayBuffer = await new Response(decompressedStream).arrayBuffer()

@@ -11,6 +11,10 @@ function assertEqual(actual, expected, message) {
 
 function assertBytes(actual, expected, message) {
   assert(actual instanceof Uint8Array, `${message}: expected Uint8Array`)
+  assert(
+    actual.buffer instanceof ArrayBuffer,
+    `${message}: expected ArrayBuffer backing`
+  )
   assertEqual(actual.length, expected.length, `${message}: byte length`)
   for (let index = 0; index < expected.length; index++) {
     assertEqual(actual[index], expected[index], `${message}: byte ${index}`)
@@ -38,8 +42,40 @@ export async function runBytecodecSuite(api, options = {}) {
     }
   }
 
+  await run('offset and shared byte inputs', () => {
+    const buffers = [new ArrayBuffer(8)]
+    if (typeof SharedArrayBuffer !== 'undefined')
+      buffers.push(new SharedArrayBuffer(8))
+    for (const buffer of buffers) {
+      new Uint8Array(buffer).set([255, 65, 66, 255])
+      const view = new DataView(buffer, 1, 2)
+      const normalized = api.util.normalizeBytes(view)
+      assertBytes(normalized, [65, 66], 'offset normalization')
+      assertEqual(api.base45.bytesToBase45String(view), 'BB8', 'offset Base45')
+      assertEqual(api.base64.bytesToBase64String(view), 'QUI=', 'offset Base64')
+      assertEqual(api.utf8.bytesToUTF8String(view), 'AB', 'offset UTF-8')
+      normalized[0] = 0
+      assertEqual(new Uint8Array(buffer)[1], 65, 'copy ownership')
+    }
+  })
+
   await run('focused export surfaces', () => {
     assertEqual(typeof api.root.Bytes, 'function', 'Bytes export')
+    assertEqual(
+      Object.keys(api.root).sort().join(','),
+      'BytecodecError,Bytes',
+      'root exports'
+    )
+    try {
+      api.root.Bytes.base45.decode('A')
+      throw new Error('invalid Base45 succeeded')
+    } catch (error) {
+      assert(
+        error instanceof api.root.BytecodecError,
+        'exported error constructor'
+      )
+      assertEqual(error.code, 'BASE45_INVALID_LENGTH', 'validation code')
+    }
     for (const [namespace, names] of [
       [api.base45, ['bytesFromBase45String', 'bytesToBase45String']],
       [
@@ -173,10 +209,15 @@ export async function runBytecodecSuite(api, options = {}) {
     }
   })
 
-  return { label, ok: errors.length === 0, tests, errors }
+  const version =
+    runtimeGlobals.Bun?.version ??
+    runtimeGlobals.Deno?.version?.deno ??
+    runtimeGlobals.process?.versions?.node
+  return { label, version, ok: errors.length === 0, tests, errors }
 }
 
 export function printResults(results) {
+  console.log('BYTECODEC_RESULT ' + JSON.stringify(results))
   const passed = results.tests.filter((test) => test.ok).length
   console.log(`${results.label}: ${passed}/${results.tests.length} passed`)
   for (const error of results.errors) {

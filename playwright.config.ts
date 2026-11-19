@@ -1,7 +1,15 @@
 import { defineConfig, devices } from '@playwright/test'
 
+const firefoxLaunchOptions = process.env.PLAYWRIGHT_FIREFOX_EXECUTABLE
+  ? { executablePath: process.env.PLAYWRIGHT_FIREFOX_EXECUTABLE }
+  : undefined
+
 export default defineConfig({
-  testDir: 'test/e2e/runsInBrowsers',
+  testDir: 'test/compatibility/runsInBrowsers',
+  reporter: [
+    ['list'],
+    ['json', { outputFile: 'test/.results/playwright.json' }],
+  ],
   testMatch: '**/*.spec.ts',
   timeout: 30_000,
   fullyParallel: true,
@@ -17,7 +25,7 @@ export default defineConfig({
     },
     {
       name: 'firefox',
-      use: { browserName: 'firefox' },
+      use: { browserName: 'firefox', launchOptions: firefoxLaunchOptions },
     },
     {
       name: 'webkit',
@@ -31,6 +39,7 @@ export default defineConfig({
       name: 'mobile-firefox',
       use: {
         browserName: 'firefox',
+        launchOptions: firefoxLaunchOptions,
         viewport: { width: 390, height: 844 },
         hasTouch: true,
       },
