@@ -90,20 +90,20 @@ Invalid text throws BASE45_INPUT_EXPECTED, BASE45_INVALID_LENGTH, BASE45_INVALID
 
 <!-- BEGIN GENERATED:base45:benchmarks -->
 
-2026-11-19T14:58:40.016Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44549280023) · commit `082f503`
+2026-11-19T15:03:24.730Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44550047648) · commit `6be3f67`
 
-Node v24.22.2 · linux x64
+Node v24.22.3 · linux x64
 
-AMD EPYC 9V74 80-Core Processor · 1,000 measured calls per case after warmup
+AMD EPYC 9V45 96-Core Processor · 1,000 measured calls per case after warmup
 
 | Operation | Input bytes | Ops/sec |
 | --------- | ----------: | ------: |
-| encode    |          64 | 394,024 |
-| decode    |          64 | 754,451 |
-| encode    |        1024 |  85,925 |
-| decode    |        1024 | 213,873 |
-| encode    |       16384 |   6,953 |
-| decode    |       16384 |  12,931 |
+| encode    |          64 | 430,720 |
+| decode    |          64 | 918,324 |
+| encode    |        1024 | 112,595 |
+| decode    |        1024 | 318,757 |
+| encode    |       16384 |   9,029 |
+| decode    |       16384 |  19,355 |
 
 <!-- END GENERATED:base45:benchmarks -->
 
@@ -113,9 +113,9 @@ AMD EPYC 9V74 80-Core Processor · 1,000 measured calls per case after warmup
 
 <!-- BEGIN GENERATED:base45:tests -->
 
-2026-11-19T14:58:18.590Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44549280023) · commit `082f503`
+2026-11-19T15:03:08.357Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44550047648) · commit `6be3f67`
 
-Node v24.22.2 · linux x64
+Node v24.22.3 · linux x64
 
 | Suite            | Passed | Failed | Skipped |
 | ---------------- | -----: | -----: | ------: |
@@ -131,8 +131,8 @@ The shared compatibility suite exercises the whole public API.
 
 | Runtime / browser      |      Version | Status | Passed | Failed |
 | ---------------------- | -----------: | -----: | -----: | -----: |
-| node esm               |      24.22.2 | passed |      9 |      0 |
-| node cjs               |      24.22.2 | passed |      9 |      0 |
+| node esm               |      24.22.3 | passed |      9 |      0 |
+| node cjs               |      24.22.3 | passed |      9 |      0 |
 | bun esm                |        1.4.5 | passed |      9 |      0 |
 | bun cjs                |        1.4.5 | passed |      9 |      0 |
 | deno esm               |        2.9.8 | passed |      9 |      0 |
@@ -180,26 +180,26 @@ Unavailable runtime APIs throw BASE64_ENCODER_UNAVAILABLE or BASE64_DECODER_UNAV
 
 <!-- BEGIN GENERATED:base64:benchmarks -->
 
-2026-11-19T14:58:40.123Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44549280023) · commit `082f503`
+2026-11-19T15:03:24.821Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44550047648) · commit `6be3f67`
 
-Node v24.22.2 · linux x64
+Node v24.22.3 · linux x64
 
-AMD EPYC 9V74 80-Core Processor · 1,000 measured calls per case after warmup
+AMD EPYC 9V45 96-Core Processor · 1,000 measured calls per case after warmup
 
 | Operation        | Input bytes |   Ops/sec |
 | ---------------- | ----------: | --------: |
-| base64 encode    |          64 |   411,066 |
-| base64 decode    |          64 | 1,675,502 |
-| base64url encode |          64 |   990,526 |
-| base64url decode |          64 | 1,534,665 |
-| base64 encode    |        1024 |   680,135 |
-| base64 decode    |        1024 |   726,874 |
-| base64url encode |        1024 |   286,099 |
-| base64url decode |        1024 |   416,825 |
-| base64 encode    |       16384 |    78,796 |
-| base64 decode    |       16384 |   107,817 |
-| base64url encode |       16384 |    33,135 |
-| base64url decode |       16384 |    79,937 |
+| base64 encode    |          64 |   760,873 |
+| base64 decode    |          64 | 1,290,061 |
+| base64url encode |          64 |   317,789 |
+| base64url decode |          64 | 1,855,350 |
+| base64 encode    |        1024 |   848,627 |
+| base64 decode    |        1024 |   870,762 |
+| base64url encode |        1024 |   357,317 |
+| base64url decode |        1024 |   418,324 |
+| base64 encode    |       16384 |    82,440 |
+| base64 decode    |       16384 |   148,189 |
+| base64url encode |       16384 |    43,937 |
+| base64url decode |       16384 |    91,285 |
 
 <!-- END GENERATED:base64:benchmarks -->
 
@@ -209,9 +209,9 @@ AMD EPYC 9V74 80-Core Processor · 1,000 measured calls per case after warmup
 
 <!-- BEGIN GENERATED:base64:tests -->
 
-2026-11-19T14:58:18.590Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44549280023) · commit `082f503`
+2026-11-19T15:03:08.357Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44550047648) · commit `6be3f67`
 
-Node v24.22.2 · linux x64
+Node v24.22.3 · linux x64
 
 | Suite            | Passed | Failed | Skipped |
 | ---------------- | -----: | -----: | ------: |
@@ -227,8 +227,8 @@ The shared compatibility suite exercises the whole public API.
 
 | Runtime / browser      |      Version | Status | Passed | Failed |
 | ---------------------- | -----------: | -----: | -----: | -----: |
-| node esm               |      24.22.2 | passed |      9 |      0 |
-| node cjs               |      24.22.2 | passed |      9 |      0 |
+| node esm               |      24.22.3 | passed |      9 |      0 |
+| node cjs               |      24.22.3 | passed |      9 |      0 |
 | bun esm                |        1.4.5 | passed |      9 |      0 |
 | bun cjs                |        1.4.5 | passed |      9 |      0 |
 | deno esm               |        2.9.8 | passed |      9 |      0 |
@@ -271,20 +271,20 @@ Non-string text input throws STRING_INPUT_EXPECTED. Missing codecs throw UTF8_EN
 
 <!-- BEGIN GENERATED:utf8:benchmarks -->
 
-2026-11-19T14:58:40.153Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44549280023) · commit `082f503`
+2026-11-19T15:03:24.848Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44550047648) · commit `6be3f67`
 
-Node v24.22.2 · linux x64
+Node v24.22.3 · linux x64
 
-AMD EPYC 9V74 80-Core Processor · 1,000 measured calls per case after warmup
+AMD EPYC 9V45 96-Core Processor · 1,000 measured calls per case after warmup
 
 | Operation               | Input bytes |   Ops/sec |
 | ----------------------- | ----------: | --------: |
-| encode (bytes → string) |          64 | 1,213,672 |
-| decode (string → bytes) |          64 | 2,418,731 |
-| encode (bytes → string) |        1024 |   778,770 |
-| decode (string → bytes) |        1024 | 1,129,947 |
-| encode (bytes → string) |       16384 |   133,063 |
-| decode (string → bytes) |       16384 |   106,280 |
+| encode (bytes → string) |          64 | 1,546,927 |
+| decode (string → bytes) |          64 | 2,618,521 |
+| encode (bytes → string) |        1024 |   798,272 |
+| decode (string → bytes) |        1024 | 1,206,290 |
+| encode (bytes → string) |       16384 |   157,095 |
+| decode (string → bytes) |       16384 |   125,942 |
 
 <!-- END GENERATED:utf8:benchmarks -->
 
@@ -294,9 +294,9 @@ AMD EPYC 9V74 80-Core Processor · 1,000 measured calls per case after warmup
 
 <!-- BEGIN GENERATED:utf8:tests -->
 
-2026-11-19T14:58:18.590Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44549280023) · commit `082f503`
+2026-11-19T15:03:08.357Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44550047648) · commit `6be3f67`
 
-Node v24.22.2 · linux x64
+Node v24.22.3 · linux x64
 
 | Suite          | Passed | Failed | Skipped |
 | -------------- | -----: | -----: | ------: |
@@ -312,8 +312,8 @@ The shared compatibility suite exercises the whole public API.
 
 | Runtime / browser      |      Version | Status | Passed | Failed |
 | ---------------------- | -----------: | -----: | -----: | -----: |
-| node esm               |      24.22.2 | passed |      9 |      0 |
-| node cjs               |      24.22.2 | passed |      9 |      0 |
+| node esm               |      24.22.3 | passed |      9 |      0 |
+| node cjs               |      24.22.3 | passed |      9 |      0 |
 | bun esm                |        1.4.5 | passed |      9 |      0 |
 | bun cjs                |        1.4.5 | passed |      9 |      0 |
 | deno esm               |        2.9.8 | passed |      9 |      0 |
@@ -356,20 +356,20 @@ Missing compression APIs throw GZIP_COMPRESSION_UNAVAILABLE or GZIP_DECOMPRESSIO
 
 <!-- BEGIN GENERATED:gzip:benchmarks -->
 
-2026-11-19T14:58:40.833Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44549280023) · commit `082f503`
+2026-11-19T15:03:25.390Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44550047648) · commit `6be3f67`
 
-Node v24.22.2 · linux x64
+Node v24.22.3 · linux x64
 
-AMD EPYC 9V74 80-Core Processor · 1,000 measured calls per case after warmup
+AMD EPYC 9V45 96-Core Processor · 1,000 measured calls per case after warmup
 
 | Operation  | Input bytes | Ops/sec |
 | ---------- | ----------: | ------: |
-| compress   |          64 |  10,008 |
-| decompress |          64 |  11,661 |
-| compress   |        1024 |  10,645 |
-| decompress |        1024 |  14,229 |
-| compress   |       16384 |   8,201 |
-| decompress |       16384 |   8,390 |
+| compress   |          64 |  11,970 |
+| decompress |          64 |  15,505 |
+| compress   |        1024 |  14,038 |
+| decompress |        1024 |  15,596 |
+| compress   |       16384 |  10,801 |
+| decompress |       16384 |  10,648 |
 
 <!-- END GENERATED:gzip:benchmarks -->
 
@@ -379,9 +379,9 @@ AMD EPYC 9V74 80-Core Processor · 1,000 measured calls per case after warmup
 
 <!-- BEGIN GENERATED:gzip:tests -->
 
-2026-11-19T14:58:18.590Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44549280023) · commit `082f503`
+2026-11-19T15:03:08.357Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44550047648) · commit `6be3f67`
 
-Node v24.22.2 · linux x64
+Node v24.22.3 · linux x64
 
 | Suite          | Passed | Failed | Skipped |
 | -------------- | -----: | -----: | ------: |
@@ -397,8 +397,8 @@ The shared compatibility suite exercises the whole public API.
 
 | Runtime / browser      |      Version | Status | Passed | Failed |
 | ---------------------- | -----------: | -----: | -----: | -----: |
-| node esm               |      24.22.2 | passed |      9 |      0 |
-| node cjs               |      24.22.2 | passed |      9 |      0 |
+| node esm               |      24.22.3 | passed |      9 |      0 |
+| node cjs               |      24.22.3 | passed |      9 |      0 |
 | bun esm                |        1.4.5 | passed |      9 |      0 |
 | bun cjs                |        1.4.5 | passed |      9 |      0 |
 | deno esm               |        2.9.8 | passed |      9 |      0 |
@@ -458,32 +458,32 @@ Invalid sources throw BYTE_SOURCE_EXPECTED. Invalid concatenation throws CONCAT_
 
 <!-- BEGIN GENERATED:util:benchmarks -->
 
-2026-11-19T14:58:41.132Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44549280023) · commit `082f503`
+2026-11-19T15:03:25.649Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44550047648) · commit `6be3f67`
 
-Node v24.22.2 · linux x64
+Node v24.22.3 · linux x64
 
-AMD EPYC 9V74 80-Core Processor · 1,000 measured calls per case after warmup
+AMD EPYC 9V45 96-Core Processor · 1,000 measured calls per case after warmup
 
 | Operation        | Input bytes |   Ops/sec |
 | ---------------- | ----------: | --------: |
-| normalize view   |          64 | 2,767,461 |
-| concat three     |          64 |   735,554 |
-| equals same      |          64 | 1,339,692 |
-| equals different |          64 | 1,048,526 |
-| generate         |          64 |   262,352 |
-| derive 32 bytes  |          64 |    25,910 |
-| normalize view   |        1024 |   790,772 |
-| concat three     |        1024 |   236,490 |
-| equals same      |        1024 |   456,956 |
-| equals different |        1024 |   442,929 |
-| generate         |        1024 |   355,614 |
-| derive 32 bytes  |        1024 |    30,297 |
-| normalize view   |       16384 |    94,520 |
-| concat three     |       16384 |    22,036 |
-| equals same      |       16384 |    42,062 |
-| equals different |       16384 |    77,216 |
-| generate         |       16384 |   178,851 |
-| derive 32 bytes  |       16384 |    17,976 |
+| normalize view   |          64 | 3,714,076 |
+| concat three     |          64 |   969,129 |
+| equals same      |          64 | 1,901,061 |
+| equals different |          64 | 1,985,707 |
+| generate         |          64 |   398,313 |
+| derive 32 bytes  |          64 |    33,764 |
+| normalize view   |        1024 | 1,198,443 |
+| concat three     |        1024 |   266,317 |
+| equals same      |        1024 |   612,881 |
+| equals different |        1024 |   620,823 |
+| generate         |        1024 |   418,057 |
+| derive 32 bytes  |        1024 |    34,182 |
+| normalize view   |       16384 |   179,659 |
+| concat three     |       16384 |    23,440 |
+| equals same      |       16384 |    40,926 |
+| equals different |       16384 |    92,154 |
+| generate         |       16384 |   185,185 |
+| derive 32 bytes  |       16384 |    25,152 |
 
 <!-- END GENERATED:util:benchmarks -->
 
@@ -493,9 +493,9 @@ AMD EPYC 9V74 80-Core Processor · 1,000 measured calls per case after warmup
 
 <!-- BEGIN GENERATED:util:tests -->
 
-2026-11-19T14:58:18.590Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44549280023) · commit `082f503`
+2026-11-19T15:03:08.357Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44550047648) · commit `6be3f67`
 
-Node v24.22.2 · linux x64
+Node v24.22.3 · linux x64
 
 | Suite          | Passed | Failed | Skipped |
 | -------------- | -----: | -----: | ------: |
@@ -511,8 +511,8 @@ The shared compatibility suite exercises the whole public API.
 
 | Runtime / browser      |      Version | Status | Passed | Failed |
 | ---------------------- | -----------: | -----: | -----: | -----: |
-| node esm               |      24.22.2 | passed |      9 |      0 |
-| node cjs               |      24.22.2 | passed |      9 |      0 |
+| node esm               |      24.22.3 | passed |      9 |      0 |
+| node cjs               |      24.22.3 | passed |      9 |      0 |
 | bun esm                |        1.4.5 | passed |      9 |      0 |
 | bun cjs                |        1.4.5 | passed |      9 |      0 |
 | deno esm               |        2.9.8 | passed |      9 |      0 |
