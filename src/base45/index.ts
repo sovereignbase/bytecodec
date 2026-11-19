@@ -1,4 +1,4 @@
-import { BytecodecError } from '../.errors/class.js'
+import { BytecodecError, unknownError } from '../.errors/class.js'
 import { normalizeBytes } from '../util/index.js'
 import type { ByteSource } from '../index.js'
 
@@ -12,86 +12,96 @@ let base45Values: Int16Array
  * @returns A Base45 string representation of `bytes`.
  */
 export function bytesToBase45String(bytes: ByteSource): string {
-  const view = normalizeBytes(bytes)
-  let base45String = ''
+  try {
+    const view = normalizeBytes(bytes)
+    let base45String = ''
 
-  for (let offset = 0; offset + 1 < view.length; offset += 2) {
-    let value = view[offset] * 256 + view[offset + 1]
+    for (let offset = 0; offset + 1 < view.length; offset += 2) {
+      let value = view[offset] * 256 + view[offset + 1]
 
-    base45String += base45Chars[value % 45]
-    value = Math.floor(value / 45)
-    base45String += base45Chars[value % 45]
-    base45String += base45Chars[Math.floor(value / 45)]
+      base45String += base45Chars[value % 45]
+      value = Math.floor(value / 45)
+      base45String += base45Chars[value % 45]
+      base45String += base45Chars[Math.floor(value / 45)]
+    }
+
+    if (view.length % 2 === 1) {
+      const value = view[view.length - 1]
+      base45String += base45Chars[value % 45]
+      base45String += base45Chars[Math.floor(value / 45)]
+    }
+
+    return base45String
+  } catch (cause) {
+    throw unknownError(cause, 'Bytes.base45.encode()')
   }
-
-  if (view.length % 2 === 1) {
-    const value = view[view.length - 1]
-    base45String += base45Chars[value % 45]
-    base45String += base45Chars[Math.floor(value / 45)]
-  }
-
-  return base45String
 }
 
 /**
- * Decodes a Base45 string into a new `Uint8Array`.
+ * Decodes a Base45 string into a new `Uint8Array<ArrayBuffer>`.
  *
  * @param base45String The Base45 string to decode.
- * @returns A new `Uint8Array` containing the decoded bytes.
+ * @returns A new `Uint8Array<ArrayBuffer>` containing the decoded bytes.
  */
-export function bytesFromBase45String(base45String: string): Uint8Array {
-  if (typeof base45String !== 'string')
-    throw new BytecodecError(
-      'BASE45_INPUT_EXPECTED',
-      'bytesFromBase45String expects a string input'
+export function bytesFromBase45String(
+  base45String: string
+): Uint8Array<ArrayBuffer> {
+  try {
+    if (typeof base45String !== 'string')
+      throw new BytecodecError(
+        'BASE45_INPUT_EXPECTED',
+        'bytesFromBase45String expects a string input'
+      )
+
+    if (base45String.length % 3 === 1)
+      throw new BytecodecError(
+        'BASE45_INVALID_LENGTH',
+        'Base45 string length must not leave a trailing single character'
+      )
+
+    const bytes = new Uint8Array(
+      Math.floor(base45String.length / 3) * 2 +
+        (base45String.length % 3 === 2 ? 1 : 0)
     )
+    let byteOffset = 0
 
-  if (base45String.length % 3 === 1)
-    throw new BytecodecError(
-      'BASE45_INVALID_LENGTH',
-      'Base45 string length must not leave a trailing single character'
-    )
+    for (let stringOffset = 0; stringOffset < base45String.length;) {
+      const remaining = base45String.length - stringOffset
+      const digit0 = toBase45Digit(base45String, stringOffset)
+      const digit1 = toBase45Digit(base45String, stringOffset + 1)
 
-  const bytes = new Uint8Array(
-    Math.floor(base45String.length / 3) * 2 +
-      (base45String.length % 3 === 2 ? 1 : 0)
-  )
-  let byteOffset = 0
+      if (remaining === 2) {
+        const value = digit0 + digit1 * 45
 
-  for (let stringOffset = 0; stringOffset < base45String.length;) {
-    const remaining = base45String.length - stringOffset
-    const digit0 = toBase45Digit(base45String, stringOffset)
-    const digit1 = toBase45Digit(base45String, stringOffset + 1)
+        if (value > 0xff)
+          throw new BytecodecError(
+            'BASE45_INVALID_CHUNK',
+            `Invalid base45 chunk at index ${stringOffset}`
+          )
 
-    if (remaining === 2) {
-      const value = digit0 + digit1 * 45
+        bytes[byteOffset++] = value
+        stringOffset += 2
+        continue
+      }
 
-      if (value > 0xff)
+      const digit2 = toBase45Digit(base45String, stringOffset + 2)
+      const value = digit0 + digit1 * 45 + digit2 * 2025
+
+      if (value > 0xffff)
         throw new BytecodecError(
           'BASE45_INVALID_CHUNK',
           `Invalid base45 chunk at index ${stringOffset}`
         )
 
-      bytes[byteOffset++] = value
-      stringOffset += 2
-      continue
+      bytes[byteOffset++] = value >>> 8
+      bytes[byteOffset++] = value & 0xff
+      stringOffset += 3
     }
 
-    const digit2 = toBase45Digit(base45String, stringOffset + 2)
-    const value = digit0 + digit1 * 45 + digit2 * 2025
-
-    if (value > 0xffff)
-      throw new BytecodecError(
-        'BASE45_INVALID_CHUNK',
-        `Invalid base45 chunk at index ${stringOffset}`
-      )
-
-    bytes[byteOffset++] = value >>> 8
-    bytes[byteOffset++] = value & 0xff
-    stringOffset += 3
+    return bytes
+  } catch (cause) {
+    throw unknownError(cause, 'Bytes.base45.decode()')
   }
-
-  return bytes
 }
 
 function toBase45Digit(base45String: string, stringOffset: number): number {

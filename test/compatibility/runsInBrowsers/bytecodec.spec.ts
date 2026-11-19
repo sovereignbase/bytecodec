@@ -75,30 +75,17 @@ test('loads focused entrypoints and runs every codec in a browser', async ({
       import(utilUrl) as Promise<typeof Util>,
     ])
 
-    const text = 'browser ✓ 🚀'
-    const bytes = utf8.bytesFromUTF8String(text)
-    const compressed = await gzip.bytesToGzipBytes(bytes)
-    const restored = await gzip.bytesFromGzipBytes(compressed)
-    const derived = await util.deriveBytes(bytes, [1, 2], 16)
-
-    return {
-      rootExports: Object.keys(root),
-      base45: base45.bytesToBase45String([65, 66]),
-      base64: base64.bytesToBase64String(bytes),
-      roundTrip: utf8.bytesToUTF8String(restored),
-      derivedLength: derived.length,
-      wrapper: root.Bytes.utf8.encode(
-        root.Bytes.base64url.decode(root.Bytes.base64url.encode(bytes))
-      ),
-    }
+    const suiteUrl = '/test/compatibility/shared/suite.mjs'
+    const { runBytecodecSuite } = await import(suiteUrl)
+    return runBytecodecSuite(
+      { root, base45, base64, gzip, utf8, util },
+      { label: 'browser' }
+    )
   })
-
-  expect(result).toEqual({
-    rootExports: ['Bytes'],
-    base45: 'BB8',
-    base64: 'YnJvd3NlciDinJMg8J+agA==',
-    roundTrip: 'browser ✓ 🚀',
-    derivedLength: 16,
-    wrapper: 'browser ✓ 🚀',
+  test.info().annotations.push({
+    type: 'browser-version',
+    description: page.context().browser()?.version(),
   })
+  expect(result.errors).toEqual([])
+  expect(result.ok).toBe(true)
 })

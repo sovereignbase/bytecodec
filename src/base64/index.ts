@@ -1,4 +1,4 @@
-import { BytecodecError } from '../.errors/class.js'
+import { BytecodecError, unknownError } from '../.errors/class.js'
 import { normalizeBytes } from '../util/index.js'
 import type { ByteSource } from '../index.js'
 
@@ -9,62 +9,59 @@ import type { ByteSource } from '../index.js'
  * @returns A base64 string representation of `bytes`.
  */
 export function bytesToBase64String(bytes: ByteSource): string {
-  const view = normalizeBytes(bytes)
-  if (typeof Buffer !== 'undefined' && typeof Buffer.from === 'function')
-    return Buffer.from(view).toString('base64')
+  try {
+    const view = normalizeBytes(bytes)
+    if (typeof Buffer !== 'undefined' && typeof Buffer.from === 'function')
+      return Buffer.from(view).toString('base64')
 
-  let binaryString = ''
-  const chunkSize = 0x8000
-  for (let offset = 0; offset < view.length; offset += chunkSize) {
-    const end = Math.min(offset + chunkSize, view.length)
-    let chunkString = ''
-    for (let index = offset; index < end; index++) {
-      chunkString += String.fromCharCode(view[index])
+    let binaryString = ''
+    const chunkSize = 0x8000
+    for (let offset = 0; offset < view.length; offset += chunkSize) {
+      const end = Math.min(offset + chunkSize, view.length)
+      let chunkString = ''
+      for (let index = offset; index < end; index++) {
+        chunkString += String.fromCharCode(view[index])
+      }
+      binaryString += chunkString
     }
-    binaryString += chunkString
+    if (typeof btoa !== 'function')
+      throw new BytecodecError(
+        'BASE64_ENCODER_UNAVAILABLE',
+        'No base64 encoder available in this environment.'
+      )
+    return btoa(binaryString)
+  } catch (cause) {
+    throw unknownError(cause, 'Bytes.base64.encode()')
   }
-  if (typeof btoa !== 'function')
-    throw new BytecodecError(
-      'BASE64_ENCODER_UNAVAILABLE',
-      'No base64 encoder available in this environment.'
-    )
-  return btoa(binaryString)
 }
 
 /**
- * Decodes a base64-encoded string into a new `Uint8Array`.
+ * Decodes a base64-encoded string into a new `Uint8Array<ArrayBuffer>`.
  *
  * @param base64String The base64 string to decode.
- * @returns A new `Uint8Array` containing the decoded bytes.
+ * @returns A new `Uint8Array<ArrayBuffer>` containing the decoded bytes.
  */
-export function bytesFromBase64String(base64String: string): Uint8Array {
-  if (typeof Buffer !== 'undefined' && typeof Buffer.from === 'function')
-    return new Uint8Array(Buffer.from(base64String, 'base64'))
+export function bytesFromBase64String(
+  base64String: string
+): Uint8Array<ArrayBuffer> {
+  try {
+    if (typeof Buffer !== 'undefined' && typeof Buffer.from === 'function')
+      return new Uint8Array(Buffer.from(base64String, 'base64'))
 
-  if (typeof atob !== 'function')
-    throw new BytecodecError(
-      'BASE64_DECODER_UNAVAILABLE',
-      'No base64 decoder available in this environment.'
-    )
+    if (typeof atob !== 'function')
+      throw new BytecodecError(
+        'BASE64_DECODER_UNAVAILABLE',
+        'No base64 decoder available in this environment.'
+      )
 
-  const binaryString = atob(base64String)
-  const bytes = new Uint8Array(binaryString.length)
-  for (let index = 0; index < binaryString.length; index++)
-    bytes[index] = binaryString.charCodeAt(index)
-  return bytes
-}
-
-/**
- * Decodes a base64url-encoded string into a new `Uint8Array`.
- *
- * @param base64UrlString The base64url string to decode.
- * @returns A new `Uint8Array` containing the decoded bytes.
- */
-export function bytesFromBase64UrlString(
-  base64UrlString: Base64URLString
-): Uint8Array {
-  const base64String = base64UrlbytesToBase64String(base64UrlString)
-  return bytesFromBase64String(base64String)
+    const binaryString = atob(base64String)
+    const bytes = new Uint8Array(binaryString.length)
+    for (let index = 0; index < binaryString.length; index++)
+      bytes[index] = binaryString.charCodeAt(index)
+    return bytes
+  } catch (cause) {
+    throw unknownError(cause, 'Bytes.base64.decode()')
+  }
 }
 
 /**
@@ -74,8 +71,29 @@ export function bytesFromBase64UrlString(
  * @returns A base64url string representation of `bytes`.
  */
 export function bytesToBase64UrlString(bytes: ByteSource): Base64URLString {
-  const base64 = bytesToBase64String(bytes)
-  return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '')
+  try {
+    const base64 = bytesToBase64String(bytes)
+    return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '')
+  } catch (cause) {
+    throw unknownError(cause, 'Bytes.base64url.encode()')
+  }
+}
+
+/**
+ * Decodes a base64url-encoded string into a new `Uint8Array<ArrayBuffer>`.
+ *
+ * @param base64UrlString The base64url string to decode.
+ * @returns A new `Uint8Array<ArrayBuffer>` containing the decoded bytes.
+ */
+export function bytesFromBase64UrlString(
+  base64UrlString: Base64URLString
+): Uint8Array<ArrayBuffer> {
+  try {
+    const base64String = base64UrlbytesToBase64String(base64UrlString)
+    return bytesFromBase64String(base64String)
+  } catch (cause) {
+    throw unknownError(cause, 'Bytes.base64url.decode()')
+  }
 }
 
 /**

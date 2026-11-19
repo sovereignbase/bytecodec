@@ -9,6 +9,18 @@ import {
 afterEach(() => vi.unstubAllGlobals())
 
 describe('Base64 codecs', () => {
+  it.each([true, false])(
+    'converts URL alphabet and padding with Buffer = %s',
+    (useBuffer) => {
+      if (!useBuffer) vi.stubGlobal('Buffer', undefined)
+      const bytes = new Uint8Array([251, 255])
+      expect(bytesToBase64String(bytes)).toBe('+/8=')
+      expect(bytesToBase64UrlString(bytes)).toBe('-_8')
+      expect(bytesFromBase64UrlString('-_8')).toEqual(bytes)
+      expect(bytesFromBase64String('+/8=')).toEqual(bytes)
+      expect(bytesFromBase64UrlString('-_8').buffer).toBeInstanceOf(ArrayBuffer)
+    }
+  )
   it('round-trips base64 and unpadded base64url through Buffer', () => {
     const bytes = new Uint8Array([104, 101, 108, 108, 111])
 

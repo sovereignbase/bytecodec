@@ -20,7 +20,7 @@ import {
 export type ByteSource =
   ArrayBuffer | SharedArrayBuffer | ArrayBufferView | number[]
 
-export type { BytecodecErrorCode } from './.errors/class.js'
+export { BytecodecError, type BytecodecErrorCode } from './.errors/class.js'
 
 /**
  * Convenience wrapper around the codec functions.
@@ -51,7 +51,7 @@ export class Bytes {
     decode: bytesFromGzipBytes,
   }
 
-  static concat(sources: ByteSource[]): Uint8Array {
+  static concat(sources: ByteSource[]): Uint8Array<ArrayBuffer> {
     return concatBytes(sources)
   }
 
@@ -63,15 +63,15 @@ export class Bytes {
     base: ByteSource,
     domain: ByteSource,
     byteLength: number
-  ): Promise<Uint8Array> {
+  ): Promise<Uint8Array<ArrayBuffer>> {
     return deriveBytes(base, domain, byteLength)
   }
 
-  static generate(byteLength: number): Uint8Array {
+  static generate(byteLength: number): Uint8Array<ArrayBuffer> {
     return generateBytes(byteLength)
   }
 
-  static normalize(bytes: ByteSource): Uint8Array {
+  static normalize(bytes: ByteSource): Uint8Array<ArrayBuffer> {
     return normalizeBytes(bytes)
   }
 }

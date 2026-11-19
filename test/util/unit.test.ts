@@ -58,7 +58,7 @@ describe('byte utilities', () => {
     )
   })
 
-  it('handles a non-Error normalization failure', () => {
+  it('wraps a non-Error normalization failure before adding concat context', () => {
     class ThrowingArrayBuffer {
       static [Symbol.hasInstance](): boolean {
         return false
@@ -70,7 +70,7 @@ describe('byte utilities', () => {
     vi.stubGlobal('ArrayBuffer', ThrowingArrayBuffer)
 
     expect(() => concatBytes([{} as never])).toThrow(
-      'concatBytes failed to normalize input at index 0: raw failure'
+      'concatBytes failed to normalize input at index 0: {@sovereignbase/bytecodec} Bytes.normalize() failed.'
     )
   })
 
