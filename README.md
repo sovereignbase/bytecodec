@@ -90,20 +90,20 @@ Invalid text throws BASE45_INPUT_EXPECTED, BASE45_INVALID_LENGTH, BASE45_INVALID
 
 <!-- BEGIN GENERATED:base45:benchmarks -->
 
-2026-11-19T14:31:08.442Z · local run · commit `cca7177`
+2026-11-19T14:58:40.016Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44549280023) · commit `082f503`
 
-Node v24.16.0 · win32 x64
+Node v24.22.2 · linux x64
 
-Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz · 1,000 measured calls per case after warmup
+AMD EPYC 9V74 80-Core Processor · 1,000 measured calls per case after warmup
 
 | Operation | Input bytes | Ops/sec |
 | --------- | ----------: | ------: |
-| encode    |          64 | 141,237 |
-| decode    |          64 | 238,317 |
-| encode    |        1024 |  31,255 |
-| decode    |        1024 |  67,955 |
-| encode    |       16384 |   2,048 |
-| decode    |       16384 |   3,433 |
+| encode    |          64 | 394,024 |
+| decode    |          64 | 754,451 |
+| encode    |        1024 |  85,925 |
+| decode    |        1024 | 213,873 |
+| encode    |       16384 |   6,953 |
+| decode    |       16384 |  12,931 |
 
 <!-- END GENERATED:base45:benchmarks -->
 
@@ -113,9 +113,9 @@ Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz · 1,000 measured calls per case after
 
 <!-- BEGIN GENERATED:base45:tests -->
 
-2026-11-19T14:28:15.863Z · local run · commit `cca7177`
+2026-11-19T14:58:18.590Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44549280023) · commit `082f503`
 
-Node v24.16.0 · win32 x64
+Node v24.22.2 · linux x64
 
 | Suite            | Passed | Failed | Skipped |
 | ---------------- | -----: | -----: | ------: |
@@ -131,18 +131,18 @@ The shared compatibility suite exercises the whole public API.
 
 | Runtime / browser      |      Version | Status | Passed | Failed |
 | ---------------------- | -----------: | -----: | -----: | -----: |
-| node esm               |      24.16.0 | passed |      9 |      0 |
-| node cjs               |      24.16.0 | passed |      9 |      0 |
-| bun esm                |       1.3.10 | passed |      9 |      0 |
-| bun cjs                |       1.3.10 | passed |      9 |      0 |
-| deno esm               |        2.8.3 | passed |      9 |      0 |
+| node esm               |      24.22.2 | passed |      9 |      0 |
+| node cjs               |      24.22.2 | passed |      9 |      0 |
+| bun esm                |        1.4.5 | passed |      9 |      0 |
+| bun cjs                |        1.4.5 | passed |      9 |      0 |
+| deno esm               |        2.9.8 | passed |      9 |      0 |
 | edge-runtime esm       |        4.0.1 | passed |      9 |      0 |
 | cloudflare-workers esm | 1.20261118.1 | passed |      9 |      0 |
 | chromium               | 159.0.8154.6 | passed |      1 |      0 |
-| firefox                |            — | failed |      0 |      1 |
+| firefox                |        159.0 | passed |      1 |      0 |
 | webkit                 |         27.2 | passed |      1 |      0 |
 | mobile-chromium        | 159.0.8154.6 | passed |      1 |      0 |
-| mobile-firefox         |            — | failed |      0 |      1 |
+| mobile-firefox         |        159.0 | passed |      1 |      0 |
 | mobile-webkit          |         27.2 | passed |      1 |      0 |
 
 <!-- END GENERATED:base45:tests -->
@@ -180,26 +180,26 @@ Unavailable runtime APIs throw BASE64_ENCODER_UNAVAILABLE or BASE64_DECODER_UNAV
 
 <!-- BEGIN GENERATED:base64:benchmarks -->
 
-2026-11-19T14:31:09.132Z · local run · commit `cca7177`
+2026-11-19T14:58:40.123Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44549280023) · commit `082f503`
 
-Node v24.16.0 · win32 x64
+Node v24.22.2 · linux x64
 
-Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz · 1,000 measured calls per case after warmup
+AMD EPYC 9V74 80-Core Processor · 1,000 measured calls per case after warmup
 
-| Operation        | Input bytes | Ops/sec |
-| ---------------- | ----------: | ------: |
-| base64 encode    |          64 | 116,532 |
-| base64 decode    |          64 | 297,628 |
-| base64url encode |          64 | 281,698 |
-| base64url decode |          64 | 496,376 |
-| base64 encode    |        1024 | 209,258 |
-| base64 decode    |        1024 | 160,377 |
-| base64url encode |        1024 |  82,570 |
-| base64url decode |        1024 |  96,676 |
-| base64 encode    |       16384 |  18,179 |
-| base64 decode    |       16384 |  20,135 |
-| base64url encode |       16384 |   8,358 |
-| base64url decode |       16384 |  13,444 |
+| Operation        | Input bytes |   Ops/sec |
+| ---------------- | ----------: | --------: |
+| base64 encode    |          64 |   411,066 |
+| base64 decode    |          64 | 1,675,502 |
+| base64url encode |          64 |   990,526 |
+| base64url decode |          64 | 1,534,665 |
+| base64 encode    |        1024 |   680,135 |
+| base64 decode    |        1024 |   726,874 |
+| base64url encode |        1024 |   286,099 |
+| base64url decode |        1024 |   416,825 |
+| base64 encode    |       16384 |    78,796 |
+| base64 decode    |       16384 |   107,817 |
+| base64url encode |       16384 |    33,135 |
+| base64url decode |       16384 |    79,937 |
 
 <!-- END GENERATED:base64:benchmarks -->
 
@@ -209,9 +209,9 @@ Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz · 1,000 measured calls per case after
 
 <!-- BEGIN GENERATED:base64:tests -->
 
-2026-11-19T14:28:15.863Z · local run · commit `cca7177`
+2026-11-19T14:58:18.590Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44549280023) · commit `082f503`
 
-Node v24.16.0 · win32 x64
+Node v24.22.2 · linux x64
 
 | Suite            | Passed | Failed | Skipped |
 | ---------------- | -----: | -----: | ------: |
@@ -227,18 +227,18 @@ The shared compatibility suite exercises the whole public API.
 
 | Runtime / browser      |      Version | Status | Passed | Failed |
 | ---------------------- | -----------: | -----: | -----: | -----: |
-| node esm               |      24.16.0 | passed |      9 |      0 |
-| node cjs               |      24.16.0 | passed |      9 |      0 |
-| bun esm                |       1.3.10 | passed |      9 |      0 |
-| bun cjs                |       1.3.10 | passed |      9 |      0 |
-| deno esm               |        2.8.3 | passed |      9 |      0 |
+| node esm               |      24.22.2 | passed |      9 |      0 |
+| node cjs               |      24.22.2 | passed |      9 |      0 |
+| bun esm                |        1.4.5 | passed |      9 |      0 |
+| bun cjs                |        1.4.5 | passed |      9 |      0 |
+| deno esm               |        2.9.8 | passed |      9 |      0 |
 | edge-runtime esm       |        4.0.1 | passed |      9 |      0 |
 | cloudflare-workers esm | 1.20261118.1 | passed |      9 |      0 |
 | chromium               | 159.0.8154.6 | passed |      1 |      0 |
-| firefox                |            — | failed |      0 |      1 |
+| firefox                |        159.0 | passed |      1 |      0 |
 | webkit                 |         27.2 | passed |      1 |      0 |
 | mobile-chromium        | 159.0.8154.6 | passed |      1 |      0 |
-| mobile-firefox         |            — | failed |      0 |      1 |
+| mobile-firefox         |        159.0 | passed |      1 |      0 |
 | mobile-webkit          |         27.2 | passed |      1 |      0 |
 
 <!-- END GENERATED:base64:tests -->
@@ -271,20 +271,20 @@ Non-string text input throws STRING_INPUT_EXPECTED. Missing codecs throw UTF8_EN
 
 <!-- BEGIN GENERATED:utf8:benchmarks -->
 
-2026-11-19T14:31:09.535Z · local run · commit `cca7177`
+2026-11-19T14:58:40.153Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44549280023) · commit `082f503`
 
-Node v24.16.0 · win32 x64
+Node v24.22.2 · linux x64
 
-Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz · 1,000 measured calls per case after warmup
+AMD EPYC 9V74 80-Core Processor · 1,000 measured calls per case after warmup
 
-| Operation               | Input bytes | Ops/sec |
-| ----------------------- | ----------: | ------: |
-| encode (bytes → string) |          64 | 336,383 |
-| decode (string → bytes) |          64 | 429,627 |
-| encode (bytes → string) |        1024 | 164,864 |
-| decode (string → bytes) |        1024 | 138,968 |
-| encode (bytes → string) |       16384 |  32,916 |
-| decode (string → bytes) |       16384 |   9,672 |
+| Operation               | Input bytes |   Ops/sec |
+| ----------------------- | ----------: | --------: |
+| encode (bytes → string) |          64 | 1,213,672 |
+| decode (string → bytes) |          64 | 2,418,731 |
+| encode (bytes → string) |        1024 |   778,770 |
+| decode (string → bytes) |        1024 | 1,129,947 |
+| encode (bytes → string) |       16384 |   133,063 |
+| decode (string → bytes) |       16384 |   106,280 |
 
 <!-- END GENERATED:utf8:benchmarks -->
 
@@ -294,9 +294,9 @@ Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz · 1,000 measured calls per case after
 
 <!-- BEGIN GENERATED:utf8:tests -->
 
-2026-11-19T14:28:15.863Z · local run · commit `cca7177`
+2026-11-19T14:58:18.590Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44549280023) · commit `082f503`
 
-Node v24.16.0 · win32 x64
+Node v24.22.2 · linux x64
 
 | Suite          | Passed | Failed | Skipped |
 | -------------- | -----: | -----: | ------: |
@@ -312,18 +312,18 @@ The shared compatibility suite exercises the whole public API.
 
 | Runtime / browser      |      Version | Status | Passed | Failed |
 | ---------------------- | -----------: | -----: | -----: | -----: |
-| node esm               |      24.16.0 | passed |      9 |      0 |
-| node cjs               |      24.16.0 | passed |      9 |      0 |
-| bun esm                |       1.3.10 | passed |      9 |      0 |
-| bun cjs                |       1.3.10 | passed |      9 |      0 |
-| deno esm               |        2.8.3 | passed |      9 |      0 |
+| node esm               |      24.22.2 | passed |      9 |      0 |
+| node cjs               |      24.22.2 | passed |      9 |      0 |
+| bun esm                |        1.4.5 | passed |      9 |      0 |
+| bun cjs                |        1.4.5 | passed |      9 |      0 |
+| deno esm               |        2.9.8 | passed |      9 |      0 |
 | edge-runtime esm       |        4.0.1 | passed |      9 |      0 |
 | cloudflare-workers esm | 1.20261118.1 | passed |      9 |      0 |
 | chromium               | 159.0.8154.6 | passed |      1 |      0 |
-| firefox                |            — | failed |      0 |      1 |
+| firefox                |        159.0 | passed |      1 |      0 |
 | webkit                 |         27.2 | passed |      1 |      0 |
 | mobile-chromium        | 159.0.8154.6 | passed |      1 |      0 |
-| mobile-firefox         |            — | failed |      0 |      1 |
+| mobile-firefox         |        159.0 | passed |      1 |      0 |
 | mobile-webkit          |         27.2 | passed |      1 |      0 |
 
 <!-- END GENERATED:utf8:tests -->
@@ -356,20 +356,20 @@ Missing compression APIs throw GZIP_COMPRESSION_UNAVAILABLE or GZIP_DECOMPRESSIO
 
 <!-- BEGIN GENERATED:gzip:benchmarks -->
 
-2026-11-19T14:31:13.084Z · local run · commit `cca7177`
+2026-11-19T14:58:40.833Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44549280023) · commit `082f503`
 
-Node v24.16.0 · win32 x64
+Node v24.22.2 · linux x64
 
-Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz · 1,000 measured calls per case after warmup
+AMD EPYC 9V74 80-Core Processor · 1,000 measured calls per case after warmup
 
 | Operation  | Input bytes | Ops/sec |
 | ---------- | ----------: | ------: |
-| compress   |          64 |   2,014 |
-| decompress |          64 |   2,857 |
-| compress   |        1024 |   1,695 |
-| decompress |        1024 |   2,857 |
-| compress   |       16384 |   1,576 |
-| decompress |       16384 |   2,377 |
+| compress   |          64 |  10,008 |
+| decompress |          64 |  11,661 |
+| compress   |        1024 |  10,645 |
+| decompress |        1024 |  14,229 |
+| compress   |       16384 |   8,201 |
+| decompress |       16384 |   8,390 |
 
 <!-- END GENERATED:gzip:benchmarks -->
 
@@ -379,9 +379,9 @@ Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz · 1,000 measured calls per case after
 
 <!-- BEGIN GENERATED:gzip:tests -->
 
-2026-11-19T14:28:15.863Z · local run · commit `cca7177`
+2026-11-19T14:58:18.590Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44549280023) · commit `082f503`
 
-Node v24.16.0 · win32 x64
+Node v24.22.2 · linux x64
 
 | Suite          | Passed | Failed | Skipped |
 | -------------- | -----: | -----: | ------: |
@@ -397,18 +397,18 @@ The shared compatibility suite exercises the whole public API.
 
 | Runtime / browser      |      Version | Status | Passed | Failed |
 | ---------------------- | -----------: | -----: | -----: | -----: |
-| node esm               |      24.16.0 | passed |      9 |      0 |
-| node cjs               |      24.16.0 | passed |      9 |      0 |
-| bun esm                |       1.3.10 | passed |      9 |      0 |
-| bun cjs                |       1.3.10 | passed |      9 |      0 |
-| deno esm               |        2.8.3 | passed |      9 |      0 |
+| node esm               |      24.22.2 | passed |      9 |      0 |
+| node cjs               |      24.22.2 | passed |      9 |      0 |
+| bun esm                |        1.4.5 | passed |      9 |      0 |
+| bun cjs                |        1.4.5 | passed |      9 |      0 |
+| deno esm               |        2.9.8 | passed |      9 |      0 |
 | edge-runtime esm       |        4.0.1 | passed |      9 |      0 |
 | cloudflare-workers esm | 1.20261118.1 | passed |      9 |      0 |
 | chromium               | 159.0.8154.6 | passed |      1 |      0 |
-| firefox                |            — | failed |      0 |      1 |
+| firefox                |        159.0 | passed |      1 |      0 |
 | webkit                 |         27.2 | passed |      1 |      0 |
 | mobile-chromium        | 159.0.8154.6 | passed |      1 |      0 |
-| mobile-firefox         |            — | failed |      0 |      1 |
+| mobile-firefox         |        159.0 | passed |      1 |      0 |
 | mobile-webkit          |         27.2 | passed |      1 |      0 |
 
 <!-- END GENERATED:gzip:tests -->
@@ -458,32 +458,32 @@ Invalid sources throw BYTE_SOURCE_EXPECTED. Invalid concatenation throws CONCAT_
 
 <!-- BEGIN GENERATED:util:benchmarks -->
 
-2026-11-19T14:31:15.360Z · local run · commit `cca7177`
+2026-11-19T14:58:41.132Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44549280023) · commit `082f503`
 
-Node v24.16.0 · win32 x64
+Node v24.22.2 · linux x64
 
-Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz · 1,000 measured calls per case after warmup
+AMD EPYC 9V74 80-Core Processor · 1,000 measured calls per case after warmup
 
-| Operation        | Input bytes | Ops/sec |
-| ---------------- | ----------: | ------: |
-| normalize view   |          64 | 896,539 |
-| concat three     |          64 | 180,333 |
-| equals same      |          64 | 402,495 |
-| equals different |          64 | 378,530 |
-| generate         |          64 |  90,700 |
-| derive 32 bytes  |          64 |   3,494 |
-| normalize view   |        1024 | 290,630 |
-| concat three     |        1024 |  59,787 |
-| equals same      |        1024 | 155,960 |
-| equals different |        1024 | 134,553 |
-| generate         |        1024 | 113,249 |
-| derive 32 bytes  |        1024 |   3,021 |
-| normalize view   |       16384 |  20,386 |
-| concat three     |       16384 |   3,275 |
-| equals same      |       16384 |   9,604 |
-| equals different |       16384 |   8,352 |
-| generate         |       16384 |  23,555 |
-| derive 32 bytes  |       16384 |   2,326 |
+| Operation        | Input bytes |   Ops/sec |
+| ---------------- | ----------: | --------: |
+| normalize view   |          64 | 2,767,461 |
+| concat three     |          64 |   735,554 |
+| equals same      |          64 | 1,339,692 |
+| equals different |          64 | 1,048,526 |
+| generate         |          64 |   262,352 |
+| derive 32 bytes  |          64 |    25,910 |
+| normalize view   |        1024 |   790,772 |
+| concat three     |        1024 |   236,490 |
+| equals same      |        1024 |   456,956 |
+| equals different |        1024 |   442,929 |
+| generate         |        1024 |   355,614 |
+| derive 32 bytes  |        1024 |    30,297 |
+| normalize view   |       16384 |    94,520 |
+| concat three     |       16384 |    22,036 |
+| equals same      |       16384 |    42,062 |
+| equals different |       16384 |    77,216 |
+| generate         |       16384 |   178,851 |
+| derive 32 bytes  |       16384 |    17,976 |
 
 <!-- END GENERATED:util:benchmarks -->
 
@@ -493,9 +493,9 @@ Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz · 1,000 measured calls per case after
 
 <!-- BEGIN GENERATED:util:tests -->
 
-2026-11-19T14:28:15.863Z · local run · commit `cca7177`
+2026-11-19T14:58:18.590Z · [CI run](https://github.com/sovereignbase/bytecodec/actions/runs/44549280023) · commit `082f503`
 
-Node v24.16.0 · win32 x64
+Node v24.22.2 · linux x64
 
 | Suite          | Passed | Failed | Skipped |
 | -------------- | -----: | -----: | ------: |
@@ -511,18 +511,18 @@ The shared compatibility suite exercises the whole public API.
 
 | Runtime / browser      |      Version | Status | Passed | Failed |
 | ---------------------- | -----------: | -----: | -----: | -----: |
-| node esm               |      24.16.0 | passed |      9 |      0 |
-| node cjs               |      24.16.0 | passed |      9 |      0 |
-| bun esm                |       1.3.10 | passed |      9 |      0 |
-| bun cjs                |       1.3.10 | passed |      9 |      0 |
-| deno esm               |        2.8.3 | passed |      9 |      0 |
+| node esm               |      24.22.2 | passed |      9 |      0 |
+| node cjs               |      24.22.2 | passed |      9 |      0 |
+| bun esm                |        1.4.5 | passed |      9 |      0 |
+| bun cjs                |        1.4.5 | passed |      9 |      0 |
+| deno esm               |        2.9.8 | passed |      9 |      0 |
 | edge-runtime esm       |        4.0.1 | passed |      9 |      0 |
 | cloudflare-workers esm | 1.20261118.1 | passed |      9 |      0 |
 | chromium               | 159.0.8154.6 | passed |      1 |      0 |
-| firefox                |            — | failed |      0 |      1 |
+| firefox                |        159.0 | passed |      1 |      0 |
 | webkit                 |         27.2 | passed |      1 |      0 |
 | mobile-chromium        | 159.0.8154.6 | passed |      1 |      0 |
-| mobile-firefox         |            — | failed |      0 |      1 |
+| mobile-firefox         |        159.0 | passed |      1 |      0 |
 | mobile-webkit          |         27.2 | passed |      1 |      0 |
 
 <!-- END GENERATED:util:tests -->
