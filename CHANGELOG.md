@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.2](https://github.com/sovereignbase/bytecodec/compare/v2.0.1...v2.0.2) (2026-11-19)
+
+
+### Bug Fixes
+
+* correct byte return types ([082f503](https://github.com/sovereignbase/bytecodec/commit/082f50353c86266a73eea1a3b1a5f10c245bf8dd))
+* correct byte return types ([72e2cd2](https://github.com/sovereignbase/bytecodec/commit/72e2cd2b3214d1fe8941d43caa587433161f3eec)), closes [#35](https://github.com/sovereignbase/bytecodec/issues/35)
+
 ## [2.0.1](https://github.com/sovereignbase/bytecodec/compare/v2.0.0...v2.0.1) (2026-09-02)
 
 
